@@ -1,5 +1,18 @@
 <script setup>
+import { ref, onMounted } from 'vue';
 import HelloWorld from './components/HelloWorld.vue'
+
+const data = ref(null);
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/api');
+    const result = await response.json();
+    data.value = result.message;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
 </script>
 
 <template>
@@ -11,7 +24,8 @@ import HelloWorld from './components/HelloWorld.vue'
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
-  <HelloWorld msg="Vite + Vue" />
+  <HelloWorld v-if="data" :msg="data"/>
+  <HelloWorld v-else msg="Loading..." />
 </template>
 
 <style scoped>
