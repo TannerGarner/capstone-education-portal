@@ -3,43 +3,60 @@
 </script>
 
 <template>
-    <div class="container login">
-        <h1>Login</h1>
-        <form class="form ">
+    <div class="container">
+        <form class="login">
+            <h1>Login</h1>
             <input required type="text" name="userName" placeholder="Username"></input>
             <input required type="password" name="password" placeholder="Password"></input>
             <button type="submit">Login</button>
+            <button @click="emit('toggle')">
+                Switch to Sign Up
+            </button>
         </form>
-        <button @click="emit('toggle')">
-            Switch to Log In
-        </button>
     </div>
 </template>
 
-<style>
+<style scoped>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
     .login {
         background-color: rgb(21,49,49);
         border-radius: 15px;
-        padding: 20px;
-        width: 650px;
-    }
-
-    form {
+        padding: 30px 10px;
+        width: 500px;
+        height: 400px;
+        color: #F5F1ED;
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .login h1{
+        font-size: 48px;
     }
 
     .login input {
-        margin: 10px;
-        padding: 10px;
+        padding: 15px;
         border-radius: 5px;
         border: none;
         background-color: rgb(254,94,65);
-        color: rgb(245, 241, 237);
+        font-size: 24px;
+        color: #F5F1ED;
     }
 
     .login input::placeholder{
-        color: rgb(245, 241, 237);
+        color: #F5F1ED;
         opacity: 50%;
     }
+
+    button {
+        background-color: #489FB5;
+    }
+
 </style>

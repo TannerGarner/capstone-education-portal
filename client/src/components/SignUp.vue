@@ -23,7 +23,7 @@
             <button type="submit">Sign Up</button>
         </form>
         <button @click="emit('toggle')">
-            Switch to Sign Up
+            Switch to Log In
         </button>
     </div>
 </template>
