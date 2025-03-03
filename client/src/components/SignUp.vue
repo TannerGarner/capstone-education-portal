@@ -40,7 +40,7 @@
     }
 
     .signUp{
-        background-color: rgb(21,49,49);
+        background-color: #153131;
         border-radius: 15px;
         padding: 30px 10px;
         width: 70%;
