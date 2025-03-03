@@ -37,15 +37,11 @@
         justify-content: space-around;
     }
 
-    .login h1{
-        font-size: 48px;
-    }
-
     .login input {
         padding: 15px;
         border-radius: 5px;
         border: none;
-        background-color: rgb(254,94,65);
+        background-color: #FE5E41;
         font-size: 24px;
         color: #F5F1ED;
     }
