@@ -61,8 +61,8 @@
     }
 
     .courseList{
-        display: grid;
-        grid-template-rows: repeat(minmax(300px, 1fr));
+        display: flex;
+        flex-direction: column;
         gap: 20px;
         padding: 20px;
     }
@@ -78,8 +78,8 @@
         align-items: center;
     }
 
-    .courseDisplay > * {
-        flex-grow: 1;
+    h2{
+        font-size: 18px;
     }
 
     .dropdown{
