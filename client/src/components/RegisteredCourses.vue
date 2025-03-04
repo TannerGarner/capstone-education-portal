@@ -1,5 +1,6 @@
 <script setup>
     import { ref } from 'vue';
+
     const courses = ref([
         {
             string_id:"CSCI-1001",
@@ -21,8 +22,15 @@
             credit_hours:"3",
             tuition_cost: 900.00
         }
-    ])
+    ]);
+    
+    const dropdownState = ref(new Map());
 
+    const toggleDropdown = (string_id) => {
+        dropdownState.value.set(string_id, !dropdownState.value.get(string_id));
+    };
+
+    const isDropdownOpen = (string_id) => dropdownState.value.get(string_id) || false;
 </script>
 
 <template>
@@ -36,8 +44,10 @@
                 <p>Schedule: {{course.schedule}}</p>
                 <p>Classroom: {{course.classroom_number}}</p>
                 <p>Credit Hours: {{course.credit_hours}}</p>
-                <button>\/</button>
-                <div class="dropdown">
+                <button @click="toggleDropdown(course.string_id)">
+                    {{ isDropdownOpen(course.string_id) ? "▲" : "▼" }}
+                </button>
+                <div v-if="isDropdownOpen(course.string_id)" class="dropdown">
                     <p>{{course.description}}</p>
                     <p>Maximum Capacity: {{course.maximum_capacity}}</p>
                     <p>Tuition Cost: ${{course.tuition_cost}}</p>
@@ -83,6 +93,6 @@
     }
 
     .dropdown{
-        display: none;
+        /* display: none; */
     }
 </style>
