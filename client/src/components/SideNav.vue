@@ -42,7 +42,15 @@
     li {
         background-color: #F5F1ED;
         color: #153131;
-        padding: 10px;
+        padding: 15px;
         border-radius: 5px;
+        cursor:default;
+        transition: background-color 0.3s, color 0.3s;
     }
+
+    li:hover {
+        background-color: #489FB5;
+        color: #F5F1ED;
+    }
+
 </style>
