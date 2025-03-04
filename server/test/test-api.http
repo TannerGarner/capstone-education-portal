@@ -5,7 +5,7 @@ GET http://localhost:3001/
 GET http://localhost:3001/test
 
 ###
-POST http://localhost:3001/test-query
+GET http://localhost:3001/test-query
 
 
 ### Logging In
@@ -13,6 +13,15 @@ POST http://localhost:3001/login
 Content-Type: application/json
 
 {
-    "username": 
-    "password": 
+    "username": "...",
+    "password": "..."
+}
+
+### Register
+POST http://localhost:3001/register
+Content-Type: application/json
+
+{
+    "username": "...",
+    "password": "..."
 }

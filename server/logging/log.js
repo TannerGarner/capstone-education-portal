@@ -1,5 +1,4 @@
 import winston from "winston";
-import morgan from "morgan";
 
 export const logger = winston.createLogger({
     level: process.env.LOG_LEVEL ?? "http",
@@ -9,11 +8,3 @@ export const logger = winston.createLogger({
         new winston.transports.File({ filename: "./logging/server.log" })
     ]
 });
-
-export function setUpMorgan(app) {
-    app.use(morgan("combined", {
-        stream: {
-            write: (message) => logger.http(message.trim())
-        }
-    }));
-}

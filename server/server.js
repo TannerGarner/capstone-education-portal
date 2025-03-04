@@ -1,5 +1,8 @@
 import express from "express";
-import { logger, setUpMorgan } from "./logging/log.js";
+import { logger } from "./logging/log.js";
+import { register } from "./middleware/student-middleware.js";
+import pgPool from "./services/postgres.js";
+import { setUpMorgan } from "./services/morgan.js";
 
 const PORT = process.env.PORT || 3001;
 
@@ -11,12 +14,12 @@ app.use(express.urlencoded({ extended: true }));
 setUpMorgan(app);
 
 
-import pg from "pg";
-const { Pool } = pg;
-const connectionString = process.env.DB_URI || 'postgres://postgres:postgres@localhost:5432/capstone-test';
-logger.info(`connectionString: ${connectionString}`);
+// import pg from "pg";
+// const { Pool } = pg;
+// const connectionString = process.env.DB_URI || 'postgres://postgres:postgres@localhost:5432/capstone-test';
+// logger.info(`connectionString: ${connectionString}`);
 
-const pool = new Pool({ connectionString });
+// const pool = new Pool({ connectionString });
 
 
 
@@ -28,9 +31,9 @@ app.get("/test", (_req, res) => {
     res.send("Test Endpoint");
 });
 
-app.post("/test-query", async (req, res) => {
+app.get("/test-query", async (req, res) => {
     try {
-        const data = await pool.query({
+        const data = await pgPool.query({
             text: "SELECT * FROM courses;",
             values: []
         });
@@ -43,6 +46,9 @@ app.post("/test-query", async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-    logger.info(`Server listening on ${PORT}`);
-});
+// app.post("/register", register);
+// app.post("/login", "...");
+// app.get("/courses", "...");
+
+
+app.listen(PORT, () => logger.info(`Server listening on ${PORT}`));
