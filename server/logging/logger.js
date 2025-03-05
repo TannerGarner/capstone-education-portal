@@ -1,6 +1,6 @@
 import winston from "winston";
 
-export const logger = winston.createLogger({
+const logger = winston.createLogger({
     level: process.env.LOG_LEVEL ?? "http",
     format: winston.format.json(),
     transports: [
@@ -8,3 +8,4 @@ export const logger = winston.createLogger({
         new winston.transports.File({ filename: "./logging/server.log" })
     ]
 });
+export default logger;
