@@ -1,6 +1,6 @@
 import express from "express";
 import logger from "./logging/logger.js";
-import { coursesMW, registerMW } from "./middleware/student-middleware.js";
+import { getCoursesMW, getRegisterMW, getUserMW } from "./middleware/student-middleware.js";
 import setUpMorgan from "./services/morgan.js";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -21,12 +21,12 @@ setUpMorgan(app);
 
 
 app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
+    res.json({ message: "Hello from server!" });
 });
 
-// app.post("/register", registerMW); // Incomplete
-// app.post("/login", "..."); // Incomplete
-app.get("/courses", coursesMW);
-
+// app.post("/api/register", getRegisterMW); // Incomplete
+// app.post("/api/login", "..."); // Incomplete
+app.get("/api/courses", getCoursesMW);
+app.get("/api/user/:userID", getUserMW);
 
 app.listen(PORT, () => logger.info(`Server listening on ${PORT}`));
