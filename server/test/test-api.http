@@ -38,5 +38,14 @@ Content-Type: application/json
     }
 }
 
-### Test /courses
-GET http://localhost:3001/courses
+
+
+
+### Test /api/courses
+GET http://localhost:3001/api/courses
+
+### Test /api/user/12345 (Real User)
+GET http://localhost:3001/api/user/12345
+
+### Test /api/user/1234555 (Fake User)
+GET http://localhost:3001/api/user/1234555
