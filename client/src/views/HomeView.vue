@@ -1,6 +1,7 @@
 <script setup>
     import SideNav from '../components/SideNav.vue';
     import RegisteredCourses from '../components/RegisteredCourses.vue';
+    import Register from '../components/Register.vue';
     import { RouterLink } from 'vue-router';
     import { ref } from 'vue';
 
@@ -10,7 +11,8 @@
     
     <div class="container">
         <SideNav/>
-        <RegisteredCourses/>
+        <!-- <RegisteredCourses/> -->
+        <Register/>
     </div>
 </template>
 

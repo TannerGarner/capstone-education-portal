@@ -5,6 +5,12 @@ html body {
   background-color: #F5F1ED;
 }
 
+.header{
+  background-color: #489FB5;
+  color: #F5F1ED;
+  padding: 20px;
+}
+
 h1 {
   margin: 0;
   padding: 0;

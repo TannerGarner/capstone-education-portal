@@ -1,7 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-
-    const courses = ref([
+    const allCourses = ref([
         {
             string_id:"CSCI-1001",
             title:"Introduction to Computer Science",
@@ -23,34 +22,27 @@
             tuition_cost: 900.00
         }
     ]);
-    
-    const dropdownState = ref(new Map());
 
-    const toggleDropdown = (string_id) => {
-        dropdownState.value.set(string_id, !dropdownState.value.get(string_id));
-    };
-
-    const isDropdownOpen = (string_id) => dropdownState.value.get(string_id) || false;
 </script>
 
 <template>
     <div class="container">
         <div class="header">
-            <h1>Registered Courses</h1>
+            <h1>Register</h1>
         </div>
-        <div class="courseList">
-            <div class="courseDisplay" v-for="course in courses" :key="course.string_id">
-                <h2>{{course.title}}</h2>
-                <p>Schedule: {{course.schedule}}</p>
-                <p>Classroom: {{course.classroom_number}}</p>
-                <p>Credit Hours: {{course.credit_hours}}</p>
-                <button @click="toggleDropdown(course.string_id)">
-                    {{ isDropdownOpen(course.string_id) ? "▲" : "▼" }}
-                </button>
-                <div v-if="isDropdownOpen(course.string_id)" class="dropdown">
-                    <p>{{course.description}}</p>
+        <div class="allCourses">
+            <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+            <div class="courseList">
+                <div class="course" v-for="course in allCourses" :key="course.string_id">
+                    <p>{{course.title}}</p>
+                    <p>Schedule: {{course.schedule}}</p>
+                    <p>Classroom: {{course.classroom_number}}</p>
+                    <p>Credit Hours: {{course.credit_hours}}</p>
                     <p>Maximum Capacity: {{course.maximum_capacity}}</p>
                     <p>Tuition Cost: ${{course.tuition_cost}}</p>
+                    <button>
+                        Register
+                    </button>
                 </div>
             </div>
         </div>
@@ -58,35 +50,50 @@
 </template>
 
 <style scoped>
-    .container{
-        background-color: #F5F1ED;
+    .container {
         display: flex;
         flex-direction: column;
+        width: 100%;
+        height: 100%;
+    }
+
+    .allCourses {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .courseList{
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        padding: 20px;
+        padding: 20px 0px;
     }
 
-    .courseDisplay{
+    .allCourses > input {
+        padding: 20px;
+        border-radius: 5px;
+        border: none;
+        background-color: #489FB5;
+        font-size: 24px;
+        color: #F5F1ED;
+        display: flex;
+        width: 50%;
+        margin-bottom: 20px;
+    }
+
+    .course{
         background-color: #F5F1ED;
         border: 2px solid #489FB5;
-        border-left: 10px solid #489FB5;
-        padding: 20px;
+        padding: 5px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
 
-    h2{
-        font-size: 18px;
+    .course > * {
+        overflow: hidden;       
+        text-overflow: ellipsis; 
+        white-space: nowrap;
     }
-
-    /* .dropdown{
-        display: none;
-    } */
 </style>
