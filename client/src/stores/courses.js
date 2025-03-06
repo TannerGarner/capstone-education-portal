@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const useCoursesStore = defineStore("courses",{
     state: () => ({
         courses: [],
+        course: {},
         loading: false,
     }),
     actions: {
@@ -43,8 +44,8 @@ export const useCoursesStore = defineStore("courses",{
                     throw new Error("Failed to create course");
                 }
         
-                const course = await response.json();
-                this.courses.push(course);
+                this.course = await response.json();
+                this.courses.push(this.course);
             } catch (error) {
                 console.error("Failed to create course:", error);
             }

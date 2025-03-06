@@ -17,7 +17,8 @@
         phone_number: ""
     })
 
-    function onSubmit(){
+    function onSubmit(event){
+        event.preventDefault();
         userStore.createUser(newUser.value);
     }
 
@@ -30,18 +31,18 @@
             <h1>Student Registration</h1>
             <div class="row">
                 <div class="column c1">
-                    <input @change="newUser.first_name = this.value" required type="text" name="firstName" placeholder="First Name" ></input>
-                    <input @change="newUser.last_name = this.value" required type="text" name="lastName" placeholder="Last Name"></input>
-                    <input @change="newUser.username = this.value" required type="text" name="userName" placeholder="Username"></input>
-                    <input @change="newUser.email = this.value" required type="email" name="email" placeholder="Email"></input>
-                    <input @change="newUser.password = this.value" required type="password" name="password" placeholder="Password"></input>
+                    <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
+                    <input v-model="newUser.last_name" required type="text" name="lastName" placeholder="Last Name">
+                    <input v-model="newUser.username" required type="text" name="userName" placeholder="Username">
+                    <input v-model="newUser.email" required type="email" name="email" placeholder="Email">
+                    <input v-model="newUser.password" required type="password" name="password" placeholder="Password">
                 </div>
                 <div class="column c2">
-                    <input @change="newUser.address.street = this.value" required type="text" name="street" placeholder="Street Address"></input>
-                    <input @change="newUser.address.city = this.value" required type="text" name="city" placeholder="City"></input>
-                    <input @change="newUser.address.state = this.value" required type="text" name="stateRegion" placeholder="State, Region"></input>
-                    <input @change="newUser.address.country = this.value" required type="text" name="country" placeholder="Country"></input>
-                    <input @change="newUser.address.phone = this.value" required type="phone" name="phone" placeholder="Phone Number"></input>
+                    <input v-model="newUser.address.street" required type="text" name="street" placeholder="Street Address">
+                    <input v-model="newUser.address.city" required type="text" name="city" placeholder="City">
+                    <input v-model="newUser.address.state" required type="text" name="stateRegion" placeholder="State, Region">
+                    <input v-model="newUser.address.country" required type="text" name="country" placeholder="Country">
+                    <input v-model="newUser.phone_number" required type="tel" name="phone" placeholder="Phone Number">
                 </div>
             </div>
             <button @click="onSubmit" type="submit">Sign Up</button>
