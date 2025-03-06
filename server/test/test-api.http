@@ -44,8 +44,28 @@ Content-Type: application/json
 ### Test /api/courses
 GET http://localhost:3001/api/courses
 
-### Test /api/user/12345 (Real User)
-GET http://localhost:3001/api/user/12345
+### Test /api/user/98 (Real User)
+GET http://localhost:3001/api/user/98
 
 ### Test /api/user/1234555 (Fake User)
 GET http://localhost:3001/api/user/1234555
+
+### Test /api/register
+POST http://localhost:3001/api/register
+Content-Type: application/json
+
+{
+    "general_data": {
+        "first_name": "Jack",
+        "last_name": "Bell",
+        "username": "Candle Master",
+        "password": "JackPassword",
+        "email": "candle@mtec.edu",
+        "phone_number": 1112223333,
+        "address_id": null,
+        "is_admin": false
+    },
+    "address_data": {
+
+    }
+}

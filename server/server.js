@@ -24,7 +24,7 @@ app.get("/api", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
 
-// app.post("/api/register", getRegisterMW); // Incomplete
+app.post("/api/register", getRegisterMW);
 // app.post("/api/login", "..."); // Incomplete
 app.get("/api/courses", getCoursesMW);
 app.get("/api/user/:userID", getUserMW);

@@ -2,36 +2,59 @@ import bcrypt from "bcrypt";
 import { genUserID } from "../utils/generalUtils.js";
 import pgPool from "../services/postgres.js";
 import logger from "../logging/logger.js";
+import { genToken } from "../services/jwt.js";
 
 export async function getRegisterMW(req, res) {
     try {
-        // Code to verify that username is unique:
-        
+        // Store address data: (Incomplete)
+        const addressData = { ...req.body.address_data };
 
         // Store general data:
         const generalData = {
             ...req.body.general_data,
             password_hash: bcrypt.hashSync(req.body.general_data.password, 10),
-            user_id: genUserID()
+            user_id: genUserID(),
+            address_id: null
         };
         delete generalData.password;
 
-        
-        // Store address data:
-        const addressData = { ...req.body.address_data };
 
-        const columns = [...Object.values(generalData), /* address_id = */ 100];
-
-        
-
-        await pgPool.query({
-            text: "............",
-            values: []
+        const { rowCount } = await pgPool.query({
+            text: `
+                INSERT INTO
+	                users (user_id, first_name, last_name, username, password_hash, email, phone_number, address_id, is_admin)
+                VALUES
+	                ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+            `,
+            values: [
+                generalData.user_id,
+                generalData.first_name,
+                generalData.last_name,
+                generalData.username,
+                generalData.password_hash,
+                generalData.email,
+                generalData.phone_number,
+                generalData.address_id,
+                generalData.is_admin
+            ]
         });
 
-        res.status(500).json({ errorMessage: "This endpoint is not yet completed." });
+        if (!!rowCount) {
+            const token = genToken(generalData.user_id, generalData.username);
+
+            res.json({ token });
+        }
+        else res.status(500).json({ errorMessage: "Postgres Error" });
     } catch (err) {
-        res.status(500).json({ errorMessage: "Internal Server Error" });
+        logger.error(err.message);
+        if (err.message == `duplicate key value violates unique constraint "username"`) {
+            res.status(409).json({ errorMessage: "Username already in use" });
+        }
+        // else if (err.message == `duplicate key value violates unique constraint "users_pkey"`) {
+
+        // }
+
+        res.status(500).json({ errorMessage: err.message });
     }
 }
 
