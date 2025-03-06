@@ -1,4 +1,26 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
+    import { useUsersStore } from '../stores/users.js';
+    const userStore = useUsersStore();
+
+    const newUser = ref({
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        address: {
+            street: "",
+            city: "",
+            state: "",
+            country: "",
+        },
+        phone_number: ""
+    })
+
+    function onSubmit(){
+        userStore.createUser(newUser.value);
+    }
+
     const emit = defineEmits(["toggle"]);
 </script>
 
@@ -8,21 +30,21 @@
             <h1>Student Registration</h1>
             <div class="row">
                 <div class="column c1">
-                    <input required type="text" name="firstName" placeholder="First Name" ></input>
-                    <input required type="text" name="lastName" placeholder="Last Name"></input>
-                    <input required type="text" name="userName" placeholder="Username"></input>
-                    <input required type="email" name="email" placeholder="Email"></input>
-                    <input required type="password" name="password" placeholder="Password"></input>
+                    <input @change="newUser.first_name = this.value" required type="text" name="firstName" placeholder="First Name" ></input>
+                    <input @change="newUser.last_name = this.value" required type="text" name="lastName" placeholder="Last Name"></input>
+                    <input @change="newUser.username = this.value" required type="text" name="userName" placeholder="Username"></input>
+                    <input @change="newUser.email = this.value" required type="email" name="email" placeholder="Email"></input>
+                    <input @change="newUser.password = this.value" required type="password" name="password" placeholder="Password"></input>
                 </div>
                 <div class="column c2">
-                    <input required type="text" name="address" placeholder="Street Address"></input>
-                    <input required type="text" name="city" placeholder="City"></input>
-                    <input required type="text" name="stateRegion" placeholder="State, Region"></input>
-                    <input required type="text" name="country" placeholder="Country"></input>
-                    <input required type="phone" name="phone" placeholder="Phone Number"></input>
+                    <input @change="newUser.address.street = this.value" required type="text" name="street" placeholder="Street Address"></input>
+                    <input @change="newUser.address.city = this.value" required type="text" name="city" placeholder="City"></input>
+                    <input @change="newUser.address.state = this.value" required type="text" name="stateRegion" placeholder="State, Region"></input>
+                    <input @change="newUser.address.country = this.value" required type="text" name="country" placeholder="Country"></input>
+                    <input @change="newUser.address.phone = this.value" required type="phone" name="phone" placeholder="Phone Number"></input>
                 </div>
             </div>
-            <button type="submit">Sign Up</button>
+            <button @click="onSubmit" type="submit">Sign Up</button>
             <button @click="emit('toggle')">
                 Switch to Log In
             </button>
