@@ -2,36 +2,55 @@ import bcrypt from "bcrypt";
 import { genUserID } from "../utils/generalUtils.js";
 import pgPool from "../services/postgres.js";
 import logger from "../logging/logger.js";
+import { genToken } from "../services/jwt.js";
 
-export async function getRegisterMW(req, res) {
+export async function postUserMW(req, res) {
     try {
-        // Code to verify that username is unique:
-        
-
-        // Store general data:
-        const generalData = {
-            ...req.body.general_data,
-            password_hash: bcrypt.hashSync(req.body.general_data.password, 10),
-            user_id: genUserID()
+        const userData = {
+            ...req.body,
+            password_hash: bcrypt.hashSync(req.body.password, 10),
+            user_id: genUserID(),
         };
-        delete generalData.password;
 
-        
-        // Store address data:
-        const addressData = { ...req.body.address_data };
+        const { rowCount } = await pgPool.query({
+            text: `
+                INSERT INTO
+	                users (user_id, first_name, last_name, password_hash, email, phone_number, is_admin, address_id)
+                VALUES
+	                ($1, $2, $3, $4, $5, $6, $7, find_or_create_address($8, $9, $10, $11));
+            `,
+            values: [
+                userData.user_id, // $1
+                userData.first_name, // $2
+                userData.last_name, // $3
+                userData.password_hash, // $4
+                userData.email, // $5
+                userData.phone_number, // $6
+                userData.is_admin, // $7
 
-        const columns = [...Object.values(generalData), /* address_id = */ 100];
-
-        
-
-        await pgPool.query({
-            text: "............",
-            values: []
+                userData.address_data.street, // $8
+                userData.address_data.city, // $9
+                userData.address_data.state_or_region, // $10
+                userData.address_data.country // $11
+            ]
         });
 
-        res.status(500).json({ errorMessage: "This endpoint is not yet completed." });
+        if (rowCount) {
+            const token = genToken(userData.user_id, userData.username);
+            res.json({
+                token,
+                userID: userData.user_id
+            });
+        }
+        else res.status(500).json({ errorMessage: "Postgres Error" });
+
     } catch (err) {
-        res.status(500).json({ errorMessage: "Internal Server Error" });
+        logger.error(err.message);
+        // if (err.message == `duplicate key value violates unique constraint "users_pkey"`) {
+
+        // }
+
+        res.status(500).json({ errorMessage: err.message });
     }
 }
 
@@ -63,6 +82,6 @@ export async function getUserMW(req, res) {
         else res.status(404).json({ errorMessage: "User does not exist" });
     } catch (err) {
         logger.error(err.message);
-        res.status(500).json({ errorMessage: "Internal Server Error" });
+        res.status(500).json({ errorMessage: err.message });
     }
 }
