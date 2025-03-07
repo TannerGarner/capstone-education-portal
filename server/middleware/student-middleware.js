@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { genUserID } from "../utils/generalUtils.js";
 import logger from "../logging/logger.js";
 import { genToken } from "../services/jwt.js";
-import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/userCRUD.js";
+import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
 
 export async function postUserMW(req, res) {
