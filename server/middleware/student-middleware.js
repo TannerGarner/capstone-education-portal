@@ -4,6 +4,18 @@ import pgPool from "../services/postgres.js";
 import logger from "../logging/logger.js";
 import { genToken } from "../services/jwt.js";
 
+export async function verifyTokenMW(req, res) {
+    const { token } = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        res.json({ user_id: decoded.sub });
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ errorMessage: "Internal Server Error" });
+    }
+}
+
 export async function postUserMW(req, res) {
     try {
         const userData = {
@@ -28,21 +40,21 @@ export async function postUserMW(req, res) {
                 userData.phone_number, // $6
                 userData.is_admin, // $7
 
-                userData.address_data.street, // $8
-                userData.address_data.city, // $9
-                userData.address_data.state_or_region, // $10
-                userData.address_data.country // $11
+                userData.address.street, // $8
+                userData.address.city, // $9
+                userData.address.state, // $10
+                userData.address.country // $11
             ]
         });
-
+    
         if (rowCount) {
-            const token = genToken(userData.user_id, userData.username);
+            const token = genToken(userData.user_id);
             res.json({
-                token,
-                userID: userData.user_id
+                token: token,
+                user_id: userData.user_id,
             });
         }
-        else res.status(500).json({ errorMessage: "Postgres Error" });
+        res.status(500).json({ errorMessage: err.message });
 
     } catch (err) {
         logger.error(err.message);

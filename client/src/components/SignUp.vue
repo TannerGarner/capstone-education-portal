@@ -1,7 +1,9 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
+    import { useRouter } from 'vue-router';
     const userStore = useUsersStore();
+    const router = useRouter();
 
     const newUser = ref({
         first_name: "",
@@ -14,12 +16,28 @@
             state: "",
             country: "",
         },
-        phone_number: ""
+        phone_number: "", 
+        is_admin: false
     })
 
-    function onSubmit(event){
-        event.preventDefault();
+    function onSubmit(){
         userStore.createUser(newUser.value);
+        newUser.value = {
+            first_name: "",
+            last_name: "",
+            email: "",
+            password: "",
+            address: {
+                street: "",
+                city: "",
+                state: "",
+                country: "",
+            },
+            phone_number: "",
+            is_admin: false
+        };
+        
+        router.push("/");
     }
 
     const emit = defineEmits(["toggle"]);
@@ -27,26 +45,25 @@
 
 <template>
     <div class="container">
-        <form class="signUp">
+        <form @submit.prevent="onSubmit" class="signUp">
             <h1>Student Registration</h1>
             <div class="row">
                 <div class="column c1">
                     <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
                     <input v-model="newUser.last_name" required type="text" name="lastName" placeholder="Last Name">
-                    <input v-model="newUser.username" required type="text" name="userName" placeholder="Username">
                     <input v-model="newUser.email" required type="email" name="email" placeholder="Email">
                     <input v-model="newUser.password" required type="password" name="password" placeholder="Password">
+                    <input v-model="newUser.phone_number" required type="tel" name="phone" placeholder="Phone Number">
                 </div>
                 <div class="column c2">
                     <input v-model="newUser.address.street" required type="text" name="street" placeholder="Street Address">
                     <input v-model="newUser.address.city" required type="text" name="city" placeholder="City">
                     <input v-model="newUser.address.state" required type="text" name="stateRegion" placeholder="State, Region">
                     <input v-model="newUser.address.country" required type="text" name="country" placeholder="Country">
-                    <input v-model="newUser.phone_number" required type="tel" name="phone" placeholder="Phone Number">
                 </div>
             </div>
-            <button @click="onSubmit" type="submit">Sign Up</button>
-            <button @click="emit('toggle')">
+            <button type="submit">Sign Up</button>
+            <button type="button" @click="emit('toggle')">
                 Switch to Log In
             </button>
         </form>

@@ -2,9 +2,9 @@
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     const userStore = useUsersStore();
-    
+
     onMounted(async () => {
-       await userStore.fetchUser(98);
+        await userStore.fetchUser();
     });
 
     const editUser = ref({
@@ -83,7 +83,9 @@
     </div>
     <div class="row">
         <p>Password</p>
-        <p v-if="!isEditorOpen('password')" class="userDetail">{{userStore.user.password}}</p>
+        <p v-if="!isEditorOpen('password')" class="userDetail">
+            {{ '•'.repeat(userStore.user.password_length) }}
+        </p>
         <input v-else v-model="editUser.password" class="userDetail"/>
         <button @click="toggleEditor('password')">{{ isEditorOpen('password') ? 'Cancel' : 'Edit' }}</button>
         <button v-if="isEditorOpen('password')" @click="saveChanges('password')">Save</button>

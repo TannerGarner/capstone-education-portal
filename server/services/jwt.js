@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
 
-export function genToken(userID, username) {
+export function genToken(userID) {
 
     const jwtPayload = {
         sub: userID,
-        username,
         iat: Math.floor(Date.now() / 1000), // Issued at (current time)
     };
 

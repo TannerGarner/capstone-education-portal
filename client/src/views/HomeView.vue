@@ -3,9 +3,17 @@
     import RegisteredCourses from '../components/RegisteredCourses.vue';
     import Register from '../components/Register.vue';
     import Account from '../components/Account.vue';
-    import { RouterLink } from 'vue-router';
-    import { ref } from 'vue';
+    import { useRouter, RouterLink } from 'vue-router';
+    import { ref, onMounted } from 'vue';
 
+    const router = useRouter();
+    
+    onMounted(async () => {
+    const isAuthenticated = await userStore.verifyToken();
+    if (!isAuthenticated) {
+        router.push("/login"); 
+    }
+});
 </script>
 
 <template>

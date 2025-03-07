@@ -1,6 +1,6 @@
 import express from "express";
 import logger from "./logging/logger.js";
-import { getCoursesMW, postUserMW, getUserMW } from "./middleware/student-middleware.js";
+import { getCoursesMW, postUserMW, getUserMW, verifyTokenMW } from "./middleware/student-middleware.js";
 import setUpMorgan from "./services/morgan.js";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -28,5 +28,6 @@ app.post("/api/user", postUserMW);
 // app.post("/api/login", "..."); // Incomplete
 app.get("/api/courses", getCoursesMW);
 app.get("/api/user/:userID", getUserMW);
+app.get("/api/auth/verify", verifyTokenMW);
 
 app.listen(PORT, () => logger.info(`Server listening on ${PORT}`));

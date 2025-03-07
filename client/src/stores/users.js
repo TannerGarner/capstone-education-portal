@@ -43,9 +43,20 @@ export const useUsersStore = defineStore('users',{
                 if (!response.ok) {
                     throw new Error("Failed to create user");
                 }
-        
-                const user = await response.json();
-                this.users.push(user);
+                const tokenAndUser = await response.json();
+                const token = tokenAndUser.token;
+
+                const { password, ...userWithoutPassword } = newUser;
+                this.user = { 
+                    ...userWithoutPassword, 
+                    user_id: tokenAndUser.user_id,
+                    password_length: password.length,
+                    token: token,
+                };
+
+                localStorage.setItem("user", JSON.stringify(this.user));
+
+                this.users.push(this.user);
             } catch (error) {
                 console.error("Failed to create user:", error);
             }
@@ -59,7 +70,7 @@ export const useUsersStore = defineStore('users',{
             this.users[index] = { ...this.users[index], ...updateValues };
         
             try {
-                const response = await fetch(`/api/users/${updateValues.id}`, {
+                const response = await fetch(`/api/user/${updateValues.id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updateValues),
@@ -92,6 +103,32 @@ export const useUsersStore = defineStore('users',{
             } catch (error) {
                 console.error("Delete failed, rolling back:", error);
                 this.users.splice(index, 0, oldUser);
+            }
+        },
+        async verifyToken() {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user || !user.token){
+                this.user = {};
+                localStorage.removeItem("user");
+                return false;
+            };
+            
+            try {
+                const response = await fetch("/api/auth/verify", {
+                    method: "GET",
+                    headers: { Authorization: `Bearer ${user.token}` },
+                });
+        
+                if (!response.ok) throw new Error("Invalid token");
+        
+                const data = await response.json();
+                this.user = this.fetchUser(data.user_id);
+                return true;
+            } catch (error) {
+                console.error("Authentication failed:", error);
+                this.user = null;
+                localStorage.removeItem("user");
+                return false;
             }
         },
     },
