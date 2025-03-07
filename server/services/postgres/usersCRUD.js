@@ -47,9 +47,10 @@ export async function updateUserPG(userID, newData) {
                 last_name = $2,
                 email = $3,
                 phone_number = $4,
-                is_admin = $5
+                is_admin = $5,
+                address_id = find_or_create_address($6, $7, $8, $9)
             WHERE
-                user_id = $6;
+                user_id = $10;
         `,
         values: [
             newData.first_name,
@@ -57,6 +58,12 @@ export async function updateUserPG(userID, newData) {
             newData.email,
             newData.phone_number,
             newData.is_admin,
+
+            newData.address.street,
+            newData.address.city,
+            newData.address.state,
+            newData.address.country,
+
             userID
         ]
     });

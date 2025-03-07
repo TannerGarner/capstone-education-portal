@@ -72,7 +72,7 @@ Content-Type: application/json
     "phone_number": 45,
     "is_admin": false,
     "address": {
-        "street": "200 S 500 N",
+        "street": "200 S 500 E",
         "city": "Nowhere",
         "state": "CA",
         "country": "USA"
@@ -80,10 +80,12 @@ Content-Type: application/json
 }
 
 ### user
-PUT http://localhost:3001/api/user/662579449
+PUT http://localhost:3001/api/user/644882303
 Content-Type: application/json
 
 {
-    "email": "somenewemail@mtec.edu",
-    "apple": "made up thing"
+    "email": "mmmmmmmmm@mtec.edu",
+    "address": {
+        "street": "350 N 13500 W"
+    }
 }

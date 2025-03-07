@@ -4,6 +4,7 @@ import logger from "../logging/logger.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
+import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 
 export async function postUserMW(req, res) {
     try {
@@ -35,13 +36,26 @@ export async function putUserMW(req, res) {
     try {
         const { userID } = req.params;
 
+        // Update general user data:
         const oldUserData = await getUserPG(userID);
 
         let newUserData = {
-            ...oldUserData, // Old user data
-            ...req.body // New user data
+            ...oldUserData,
+            ...req.body // new user data
         };
 
+        // Update address user data:
+        const oldAddressData = await getAddressPG(oldUserData.address_id);
+        
+        const newAddressData = {
+            ...oldAddressData,
+            ...req.body.address // new address data
+        };
+
+        // Update newUserData.address with new address data:
+        newUserData.address = newAddressData;
+
+        // Update information on database and return updated user:
         newUserData = await updateUserPG(userID, newUserData);
 
         res.json(newUserData);
