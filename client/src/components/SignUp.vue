@@ -42,7 +42,7 @@
 
     const emit = defineEmits(["toggle"]);
 </script>
-
+ 
 <template>
     <div class="container">
         <form @submit.prevent="onSubmit" class="signUp">
