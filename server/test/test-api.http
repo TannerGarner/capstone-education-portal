@@ -89,3 +89,17 @@ Content-Type: application/json
         "street": "350 N 13500 W"
     }
 }
+
+
+###
+GET http://localhost:3001/api/auth/verify
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjU2OTMyNTk4OSwiaWF0IjoxNzQxNTcyMjM5LCJleHAiOjE3NDE1NzU4Mzl9.Xf7SoiCRSxhYaLoGKBOW0mLjg6Vv9dSBrkyIdUUCZSk
+
+###
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "user_id": 569325989,
+    "password": "JackPassword"
+}

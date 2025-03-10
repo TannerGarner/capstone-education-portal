@@ -5,7 +5,7 @@ export async function getUserPG(userID) {
         text: "SELECT * FROM users WHERE user_id = $1;",
         values: [userID]
     });
-    const user = res.rows[0];
+    const user = res.rows[0] ?? null;
 
     return user;
 }

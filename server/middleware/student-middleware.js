@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
-import { genUserID } from "../utils/generalUtils.js";
 import logger from "../logging/logger.js";
+import jwt from "jsonwebtoken";
+import { genUserID } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
@@ -14,7 +15,24 @@ export async function verifyTokenMW(req, res) {
         res.json({ user_id: decoded.sub });
     } catch (err) {
         logger.error(err.message);
-        res.status(500).json({ errorMessage: "Internal Server Error" });
+        res.status(500).json({ errorMessage: err.message });
+    }
+}
+
+export async function loginMW(req, res) {
+    try {
+        const { user_id, password } = req.body;
+
+        const user = await getUserPG(user_id);
+
+        const invalidCredsRes = () => res.status(400).json({ errorMessage: "Invalid credentials entered" });
+        if (!user) return invalidCredsRes();
+        if (!bcrypt.compareSync(password, user.password_hash)) return invalidCredsRes();
+
+        res.json({ token: genToken(user_id) });
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ errorMessage: err.message });
     }
 }
 
@@ -28,15 +46,11 @@ export async function postUserMW(req, res) {
 
         const success = await createUserPG(userData);
 
-        if (success) {
-            const token = genToken(userData.user_id, userData.is_admin);
-            res.json({
-                token: token,
-                user_id: userData.user_id,
-            });
-        }
-        res.status(500).json({ errorMessage: err.message });
-
+        if (success) res.json({
+            token: genToken(userData.user_id, userData.is_admin),
+            user_id: userData.user_id
+        });
+        else res.status(500).json({ errorMessage: "Internal server error" });
     } catch (err) {
         logger.error(err.message);
 
@@ -80,7 +94,7 @@ export async function putUserMW(req, res) {
 export async function getUserMW(req, res) {
     try {
         const user = await getUserPG(req.params.userID);
-
+        
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });
     } catch (err) {
@@ -97,6 +111,6 @@ export async function getCoursesMW(req, res) {
         res.json(courses);
     } catch (err) {
         logger.error(err.message);
-        res.status(500).json({ errorMessage: "Internal Server Error" });
+        res.status(500).json({ errorMessage: err.message });
     }
 }
