@@ -106,7 +106,9 @@ export async function getUserMW(req, res) {
 
 export async function getCoursesMW(req, res) {
     try {
-        const courses = await getCoursesPG();
+        const { searchTerm } = req.query;
+
+        const courses = await getCoursesPG(searchTerm);
 
         res.json(courses);
     } catch (err) {
