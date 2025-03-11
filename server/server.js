@@ -12,9 +12,9 @@ app.get("/api", (req, res) => {
 app.post("/api/login", loginMW);
 
 app.post("/api/user", postUserMW);
-app.put("/api/user/:userID", putUserMW);
-app.get("/api/courses", getCoursesMW);
-app.get("/api/user/:userID", getUserMW);
-app.get("/api/auth/verify", verifyTokenMW);
+app.put("/api/user/:userID", verifyTokenMW, putUserMW);
+app.get("/api/courses", verifyTokenMW, getCoursesMW);
+app.get("/api/user/:userID", verifyTokenMW, getUserMW);
+// app.get("/api/auth/verify", verifyTokenMW);
 
 app.listen(PORT, () => logger.info(`Server listening on ${PORT}`));

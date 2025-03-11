@@ -1,30 +1,30 @@
-### Logging in
-POST http://localhost:3001/login
-Content-Type: application/json
+# @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzA3MDY3LCJleHAiOjE3NDE3MTA2Njd9.2FaNq9PflxePIwwiWG-WcuBP1G6ZHCltwa_tojS-df4
 
-{
-    "username": "...",
-    "password": "..."
-}
 
 ### Get all courses
 GET http://localhost:3001/api/courses
+Authorization: Bearer {{token}}
 
 ### Get course based on search term
-GET http://localhost:3001/api/courses?searchTerm=CSCI-2601
+GET http://localhost:3001/api/courses?searchTerm=ISYS
+Authorization: Bearer {{token}}
 
 ### Get course based on search term
 GET http://localhost:3001/api/courses?searchTerm=Networking
-
+Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/user/98
+GET http://localhost:3001/api/user/977781381
+Authorization: Bearer {{token}}
 
 ### Get user data
 GET http://localhost:3001/api/user/195438213
+Authorization: Bearer {{token}}
 
 ### Get user data (with fake user id)
-GET http://localhost:3001/api/user/1234555
+GET http://localhost:3001/api/user/555555
+Authorization: Bearer {{token}}
 
 ### Create user
 POST http://localhost:3001/api/user
@@ -86,31 +86,20 @@ Content-Type: application/json
     }
 }
 
-###
-PUT http://localhost:3001/api/user/644882303
-Content-Type: application/json
-
-{
-    "email": "mmmmmmmmm@mtec.edu",
-    "address": {
-        "street": "350 N 13500 W"
-    }
-}
-
-
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjU2OTMyNTk4OSwiaWF0IjoxNzQxNjQyMTgwLCJleHAiOjE3NDE2NDU3ODB9.Au69-IICm_6Od1z8ar_VF0FsUlBJgdU6tmVOt0q-ctk
-
-###
-GET http://localhost:3001/api/auth/verify
+### Edit user
+PUT http://localhost:3001/api/user/243582957
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "token": "{{token}}"
+    "first_name": "Test Test",
+    "last_name": "Test Test Test",
+    "email": "123@gmail.com",
+    "phone_number": "404",
+    "is_admin": true
 }
 
-
-###
+### Login
 POST http://localhost:3001/api/login
 Content-Type: application/json
 
@@ -118,3 +107,8 @@ Content-Type: application/json
     "user_id": 195438213,
     "password": "AriaPassword"
 }
+
+# ###
+# GET http://localhost:3001/api/auth/verify
+# Authorization: Bearer {{token}}
+# Content-Type: application/json

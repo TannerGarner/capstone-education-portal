@@ -1,38 +1,63 @@
 import bcrypt from "bcrypt";
-import logger from "../logging/logger.js";
 import jwt from "jsonwebtoken";
-import { genUserID } from "../utils/generalUtils.js";
+import { genUserID, isUserIDSyntaxValid, sendErrRes, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 
-export async function verifyTokenMW(req, res) {
-    const { token } = req.body;
+export async function verifyTokenMW(req, res, next) {
+    function extractTokenFromReq() {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) throwResErr(401, "No authorization header");
+
+        const token = authHeader.split(" ")[1];
+        if (!token) throwResErr(400, "Invalid authorization header");
+
+        return token;
+    }
 
     try {
+        const token = extractTokenFromReq();
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        res.json({ user_id: decoded.sub });
+        req.user = decoded;
+
+        next();
     } catch (err) {
-        logger.error(err.message);
-        res.status(500).json({ errorMessage: err.message });
+        if (err.message == "invalid token" || err.message == "jwt malformed") err.statusCode = 400;
+        else if (err.message == "jwt expired") err.statusCode = 401;
+
+        sendErrRes(err, res);
     }
 }
 
+
+export async function verifyRoleMW(req, res, next) {
+
+}
+
+
+
+
 export async function loginMW(req, res) {
+    function throwInvalidCredsErr() {
+        throwResErr(400, "Invalid credentials entered");
+    }
+
     try {
         const { user_id, password } = req.body;
 
+        if (!isUserIDSyntaxValid(user_id)) throwInvalidCredsErr();
+
         const user = await getUserPG(user_id);
 
-        const invalidCredsRes = () => res.status(400).json({ errorMessage: "Invalid credentials entered" });
         if (!user) return invalidCredsRes();
-        if (!bcrypt.compareSync(password, user.password_hash)) return invalidCredsRes();
+        if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
 
         res.json({ token: genToken(user_id) });
     } catch (err) {
-        logger.error(err.message);
-        res.status(500).json({ errorMessage: err.message });
+        sendErrRes(err, res);
     }
 }
 
@@ -52,9 +77,7 @@ export async function postUserMW(req, res) {
         });
         else res.status(500).json({ errorMessage: "Internal server error" });
     } catch (err) {
-        logger.error(err.message);
-
-        res.status(500).json({ errorMessage: err.message });
+        sendErrRes(err, res);
     }
 }
 
@@ -75,7 +98,7 @@ export async function putUserMW(req, res) {
         
         const newAddressData = {
             ...oldAddressData,
-            ...req.body.address // new address data
+            ...req.body?.address // new address data
         };
 
         // Update newUserData.address with new address data:
@@ -86,8 +109,7 @@ export async function putUserMW(req, res) {
 
         res.json(newUserData);
     } catch (err) {
-        logger.error(err.message);
-        res.status(500).json({ errorMessage: err.message });
+        sendErrRes(err, res);
     }
 }
 
@@ -98,8 +120,7 @@ export async function getUserMW(req, res) {
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });
     } catch (err) {
-        logger.error(err.message);
-        res.status(500).json({ errorMessage: err.message });
+        sendErrRes(err, res);
     }
 }
 
@@ -112,7 +133,6 @@ export async function getCoursesMW(req, res) {
 
         res.json(courses);
     } catch (err) {
-        logger.error(err.message);
-        res.status(500).json({ errorMessage: err.message });
+        sendErrRes(err, res);
     }
 }
