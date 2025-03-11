@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { genUserID } from "../utils/generalUtils.js";
 import logger from "../logging/logger.js";
 import { genToken } from "../services/jwt.js";
@@ -7,11 +8,37 @@ import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 
 export async function verifyTokenMW(req, res) {
-    const { token } = req.body;
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ errorMessage: "No token provided" });
+        }
+
+        const token = authHeader.split(" ")[1]; 
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        res.json({ user_id: decoded.sub });
+    } catch (err) {
+        logger.error(err.message);
+        res.status(500).json({ errorMessage: "Invalid or expired token" });
+    }
+}
+
+export async function loginAuthMW(req, res) {
+    const { user_id, password } = req.body;
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        res.json({ user_id: decoded.sub });
+        const user = await getUserPG(user_id);
+
+        if (user && bcrypt.compareSync(password, user.password_hash)) {
+            const token = genToken(user.user_id, user.is_admin);
+            res.json({
+                user: user,
+                token: token
+            });
+        } else {
+            res.status(401).json({ errorMessage: "Invalid user id or password" });
+        }
     } catch (err) {
         logger.error(err.message);
         res.status(500).json({ errorMessage: "Internal Server Error" });

@@ -1,25 +1,27 @@
 <script>
     import { RouterLink } from 'vue-router';
     import { ref } from 'vue';
+    import { useUsersStore } from '../stores/users.js';
+    // const userStore = useUsersStore();
 
 
     function logout(){ 
-        localStorage.removeItem('token');
-        window.location.href = '/auth';
+        // userStore.logout();
     }
+
 </script>
 
 <template>
     <div class="sideNav">
         <div class="user">
             <img src="../assets/vue.svg" alt="user-picture" class="userPic">
-            <h2 @click="logout">Logout</h2>
+            <button @click="logout">Logout</button>
             <h3>Username</h3>
         </div>
         <ul>
-            <li>Courses</li>
+            <li @click="" >Courses</li>
             <li>Assignments</li>
-            <li>+ New Course</li>
+            <li>Register</li>
         </ul>
     </div>
 </template>

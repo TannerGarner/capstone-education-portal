@@ -5,15 +5,17 @@
     import Account from '../components/Account.vue';
     import { useRouter, RouterLink } from 'vue-router';
     import { ref, onMounted } from 'vue';
+    import { useUsersStore } from '../stores/users.js';
+    const userStore = useUsersStore();
 
     const router = useRouter();
     
     onMounted(async () => {
-    const isAuthenticated = await userStore.verifyToken();
-    if (!isAuthenticated) {
-        router.push("/login"); 
-    }
-});
+        const isAuthenticated = await userStore.verifyToken();
+        if (!isAuthenticated) {
+            router.push("/auth"); 
+        }
+    });
 </script>
 
 <template>
