@@ -1,26 +1,30 @@
-<script>
-    import { RouterLink } from 'vue-router';
+<script setup>
+    import { useRouter, RouterLink } from 'vue-router';
     import { ref } from 'vue';
-
+    import { useUsersStore } from '../stores/users.js';
+    const userStore = useUsersStore();
+    const router = useRouter();
+    defineProps(['changeDisplay', 'components']);
 
     function logout(){ 
-        localStorage.removeItem('token');
-        window.location.href = '/auth';
+        userStore.logout();
+        router.push("/auth");
     }
+
 </script>
 
 <template>
     <div class="sideNav">
         <div class="user">
             <img src="../assets/vue.svg" alt="user-picture" class="userPic">
-            <h2 @click="logout">Logout</h2>
-            <h3>Username</h3>
+            <button @click="logout">Logout</button>
+            <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
         </div>
-        <ul>
-            <li>Courses</li>
-            <li>Assignments</li>
-            <li>+ New Course</li>
-        </ul>
+        <nav class="links">
+            <button @click="changeDisplay(components.RegisteredCourses)">Registered Courses</button>
+            <button @click="changeDisplay(components.Register)">Register</button>
+            <button @click="changeDisplay(components.Account)">Account</button>
+        </nav>
     </div>
 </template>
 
@@ -31,15 +35,21 @@
         padding: 30px;
     }
 
-    ul {
-        list-style-type: none;
+    .user {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .links {
         padding: 0;
         display: flex;
         flex-direction: column;
         gap: 10px;
     }
 
-    li {
+    .links button {
         background-color: #F5F1ED;
         color: #153131;
         padding: 15px;
@@ -48,7 +58,7 @@
         transition: background-color 0.3s, color 0.3s;
     }
 
-    li:hover {
+    button:hover {
         background-color: #489FB5;
         color: #F5F1ED;
     }

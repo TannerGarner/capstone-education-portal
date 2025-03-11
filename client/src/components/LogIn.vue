@@ -1,15 +1,39 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
+    import { useUsersStore } from '../stores/users.js';
+    import { useRouter } from 'vue-router';
+    const userStore = useUsersStore();
     const emit = defineEmits(["toggle"]);
+    const router = useRouter(); 
+
+
+    const login = ref({
+        user_id: "",
+        password: ""
+    });
+
+    onMounted(async () => {
+        const isAuthenticated = await userStore.verifyToken();
+        if (isAuthenticated) {
+            router.push("/"); 
+        }
+    });
+
+    async function onSubmit(){
+        if (await userStore.login(login.value)){
+            router.push("/");
+        };
+    }
 </script>
 
 <template>
     <div class="container">
-        <form class="login">
+        <form @submit.prevent="onSubmit" class="login">
             <h1>Login</h1>
-            <input required type="text" name="userName" placeholder="Username"></input>
-            <input required type="password" name="password" placeholder="Password"></input>
+            <input v-model="login.user_id" required type="text" name="user_id" placeholder="User Id"></input>
+            <input v-model="login.password" required type="password" name="password" placeholder="Password"></input>
             <button type="submit">Login</button>
-            <button @click="emit('toggle')">
+            <button @type="button" @click="emit('toggle')">
                 Switch to Sign Up
             </button>
         </form>

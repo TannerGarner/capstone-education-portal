@@ -32,35 +32,6 @@ export async function verifyTokenMW(req, res, next) {
     }
 }
 
-
-export async function verifyRoleMW(req, res, next) {
-
-}
-
-
-
-
-export async function loginMW(req, res) {
-    function throwInvalidCredsErr() {
-        throwResErr(400, "Invalid credentials entered");
-    }
-
-    try {
-        const { user_id, password } = req.body;
-
-        if (!isUserIDSyntaxValid(user_id)) throwInvalidCredsErr();
-
-        const user = await getUserPG(user_id);
-
-        if (!user) return invalidCredsRes();
-        if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
-
-        res.json({ token: genToken(user_id) });
-    } catch (err) {
-        sendErrRes(err, res);
-    }
-}
-
 export async function postUserMW(req, res) {
     try {
         const userData = {

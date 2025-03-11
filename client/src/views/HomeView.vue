@@ -4,25 +4,37 @@
     import Register from '../components/Register.vue';
     import Account from '../components/Account.vue';
     import { useRouter, RouterLink } from 'vue-router';
-    import { ref, onMounted } from 'vue';
+    import { ref, markRaw, onMounted } from 'vue';
+    import { useUsersStore } from '../stores/users.js';
+    const userStore = useUsersStore();
 
     const router = useRouter();
-    
+
+    const components = {
+        Account: markRaw(Account),
+        RegisteredCourses: markRaw(RegisteredCourses),
+        Register: markRaw(Register)
+    };
+
+    const displayComp = ref(components.Account);
+
+    const changeDisplay = (comp) => {
+        displayComp.value = comp;
+    };
+
     onMounted(async () => {
-    const isAuthenticated = await userStore.verifyToken();
-    if (!isAuthenticated) {
-        router.push("/login"); 
-    }
-});
+        const isAuthenticated = await userStore.verifyToken();
+        if (!isAuthenticated) {
+            router.push("/auth"); 
+        }
+    });
 </script>
 
 <template>
     
     <div class="container">
-        <SideNav/>
-        <!-- <RegisteredCourses/> -->
-        <!-- <Register/> -->
-        <Account/>
+        <SideNav :changeDisplay="changeDisplay" :components="components"/>
+        <component :is="displayComp"></component>
     </div>
 </template>
 
