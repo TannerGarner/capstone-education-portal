@@ -12,6 +12,7 @@
     });
 
     const editUser = ref({
+        user_id: userStore.user.user_id,
         first_name: "",
         last_name: "",
         email: "",

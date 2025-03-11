@@ -88,7 +88,7 @@ export async function putUserMW(req, res) {
         
         const newAddressData = {
             ...oldAddressData,
-            ...req.body.address // new address data
+            ...req.body?.address // new address data
         };
 
         // Update newUserData.address with new address data:

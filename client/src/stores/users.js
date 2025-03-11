@@ -70,23 +70,23 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async updateUser(updateValues) {
-            const index = this.users.findIndex(user => user.id === updateValues.id);
-            if (index === -1) return;
+            // const index = this.users.findIndex(user => user.id === updateValues.user_id);
+            // if (index === -1) return;
         
-            const oldUser = { ...this.users[index] };
+            const oldUser = { ...this.user };
         
-            this.users[index] = { ...this.users[index], ...updateValues };
+            // this.users[index] = { ...this.users[index], ...updateValues };
 
             this.user = { ...updateValues };
         
             try {
-                const response = await fetch(`/api/user/${updateValues.id}`, {
+                const response = await fetch(`/api/user/${this.user.user_id}`, {
                     method: "PUT",
                     headers: { 
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
-                    body: JSON.stringify(updateValues),
+                    body: JSON.stringify(this.user),
                 });
         
                 if (!response.ok) {
@@ -96,7 +96,8 @@ export const useUsersStore = defineStore('users',{
                 localStorage.setItem("user", JSON.stringify(this.user));
             } catch (error) {
                 console.error("Update failed, rolling back:", error);
-                this.users[index] = oldUser; 
+                // this.users[index] = oldUser; 
+                this.user = oldUser;
             }
         },
         async deleteUser(userID) {
