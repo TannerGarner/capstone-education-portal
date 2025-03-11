@@ -6,6 +6,27 @@ import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/user
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 
+export async function loginMW(req, res) {
+    function throwInvalidCredsErr() {
+        throwResErr(400, "Invalid credentials entered");
+    }
+
+    try {
+        const { user_id, password } = req.body;
+
+        if (!isUserIDSyntaxValid(user_id)) throwInvalidCredsErr();
+
+        const user = await getUserPG(user_id);
+
+        if (!user) return invalidCredsRes();
+        if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
+
+        res.json({ token: genToken(user_id) });
+    } catch (err) {
+        sendErrRes(err, res);
+    }
+}
+
 export async function verifyTokenMW(req, res, next) {
     function extractTokenFromReq() {
         const authHeader = req.headers.authorization;
