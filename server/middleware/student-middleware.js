@@ -108,6 +108,8 @@ export async function putUserMW(req, res) {
 export async function getUserMW(req, res) {
     try {
         const user = await getUserPG(req.params.userID);
+
+        verifyTokenMW(req, res,)
         
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });

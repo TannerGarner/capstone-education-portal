@@ -27,6 +27,10 @@
         if (!isAuthenticated) {
             router.push("/auth"); 
         }
+        else {
+            
+            await userStore.fetchUser(userStore.user.user_id);
+        }
     });
 </script>
 

@@ -123,7 +123,7 @@ export const useUsersStore = defineStore('users',{
         },
         async login(credentials) {
             try {
-                const response = await fetch("/api/auth", {
+                const response = await fetch("/api/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(credentials),
@@ -139,7 +139,7 @@ export const useUsersStore = defineStore('users',{
                     password_length: password.length,
                     token: token,
                 };
-        
+                
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
             } catch (error) {
@@ -152,34 +152,28 @@ export const useUsersStore = defineStore('users',{
             localStorage.removeItem("user");
         },
         async verifyToken() {
-            const storedUser = localStorage.getItem("user");
-            if (!storedUser) {
-                this.user = {};
+            if (!this.user || !this.user.token) {
                 return false;
             }
-
-            this.user = JSON.parse(storedUser);
-            if (!this.user.token){
-                this.user = {};
-                localStorage.removeItem("user");
-                return false;
-            };
-            
+        
             try {
-                const response = await fetch("/api/auth/verify", {
+                const response = await fetch(`/api/user/${this.user.user_id}`, {
                     method: "GET",
-                    headers: { Authorization: `Bearer ${this.user.token}` },
+                    headers: {
+                        "Authorization": `Bearer ${this.user.token}`,
+                        "Content-Type": "application/json"
+                    }
                 });
         
-                if (!response.ok) throw new Error("Invalid token");
+                if (!response.ok) {
+                    throw new Error("Token verification failed");
+                }
         
-                const data = await response.json();
-                await this.fetchUser(data.user_id);
                 return true;
             } catch (error) {
-                console.error("Authentication failed:", error);
+                console.error("Token verification error:", error);
                 this.user = null;
-                localStorage.removeItem("user");
+                localStorage.removeItem("user"); // Clear invalid token
                 return false;
             }
         },
