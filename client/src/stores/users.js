@@ -30,14 +30,22 @@ export const useUsersStore = defineStore('users',{
             try {
                 const response = await fetch(`/api/user/${userID}`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${this.user.token}`,
+                    },
                 });
         
                 if (!response.ok) throw new Error("Failed to fetch user");
         
-                this.user = await response.json();
+                const userData = await response.json();
+                this.user = { ...this.user, ...userData };                
+                return true;
             } catch (error) {
                 console.error("Error fetching user:", error);
+                this.user = null;
+                localStorage.removeItem("user"); 
+                return false;
             }
         },
         async createUser(newUser) {
@@ -130,15 +138,18 @@ export const useUsersStore = defineStore('users',{
                 });
         
                 if (!response.ok) throw new Error("Login failed");
-        
-                const tokenAndUser = await response.json();
-                const token = tokenAndUser.token;
+                
+                const { token } = await response.json();
+
+                console.log(response, token, token.sub)
+
                 const password = credentials.password;
-                this.user = { 
-                    ...tokenAndUser.user,
+                this.user = {
+                    user_id: credentials.user_id,
                     password_length: password.length,
                     token: token,
                 };
+                await this.fetchUser(this.user.user_id);
                 
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
@@ -150,32 +161,6 @@ export const useUsersStore = defineStore('users',{
         async logout() {
             this.user = {};
             localStorage.removeItem("user");
-        },
-        async verifyToken() {
-            if (!this.user || !this.user.token) {
-                return false;
-            }
-        
-            try {
-                const response = await fetch(`/api/user/${this.user.user_id}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${this.user.token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-        
-                if (!response.ok) {
-                    throw new Error("Token verification failed");
-                }
-        
-                return true;
-            } catch (error) {
-                console.error("Token verification error:", error);
-                this.user = null;
-                localStorage.removeItem("user"); // Clear invalid token
-                return false;
-            }
         },
     },
 });

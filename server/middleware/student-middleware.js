@@ -27,32 +27,6 @@ export async function loginMW(req, res) {
     }
 }
 
-export async function verifyTokenMW(req, res, next) {
-    function extractTokenFromReq() {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) throwResErr(401, "No authorization header");
-
-        const token = authHeader.split(" ")[1];
-        if (!token) throwResErr(400, "Invalid authorization header");
-
-        return token;
-    }
-
-    try {
-        const token = extractTokenFromReq();
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-
-        next();
-    } catch (err) {
-        if (err.message == "invalid token" || err.message == "jwt malformed") err.statusCode = 400;
-        else if (err.message == "jwt expired") err.statusCode = 401;
-
-        sendErrRes(err, res);
-    }
-}
-
 export async function postUserMW(req, res) {
     try {
         const userData = {
@@ -108,8 +82,6 @@ export async function putUserMW(req, res) {
 export async function getUserMW(req, res) {
     try {
         const user = await getUserPG(req.params.userID);
-
-        verifyTokenMW(req, res,)
         
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });
