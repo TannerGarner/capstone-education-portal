@@ -104,3 +104,7 @@ export async function getCoursesMW(req, res) {
         sendErrRes(err, res);
     }
 }
+
+
+
+export const errMW = (err, req, res, _next) => sendErrRes(err, res);

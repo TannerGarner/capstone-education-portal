@@ -1,5 +1,5 @@
 import logger from "./logging/logger.js";
-import { getCoursesMW, postUserMW, getUserMW, putUserMW, authMW, loginMW } from "./middleware/student-middleware.js";
+import { getCoursesMW, postUserMW, getUserMW, putUserMW, authMW, loginMW, errMW } from "./middleware/student-middleware.js";
 import createApp from "./services/express.js";
 
 const app = createApp();
@@ -15,6 +15,7 @@ app.post("/api/user", postUserMW);
 app.put("/api/user/:userID", authMW, putUserMW);
 app.get("/api/courses", authMW, getCoursesMW);
 app.get("/api/user/:userID", authMW, getUserMW);
-// app.get("/api/auth/verify", verifyTokenMW);
+
+app.use(errMW);
 
 app.listen(PORT, () => logger.info(`Server listening on ${PORT}`));
