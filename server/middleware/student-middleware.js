@@ -18,10 +18,15 @@ export async function loginMW(req, res) {
 
         const user = await getUserPG(user_id);
 
-        if (!user) return invalidCredsRes();
+        if (!user) throwInvalidCredsErr();
         if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
 
-        res.json({ token: genToken(user_id) });
+        delete user.password_hash;
+
+        res.json({
+            token: genToken(user_id),
+            user: user
+        });
     } catch (err) {
         sendErrRes(err, res);
     }
@@ -37,7 +42,11 @@ export async function postUserMW(req, res) {
             user_id: genUserID()
         };
 
+        // Add user to database: 
         const success = await createUserPG(userData);
+
+        // Delete password_hash from userData returned in response:
+        delete userData.password_hash;
 
         if (success) res.json({
             token: genToken(userData.user_id, userData.is_admin),
@@ -84,6 +93,7 @@ export async function putUserMW(req, res) {
 export async function getUserMW(req, res) {
     try {
         const user = await getUserPG(req.params.userID);
+        delete user.password_hash;
         
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });
@@ -105,6 +115,14 @@ export async function getCoursesMW(req, res) {
     }
 }
 
+export async function verifyTokenMW(_req, res) {
+    res.json({ errorMessage: null });
+}
 
 
-export const errMW = (err, req, res, _next) => sendErrRes(err, res);
+export async function errMW(err, _req, res, _next) {
+    if (err.message === "jwt expired") err.statusCode = 401;
+    else if (err.message === "invalid jwt" || err.message === "jwt malformed") err.statusCode = 400;
+
+    sendErrRes(err, res);
+}

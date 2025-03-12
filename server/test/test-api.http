@@ -1,5 +1,5 @@
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-# @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzkxMTA1LCJleHAiOjE3NDE3OTQ3MDV9.7nlfPDHiOdoUKyLCcBqrXcTmRD24EY07CQXr2aGNxbI
+# @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpYXQiOjE3NDE4MDQzNTEsImV4cCI6MTc0MTgwNzk1MX0.wFEA2mhAhAIrBMClE5tqP4NHnKTd-Uz0mA6CtBYgT3E
 
 
 ### Get all courses
@@ -108,7 +108,15 @@ Content-Type: application/json
     "password": "AriaPassword"
 }
 
-# ###
-# GET http://localhost:3001/api/auth/verify
-# Authorization: Bearer {{token}}
-# Content-Type: application/json
+### Login
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "user_id": 98,
+    "password": "JohnPassword"
+}
+
+###
+GET http://localhost:3001/api/verify-token
+Authorization: Bearer {{token}}

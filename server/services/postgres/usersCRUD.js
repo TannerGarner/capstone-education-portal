@@ -1,13 +1,39 @@
 import pgPool from "./pgPool.js";
 
 export async function getUserPG(userID) {
+    console.log("test");
+
     const res = await pgPool.query({
-        text: "SELECT * FROM users WHERE user_id = $1;",
+        text: `
+            SELECT
+                first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+            FROM
+                users u LEFT JOIN addresses a ON u.address_id = a.address_id
+            WHERE
+                user_id = $1;
+        `,
         values: [userID]
     });
-    const user = res.rows[0] ?? null;
+    const rawUserData = res.rows[0];
 
-    return user;
+    if (!rawUserData) return null;
+
+    const organizedUserData = {
+        first_name: rawUserData.first_name,
+        last_name: rawUserData.last_name,
+        password_hash: rawUserData.password_hash,
+        email: rawUserData.email,
+        phone_number: rawUserData.phone_number,
+        is_admin: rawUserData.is_admin,
+        address: {
+            street: rawUserData.street,
+            city: rawUserData.city,
+            state: rawUserData.state_or_region,
+            country: rawUserData.country
+        }
+    };
+
+    return organizedUserData;
 }
 
 export async function createUserPG(userData) {
