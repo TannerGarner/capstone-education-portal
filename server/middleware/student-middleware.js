@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { genUserID, isUserIDSyntaxValid, sendErrRes, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
@@ -29,32 +28,6 @@ export async function loginMW(req, res) {
 }
 
 export const authMW = expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] });
-
-// export async function verifyTokenMW(req, res, next) {
-//     function extractTokenFromReq() {
-//         const authHeader = req.headers.authorization;
-//         if (!authHeader) throwResErr(401, "No authorization header");
-
-//         const token = authHeader.split(" ")[1];
-//         if (!token) throwResErr(400, "Invalid authorization header");
-
-//         return token;
-//     }
-
-//     try {
-//         const token = extractTokenFromReq();
-
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//         req.user = decoded;
-
-//         next();
-//     } catch (err) {
-//         if (err.message == "invalid token" || err.message == "jwt malformed") err.statusCode = 400;
-//         else if (err.message == "jwt expired") err.statusCode = 401;
-
-//         sendErrRes(err, res);
-//     }
-// }
 
 export async function postUserMW(req, res) {
     try {

@@ -8,18 +8,21 @@
 
 
     const login = ref({
-        user_id: "",
+        user_id: null,
         password: ""
     });
 
     onMounted(async () => {
-        const isAuthenticated = await userStore.verifyToken();
-        if (isAuthenticated) {
-            router.push("/"); 
+        if (userStore.user?.user_id) {
+            const isAuthenticated = await userStore.fetchUser(userStore.user.user_id);
+            if (isAuthenticated) {
+                router.push("/");
+            }
         }
     });
 
     async function onSubmit(){
+        login.value.user_id = parseInt(login.value.user_id);
         if (await userStore.login(login.value)){
             router.push("/");
         };

@@ -30,14 +30,22 @@ export const useUsersStore = defineStore('users',{
             try {
                 const response = await fetch(`/api/user/${userID}`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${this.user.token}`,
+                    },
                 });
         
                 if (!response.ok) throw new Error("Failed to fetch user");
         
-                this.user = await response.json();
+                const userData = await response.json();
+                this.user = { ...this.user, ...userData };                
+                return true;
             } catch (error) {
                 console.error("Error fetching user:", error);
+                this.user = null;
+                localStorage.removeItem("user"); 
+                return false;
             }
         },
         async createUser(newUser) {
@@ -123,23 +131,26 @@ export const useUsersStore = defineStore('users',{
         },
         async login(credentials) {
             try {
-                const response = await fetch("/api/auth", {
+                const response = await fetch("/api/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(credentials),
                 });
         
                 if (!response.ok) throw new Error("Login failed");
-        
-                const tokenAndUser = await response.json();
-                const token = tokenAndUser.token;
+                
+                const { token } = await response.json();
+
+                console.log(response, token, token.sub)
+
                 const password = credentials.password;
-                this.user = { 
-                    ...tokenAndUser.user,
+                this.user = {
+                    user_id: credentials.user_id,
                     password_length: password.length,
                     token: token,
                 };
-        
+                await this.fetchUser(this.user.user_id);
+                
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
             } catch (error) {
@@ -150,38 +161,6 @@ export const useUsersStore = defineStore('users',{
         async logout() {
             this.user = {};
             localStorage.removeItem("user");
-        },
-        async verifyToken() {
-            const storedUser = localStorage.getItem("user");
-            if (!storedUser) {
-                this.user = {};
-                return false;
-            }
-
-            this.user = JSON.parse(storedUser);
-            if (!this.user.token){
-                this.user = {};
-                localStorage.removeItem("user");
-                return false;
-            };
-            
-            try {
-                const response = await fetch("/api/auth/verify", {
-                    method: "GET",
-                    headers: { Authorization: `Bearer ${this.user.token}` },
-                });
-        
-                if (!response.ok) throw new Error("Invalid token");
-        
-                const data = await response.json();
-                await this.fetchUser(data.user_id);
-                return true;
-            } catch (error) {
-                console.error("Authentication failed:", error);
-                this.user = null;
-                localStorage.removeItem("user");
-                return false;
-            }
         },
     },
 });

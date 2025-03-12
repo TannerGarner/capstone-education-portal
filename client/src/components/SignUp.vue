@@ -21,14 +21,16 @@
     })
 
     onMounted(async () => {
-        const isAuthenticated = await userStore.verifyToken();
+    if (userStore.user?.user_id) {
+        const isAuthenticated = await userStore.fetchUser(userStore.user.user_id);
         if (isAuthenticated) {
-            router.push("/"); 
+            router.push("/");
         }
-    });
+    }
+});
 
-    function onSubmit(){
-        userStore.createUser(newUser.value);
+    async function onSubmit(){
+        await userStore.createUser(newUser.value);
         newUser.value = {
             first_name: "",
             last_name: "",
