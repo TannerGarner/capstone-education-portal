@@ -5,6 +5,7 @@ import { genToken } from "../services/jwt.js";
 import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
+import { expressjwt } from "express-jwt";
 
 export async function loginMW(req, res) {
     function throwInvalidCredsErr() {
@@ -27,31 +28,33 @@ export async function loginMW(req, res) {
     }
 }
 
-export async function verifyTokenMW(req, res, next) {
-    function extractTokenFromReq() {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) throwResErr(401, "No authorization header");
+export const authMW = expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] });
 
-        const token = authHeader.split(" ")[1];
-        if (!token) throwResErr(400, "Invalid authorization header");
+// export async function verifyTokenMW(req, res, next) {
+//     function extractTokenFromReq() {
+//         const authHeader = req.headers.authorization;
+//         if (!authHeader) throwResErr(401, "No authorization header");
 
-        return token;
-    }
+//         const token = authHeader.split(" ")[1];
+//         if (!token) throwResErr(400, "Invalid authorization header");
 
-    try {
-        const token = extractTokenFromReq();
+//         return token;
+//     }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+//     try {
+//         const token = extractTokenFromReq();
 
-        next();
-    } catch (err) {
-        if (err.message == "invalid token" || err.message == "jwt malformed") err.statusCode = 400;
-        else if (err.message == "jwt expired") err.statusCode = 401;
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//         req.user = decoded;
 
-        sendErrRes(err, res);
-    }
-}
+//         next();
+//     } catch (err) {
+//         if (err.message == "invalid token" || err.message == "jwt malformed") err.statusCode = 400;
+//         else if (err.message == "jwt expired") err.statusCode = 401;
+
+//         sendErrRes(err, res);
+//     }
+// }
 
 export async function postUserMW(req, res) {
     try {
