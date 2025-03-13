@@ -4,11 +4,9 @@ export const useUsersStore = defineStore('users',{
     state: () => ({
         users: [],
         user: {},
-        loading: false,
     }),
     actions: {
         async fetchUsers() {
-            this.loading = true;
             try {
                 this.users = await (await fetch("/api/users", {
                     method: "GET",
@@ -17,8 +15,6 @@ export const useUsersStore = defineStore('users',{
                 return this.users;
             } catch (error) {
                 console.error("Error fetching users:", error);
-            } finally {
-                this.loading = false;
             }
         },
         async fetchUser(userID) {
@@ -140,8 +136,6 @@ export const useUsersStore = defineStore('users',{
                 if (!response.ok) throw new Error("Login failed");
                 
                 const { token } = await response.json();
-
-                console.log(response, token, token.sub)
 
                 const password = credentials.password;
                 this.user = {
