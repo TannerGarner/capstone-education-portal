@@ -1,5 +1,5 @@
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxODIzOTk3LCJleHAiOjE3NDE4Mjc1OTd9.AApNeqLevxAkL9OE-mUOUC4Q_MlMfytAOCCs2pgde5M
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxODI1OTQ2LCJleHAiOjE3NDE4Mjk1NDZ9.IKeyfAits11vOjm8n5I0-xdYHqKsSCW4sHt20NeRGXU
 
 
 ### Get all courses
@@ -110,6 +110,10 @@ Content-Type: application/json
     "phone_number": 500,
     "is_admin": true
 }
+
+### Delete user
+DELETE http://localhost:3001/api/user/704595540
+Authorization: Bearer {{token}}
 
 ### Login
 POST http://localhost:3001/api/login

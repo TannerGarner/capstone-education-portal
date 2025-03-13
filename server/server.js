@@ -1,5 +1,5 @@
 import logger from "./logging/logger.js";
-import { getCoursesMW, postUserMW, getUserMW, putUserMW, authMW, loginMW, errMW, verifyTokenMW, putCoursesMW, postCoursesMW } from "./middleware/student-middleware.js";
+import { authMW, loginMW, errMW, verifyTokenMW } from "./middleware/student-middleware.js";
 import userRouter from "./routes/userRouter.js";
 import coursesRouter from "./routes/coursesRouter.js";
 import createApp from "./services/express.js";

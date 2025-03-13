@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { genUserID, isUserIDSyntaxValid, sendErrRes, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
-import { createUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
+import { createUserPG, deleteUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 import { expressjwt } from "express-jwt";
@@ -105,6 +105,17 @@ export async function getUserMW(req, res) {
     }
 }
 
+export async function deleteUserMW(req, res) {
+    try {
+        const { userID } = req.params;
+
+        await deleteUserPG(userID);
+
+        res.json({ errorMessage: null });
+    } catch (err) {
+        sendErrRes(err, res);
+    }
+}
 
 
 

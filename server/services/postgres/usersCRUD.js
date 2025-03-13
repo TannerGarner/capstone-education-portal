@@ -1,4 +1,5 @@
 import pgPool from "./pgPool.js";
+import { throwResErr } from "../../utils/generalUtils.js";
 
 export async function getUserPG(userID) {
     const res = await pgPool.query({
@@ -93,4 +94,13 @@ export async function updateUserPG(userID, newData) {
     });
 
     return await getUserPG(userID); // Return updated user
+}
+
+export async function deleteUserPG(userID) {
+    if (!(await getUserPG(userID))) throwResErr(404, "User does not exist");
+
+    await pgPool.query({
+        text: "DELETE FROM users WHERE user_id = $1;",
+        values: [userID]
+    });
 }
