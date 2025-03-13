@@ -6,6 +6,7 @@
     onMounted(async () => {
         if (userStore.user){
             await userStore.fetchUser(userStore.user.user_id);
+            console.log(userStore.user)
         } else {
             router.push("/auth");
         }
@@ -73,11 +74,10 @@
                 <button v-if="isEditorOpen('last_name')" @click="saveChanges('last_name')">Save</button>
             </div>
             <div class="row">
-                <p>Username</p>
-                <p v-if="!isEditorOpen('username')" class="userDetail">{{userStore.user.username}}</p>
-                <input v-else v-model="editUser.username" class="userDetail"/>
-                <button @click="toggleEditor('username')">{{ isEditorOpen('username') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('username')" @click="saveChanges('username')">Save</button>
+                <p>User ID</p>
+                <p class="userDetail">{{userStore.user.user_id}}</p>
+                <button class="inactive" >Edit</button>
+                <button v-if="isEditorOpen('user_id')">Save</button>
             </div>
             <div class="row">
                 <p>Email</p>
@@ -156,6 +156,11 @@
         align-items: center;
         padding: 10px 0px;
         border-bottom: 2px solid #489FB5;
+    }
+
+    .inactive{
+        background-color: grey;
+        cursor: not-allowed;
     }
 
     input {

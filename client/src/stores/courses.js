@@ -22,12 +22,13 @@ export const useCoursesStore = defineStore("courses",{
         },
         async fetchCourse(courseID) {
             try {
-                const course = await (await fetch(`/api/courses/${courseID}`, {
+                this.course = await (await fetch(`/api/courses/?searchTerm=${courseID}`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 })).json();
+
         
-                return course;
+                return this.course;
             } catch (error) {
                 console.error("Error fetching course:", error);
             }
