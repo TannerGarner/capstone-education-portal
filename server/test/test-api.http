@@ -133,6 +133,20 @@ Content-Type: application/json
     "password": "JohnPassword"
 }
 
-###
+### Verify token
 GET http://localhost:3001/api/verify-token
 Authorization: Bearer {{token}}
+
+
+### Enroll in course
+POST http://localhost:3001/api/enroll
+Authorization: Bearer {{token}}
+Content-Type: application/javascript
+
+{
+    "user_id": "...",
+    "course_id": "..."
+}
+
+### Test endpoint
+GET http://localhost:3001/test
