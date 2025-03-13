@@ -1,8 +1,6 @@
 import pgPool from "./pgPool.js";
 
 export async function getUserPG(userID) {
-    console.log("test");
-
     const res = await pgPool.query({
         text: `
             SELECT

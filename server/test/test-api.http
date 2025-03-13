@@ -1,5 +1,5 @@
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpYXQiOjE3NDE4MDQzNTEsImV4cCI6MTc0MTgwNzk1MX0.wFEA2mhAhAIrBMClE5tqP4NHnKTd-Uz0mA6CtBYgT3E
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxODIzOTk3LCJleHAiOjE3NDE4Mjc1OTd9.AApNeqLevxAkL9OE-mUOUC4Q_MlMfytAOCCs2pgde5M
 
 
 ### Get all courses
@@ -15,7 +15,7 @@ GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/user/977781381
+GET http://localhost:3001/api/user/924183460
 Authorization: Bearer {{token}}
 
 ### Get user data
@@ -28,18 +28,19 @@ Authorization: Bearer {{token}}
 
 ### Create user
 POST http://localhost:3001/api/user
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
 
-    "first_name": "Jack",
-    "last_name": "Pepperson",
-    "password": "JackPassword",
-    "email": "apple@gmail.com",
-    "phone_number": 123,
+    "first_name": "Jill",
+    "last_name": "Ross",
+    "password": "JillPassword",
+    "email": "bestgmail@gmail.com",
+    "phone_number": 98348564,
     "is_admin": false,
     "address": {
-        "street": "22 Hauptstraße",
+        "street": "64 Hauptstraße",
         "city": "Berlin",
         "state": "",
         "country": "DEU"
@@ -87,7 +88,7 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/user/243582957
+PUT http://localhost:3001/api/user/924183460
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -96,6 +97,17 @@ Content-Type: application/json
     "last_name": "Test Test Test",
     "email": "123@gmail.com",
     "phone_number": "404",
+    "is_admin": true
+}
+
+### Edit user
+PUT http://localhost:3001/api/user/52062512
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "last_name": "Le",
+    "phone_number": 500,
     "is_admin": true
 }
 

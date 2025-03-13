@@ -45,7 +45,7 @@ export async function postUserMW(req, res) {
         // Add user to database: 
         const success = await createUserPG(userData);
 
-        // Delete password_hash from userData returned in response:
+        // Delete password_hash from userData:
         delete userData.password_hash;
 
         if (success) res.json({
@@ -84,6 +84,9 @@ export async function putUserMW(req, res) {
         // Update information on database and return updated user:
         newUserData = await updateUserPG(userID, newUserData);
 
+        // Delete password_hash from userData:
+        delete newUserData.password_hash;
+
         res.json(newUserData);
     } catch (err) {
         sendErrRes(err, res);
@@ -103,6 +106,8 @@ export async function getUserMW(req, res) {
 }
 
 
+
+
 export async function getCoursesMW(req, res) {
     try {
         const { searchTerm } = req.query;
@@ -115,14 +120,33 @@ export async function getCoursesMW(req, res) {
     }
 }
 
+export async function postCoursesMW(params) {
+    
+}
+
+export async function putCoursesMW(params) {
+    
+}
+
+
+
+
 export async function verifyTokenMW(_req, res) {
     res.json({ errorMessage: null });
 }
 
 
 export async function errMW(err, _req, res, _next) {
-    if (err.message === "jwt expired") err.statusCode = 401;
-    else if (err.message === "invalid jwt" || err.message === "jwt malformed") err.statusCode = 400;
+    function doesErrEqualsOneOfFollowing(...errorMessages) {
+        return errorMessages.includes(err.message);
+    }
+
+    if (doesErrEqualsOneOfFollowing("No authorization token was found", "jwt expired")) {
+        err.statusCode = 401;
+    }
+    else if (doesErrEqualsOneOfFollowing("Format is Authorization: Bearer [token]", "invalid jwt", "jwt malformed")) {
+        err.statusCode = 400;
+    }
 
     sendErrRes(err, res);
 }
