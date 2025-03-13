@@ -1,6 +1,6 @@
 import logger from "./logging/logger.js";
 import { authMW, loginMW, errMW, verifyTokenMW } from "./middleware/student-middleware.js";
-import userRouter from "./routes/userRouter.js";
+import usersRouter from "./routes/usersRouter.js";
 import coursesRouter from "./routes/coursesRouter.js";
 import createApp from "./services/express.js";
 
@@ -17,7 +17,7 @@ app.get("/api/verify-token", authMW, verifyTokenMW);
 
 // User endpoints:
 app.post("/api/login", loginMW);
-app.use("/api/user", userRouter);
+app.use("/api/user", usersRouter);
 
 // Course routes:
 app.use("/api/courses", coursesRouter);
