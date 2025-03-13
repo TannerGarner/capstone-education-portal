@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { authMW, deleteUserMW, getUserMW, postUserMW, putUserMW } from "../middleware/student-middleware.js";
+import { authMW, deleteUserMW, getUserMW, loginMW, postUserMW, putUserMW } from "../middleware/student-middleware.js";
 
 const usersRouter = Router();
 export default usersRouter;
 
-usersRouter.use(authMW);
-
-usersRouter.get("/:userID", getUserMW);
-usersRouter.post("", postUserMW);
-usersRouter.put("/:userID", putUserMW);
-usersRouter.delete("/:userID", deleteUserMW)
+usersRouter.post("/api/login", loginMW);
+usersRouter.get("/:userID", authMW, getUserMW);
+usersRouter.post("", authMW, postUserMW);
+usersRouter.put("/:userID", authMW, putUserMW);
+usersRouter.delete("/:userID", authMW, deleteUserMW);
