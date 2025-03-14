@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { authMW, deleteUserMW, getUserMW, loginMW, postUserMW, putUserMW } from "../middleware/student-middleware.js";
+import { deleteUserMW, getUserMW, loginMW, postUserMW, putUserMW } from "../middleware/usersMW.js";
+import { authMW } from "../middleware/authMW.js";
 
 const usersRouter = Router();
 export default usersRouter;

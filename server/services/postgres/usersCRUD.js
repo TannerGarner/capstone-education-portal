@@ -15,7 +15,7 @@ export async function getUserPG(userID) {
     });
     const rawUserData = res.rows[0];
 
-    if (!rawUserData) return null;
+    if (!rawUserData) throwResErr(404, `User (with user_id "${userID}") does not exist`);
 
     const organizedUserData = {
         first_name: rawUserData.first_name,
@@ -103,4 +103,11 @@ export async function deleteUserPG(userID) {
         text: "DELETE FROM users WHERE user_id = $1;",
         values: [userID]
     });
+}
+
+
+export async function ensureUserExistsPG(userID) {
+    const user = await getUserPG(userID);
+        
+    if (!user) throwResErr(404, `User (with user_id "${userID}") does not exist`);
 }

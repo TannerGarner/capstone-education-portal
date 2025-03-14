@@ -1,9 +1,10 @@
 import logger from "./logging/logger.js";
-import { authMW, errMW, verifyTokenMW } from "./middleware/student-middleware.js";
 import usersRouter from "./routes/usersRouter.js";
 import coursesRouter from "./routes/coursesRouter.js";
 import createApp from "./services/express.js";
-import { getCourseMaxCapacityPG, getCoursesForUserPG, getCoursesUsersCountPG, getUsersForCoursePG } from "./services/postgres/enrollmentCRUD.js";
+import enrollmentRouter from "./routes/enrollmentRouter.js";
+import { authMW, verifyTokenMW } from "./middleware/authMW.js";
+import { errMW } from "./middleware/errMW.js";
 
 const app = createApp();
 const PORT = process.env.PORT || 3001;
@@ -12,18 +13,15 @@ const PORT = process.env.PORT || 3001;
 app.get("/api", (_req, res) => res.json({ message: "Hello from server!" }));
 app.get("/api/verify-token", authMW, verifyTokenMW);
 
-
 // Test Endpoint
-app.get("/test", async (req, res) => {
-    res.json({ value: await getCoursesUsersCountPG("ISYS-2000") });
-});
-
-
-// GET /api/users/{courseID}
+// app.get("/test", async (req, res) => {
+//     res.json({ value: await getCoursePG("CSCI-2008") });
+// });
 
 // Routes:
 app.use("/api/users", usersRouter);
 app.use("/api/courses", coursesRouter);
+app.use("/api/enrollment", enrollmentRouter);
 
 // Error handling endpoint:
 app.use(errMW);

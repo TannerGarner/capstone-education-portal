@@ -1,5 +1,5 @@
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxODI1OTQ2LCJleHAiOjE3NDE4Mjk1NDZ9.IKeyfAits11vOjm8n5I0-xdYHqKsSCW4sHt20NeRGXU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY3Njc4OTQ0MCwiaWF0IjoxNzQxOTY4NjEyLCJleHAiOjE3NDE5NzIyMTJ9.xjLBg0LNcMnSIg8vdE4dvrK8zMGUyuD47d2AvVpcmTk
 
 
 ### Get all courses
@@ -15,40 +15,40 @@ GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/user/924183460
+GET http://localhost:3001/api/users/148537402
 Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/user/195438213
+GET http://localhost:3001/api/users/195438213
 Authorization: Bearer {{token}}
 
 ### Get user data (with fake user id)
-GET http://localhost:3001/api/user/555555
+GET http://localhost:3001/api/users/555555
 Authorization: Bearer {{token}}
 
 ### Create user
-POST http://localhost:3001/api/user
+POST http://localhost:3001/api/users
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
 
-    "first_name": "Jill",
-    "last_name": "Ross",
-    "password": "JillPassword",
-    "email": "bestgmail@gmail.com",
-    "phone_number": 98348564,
+    "first_name": "Jacky",
+    "last_name": "Low",
+    "password": "JackyPassword",
+    "email": "something@gmail.com",
+    "phone_number": 452058,
     "is_admin": false,
     "address": {
         "street": "64 Hauptstraße",
         "city": "Berlin",
-        "state": "",
+        "state": null,
         "country": "DEU"
     }
 }
 
 ### Create user
-POST http://localhost:3001/api/user
+POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
@@ -68,7 +68,7 @@ Content-Type: application/json
 }
 
 ### Create user
-POST http://localhost:3001/api/user
+POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
@@ -88,35 +88,31 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/user/924183460
+PUT http://localhost:3001/api/users/501694971
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
     "first_name": "Test Test",
-    "last_name": "Test Test Test",
-    "email": "123@gmail.com",
-    "phone_number": "404",
-    "is_admin": true
+    "last_name": "Test Test Test Test Test",
+    "phone_number": 404
 }
 
 ### Edit user
-PUT http://localhost:3001/api/user/52062512
+PUT http://localhost:3001/api/users/846150586
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "last_name": "Le",
-    "phone_number": 500,
-    "is_admin": true
+    "email": "johnny@gmail.com"
 }
 
 ### Delete user
-DELETE http://localhost:3001/api/user/704595540
+DELETE http://localhost:3001/api/users/501694971
 Authorization: Bearer {{token}}
 
 ### Login
-POST http://localhost:3001/api/login
+POST http://localhost:3001/api/users/login
 Content-Type: application/json
 
 {
@@ -125,7 +121,7 @@ Content-Type: application/json
 }
 
 ### Login
-POST http://localhost:3001/api/login
+POST http://localhost:3001/api/users/login
 Content-Type: application/json
 
 {
@@ -138,14 +134,53 @@ GET http://localhost:3001/api/verify-token
 Authorization: Bearer {{token}}
 
 
-### Enroll in course
-POST http://localhost:3001/api/enroll
+### See courses for user:
+GET http://localhost:3001/api/enrollment/user/195438213
 Authorization: Bearer {{token}}
-Content-Type: application/javascript
+
+### See users for course:
+GET http://localhost:3001/api/enrollment/course/CHEM-1001
+Authorization: Bearer {{token}}
+
+
+### Enroll in course
+POST http://localhost:3001/api/enrollment/enroll
+Authorization: Bearer {{token}}
+Content-Type: application/json
 
 {
-    "user_id": "...",
-    "course_id": "..."
+    "user_id": 148537402,
+    "course_id": "CHEM-1001"
+}
+
+### Enroll in course
+POST http://localhost:3001/api/enrollment/enroll
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": 846150586,
+    "course_id": "CSCI-2009"
+}
+
+### Drop course
+DELETE http://localhost:3001/api/enrollment/drop
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": 195438213,
+    "course_id": "CHEM-1001"
+}
+
+### Drop course
+DELETE http://localhost:3001/api/enrollment/drop
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": 98,
+    "course_id": "CSCI-2013"
 }
 
 ### Test endpoint
