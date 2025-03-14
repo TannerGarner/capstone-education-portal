@@ -109,5 +109,5 @@ export async function deleteUserPG(userID) {
 export async function ensureUserExistsPG(userID) {
     const user = await getUserPG(userID);
         
-    if (!user) throwResErr(404, `Course (with course_id "${courseID}") does not exist`);
+    if (!user) throwResErr(404, `User (with user_id "${userID}") does not exist`);
 }

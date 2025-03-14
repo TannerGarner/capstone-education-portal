@@ -55,5 +55,5 @@ export async function createCoursePG(courseData) {
 export async function ensureCourseExistsPG(courseID) {
     const course = await getCoursePG(courseID);
     
-    if (!course) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+    if (!course) throwResErr(404, `Course (with course_id "${courseID}") does not exist`);
 }

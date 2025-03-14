@@ -89,7 +89,7 @@ export async function dropPG(userID, courseID) {
     // Handle errors before query:
     await ensureUserExistsPG(userID);
     await ensureCourseExistsPG(courseID);
-    if (!(await isUserEnrolledInCoursePG(userID, courseID))) throwResErr(404, `User was not already enrolled in course`);
+    if (!(await isUserEnrolledInCoursePG(userID, courseID))) throwResErr(404, `User was not enrolled to begin with`);
 
     await pgPool.query({
         text: "DELETE FROM enrollment WHERE user_id = $1 AND course_id = $2;",
