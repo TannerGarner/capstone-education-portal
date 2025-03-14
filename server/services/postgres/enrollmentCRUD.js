@@ -2,7 +2,6 @@ import { throwResErr } from "../../utils/generalUtils.js";
 import pgPool from "./pgPool.js";
 import { doesCourseExistPG } from "./coursesCRUD.js";
 import { getUserPG } from "./usersCRUD.js";
-import logger from "../../logging/logger.js";
 
 export async function getCoursesForUserPG(userID) {
     const { rows } = await pgPool.query({ 
@@ -54,29 +53,15 @@ export async function getCourseUserCountPG(courseID) {
     return res.rows[0]?.count ?? null;
 }
 
-export async function isUserEnrolledInCoursePG(userID, courseID) {
-    const res = await pgPool.query({
-        text: "SELECT COUNT(*) FROM enrollment WHERE user_id = $1 AND course_id = $2;",
-        values: [userID, courseID]
-    });
-
-    return res.rows[0].count === "1";
-}
-
-async function ensureUserAndCourseExist(userID, courseID) {
-    if (!(await getUserPG(userID))) throwResErr(404, `User (with user_id "${userID}") does not exist`);
-    if (!(await doesCourseExistPG(courseID))) throwResErr(404, `Course (with course_id "${courseID}") does not exist`);
-}
-
 export async function enrollPG(userID, courseID) {
     // Ensure that user and course exist:
     await ensureUserAndCourseExist(userID, courseID);
 
-    // Ensures that the class is not full yet:
+    // Ensure that the class is not full yet:
     const spaceLeftInClass = await getCourseMaxCapacityPG(courseID) - await getCourseUserCountPG(courseID);
     if (spaceLeftInClass === 0) throwResErr(409, "Course is full");
 
-    // Updates enrollment table:
+    // Update enrollment table:
     try {
         await pgPool.query({
             text: `
@@ -99,11 +84,27 @@ export async function enrollPG(userID, courseID) {
 }
 
 export async function dropPG(userID, courseID) {
-    // Ensure that user and course exist:
-    ensureUserAndCourseExist(userID, courseID);
+    // Handle errors before query:
+    await ensureUserAndCourseExist(userID, courseID);
+    if (!(await isUserEnrolledInCoursePG(userID, courseID))) throwResErr(404, `User was already not enrolled in course "${courseID}"`);
 
     await pgPool.query({
-        text: ``,
-        values: []
+        text: "DELETE FROM enrollment WHERE user_id = $1 AND course_id = $2;",
+        values: [userID, courseID]
     });
+}
+
+
+async function isUserEnrolledInCoursePG(userID, courseID) {
+    const res = await pgPool.query({
+        text: "SELECT COUNT(*) FROM enrollment WHERE user_id = $1 AND course_id = $2;",
+        values: [userID, courseID]
+    });
+
+    return res.rows[0].count === "1";
+}
+
+async function ensureUserAndCourseExist(userID, courseID) {
+    if (!(await getUserPG(userID))) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+    if (!(await doesCourseExistPG(courseID))) throwResErr(404, `Course (with course_id "${courseID}") does not exist`);
 }

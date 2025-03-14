@@ -144,7 +144,7 @@ Content-Type: application/json
 
 {
     "user_id": 195438213,
-    "course_id": "CSCI-2701"
+    "course_id": "CHEM-1001"
 }
 
 ### Enroll in course
@@ -164,7 +164,17 @@ Content-Type: application/json
 
 {
     "user_id": 195438213,
-    "course_id": "CSCI-2009"
+    "course_id": "CHEM-1001"
+}
+
+### Drop course
+DELETE http://localhost:3001/api/enrollment/drop
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": 98,
+    "course_id": "CSCI-2013"
 }
 
 ### Test endpoint
