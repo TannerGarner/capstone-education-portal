@@ -70,7 +70,7 @@ async function ensureUserAndCourseExist(userID, courseID) {
 
 export async function enrollPG(userID, courseID) {
     // Ensure that user and course exist:
-    ensureUserAndCourseExist(userID, courseID);
+    await ensureUserAndCourseExist(userID, courseID);
 
     // Ensures that the class is not full yet:
     const spaceLeftInClass = await getCourseMaxCapacityPG(courseID) - await getCourseUserCountPG(courseID);
@@ -99,5 +99,11 @@ export async function enrollPG(userID, courseID) {
 }
 
 export async function dropPG(userID, courseID) {
+    // Ensure that user and course exist:
+    ensureUserAndCourseExist(userID, courseID);
 
+    await pgPool.query({
+        text: ``,
+        values: []
+    });
 }

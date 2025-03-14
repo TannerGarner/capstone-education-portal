@@ -17,6 +17,8 @@ export function isUserIDSyntaxValid(userID) {
 
 
 export function throwResErr(statusCode, errorMessage) {
+    console.log("errorMessage:", errorMessage);
+    console.log("typeof errorMessage:", typeof errorMessage);
     const err = new Error(errorMessage);
     err.statusCode = statusCode ?? 500;
     throw err;
