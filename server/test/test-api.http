@@ -138,16 +138,16 @@ Authorization: Bearer {{token}}
 
 
 ### Enroll in course
-POST http://localhost:3001/api/enroll
+POST http://localhost:3001/api/enrollment/enroll
 Authorization: Bearer {{token}}
-Content-Type: application/javascript
+Content-Type: application/json
 
 {
-    "user_id": "...",
-    "course_id": "..."
+    "user_id": 195438213,
+    "course_id": "CHEM-1001"
 }
 
-### Enroll course
+### Enroll in course
 POST http://localhost:3001/api/enrollment/enroll
 Authorization: Bearer {{token}}
 Content-Type: application/json
