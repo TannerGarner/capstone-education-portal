@@ -3,7 +3,7 @@ import { authMW, errMW, verifyTokenMW } from "./middleware/student-middleware.js
 import usersRouter from "./routes/usersRouter.js";
 import coursesRouter from "./routes/coursesRouter.js";
 import createApp from "./services/express.js";
-import { getCourseMaxCapacityPG, getCoursesForUserPG, getCoursesUsersCountPG, getUsersForCoursePG } from "./services/postgres/enrollmentCRUD.js";
+import enrollmentRouter from "./routes/enrollmentRouter.js";
 
 const app = createApp();
 const PORT = process.env.PORT || 3001;
@@ -14,16 +14,19 @@ app.get("/api/verify-token", authMW, verifyTokenMW);
 
 
 // Test Endpoint
-app.get("/test", async (req, res) => {
-    res.json({ value: await getCoursesUsersCountPG("ISYS-2000") });
-});
+// app.get("/test", async (req, res) => {
+//     res.json({ value: await isUserEnrolledInCoursePG(19543829, "CSCI-2009") });
+// });
 
 
-// GET /api/users/{courseID}
+// GET /api/enrollment/course/{courseID}
+// GET /api/enrollment/user/{userID}
+
 
 // Routes:
-app.use("/api", usersRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/courses", coursesRouter);
+app.use("/api/enrollment", enrollmentRouter);
 
 // Error handling endpoint:
 app.use(errMW);

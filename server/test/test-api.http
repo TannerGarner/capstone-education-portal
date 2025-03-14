@@ -1,5 +1,5 @@
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxODI1OTQ2LCJleHAiOjE3NDE4Mjk1NDZ9.IKeyfAits11vOjm8n5I0-xdYHqKsSCW4sHt20NeRGXU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpYXQiOjE3NDE5MTI2OTMsImV4cCI6MTc0MTkxNjI5M30.AgCoabRU7u1oJIzB2LUbQ-9DS90w-_BDxC9Ya4PVWRc
 
 
 ### Get all courses
@@ -15,19 +15,19 @@ GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/user/924183460
+GET http://localhost:3001/api/users/924183460
 Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/user/195438213
+GET http://localhost:3001/api/users/195438213
 Authorization: Bearer {{token}}
 
 ### Get user data (with fake user id)
-GET http://localhost:3001/api/user/555555
+GET http://localhost:3001/api/users/555555
 Authorization: Bearer {{token}}
 
 ### Create user
-POST http://localhost:3001/api/user
+POST http://localhost:3001/api/users
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -48,7 +48,7 @@ Content-Type: application/json
 }
 
 ### Create user
-POST http://localhost:3001/api/user
+POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
@@ -68,7 +68,7 @@ Content-Type: application/json
 }
 
 ### Create user
-POST http://localhost:3001/api/user
+POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
@@ -88,7 +88,7 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/user/924183460
+PUT http://localhost:3001/api/users/924183460
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -101,22 +101,21 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/user/52062512
+PUT http://localhost:3001/api/users/846150586
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "last_name": "Le",
-    "phone_number": 500,
+    "last_name": "Jefferson",
     "is_admin": true
 }
 
 ### Delete user
-DELETE http://localhost:3001/api/user/704595540
+DELETE http://localhost:3001/api/users/704595540
 Authorization: Bearer {{token}}
 
 ### Login
-POST http://localhost:3001/api/login
+POST http://localhost:3001/api/users/login
 Content-Type: application/json
 
 {
@@ -125,7 +124,7 @@ Content-Type: application/json
 }
 
 ### Login
-POST http://localhost:3001/api/login
+POST http://localhost:3001/api/users/login
 Content-Type: application/json
 
 {
@@ -146,6 +145,26 @@ Content-Type: application/javascript
 {
     "user_id": "...",
     "course_id": "..."
+}
+
+### Enroll course
+POST http://localhost:3001/api/enrollment/enroll
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": 846150586,
+    "course_id": "CSCI-2009"
+}
+
+### Drop course
+DELETE http://localhost:3001/api/enrollment/drop
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": 195438213,
+    "course_id": "CSCI-2009"
 }
 
 ### Test endpoint

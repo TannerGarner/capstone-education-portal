@@ -1,4 +1,7 @@
+import { throwResErr } from "../../utils/generalUtils.js";
 import pgPool from "./pgPool.js";
+import { doesCourseExistPG } from "./coursesCRUD.js";
+import { getUserPG } from "./usersCRUD.js";
 
 export async function getCoursesForUserPG(userID) {
     const { rows } = await pgPool.query({ 
@@ -38,14 +41,48 @@ export async function getCourseMaxCapacityPG(courseID) {
         values: [courseID]
     });
 
-    return res.rows[0].maximum_capacity;
+    return res.rows[0]?.maximum_capacity ?? null;
 }
 
-export async function getCoursesUsersCountPG(courseID) {
+export async function getCourseUserCountPG(courseID) {
     const res = await pgPool.query({
         text: "SELECT COUNT(*) FROM enrollment WHERE course_id = $1;",
         values: [courseID]
     });
 
-    return res.rows[0].count;
+    return res.rows[0]?.count ?? null;
+}
+
+export async function isUserEnrolledInCoursePG(userID, courseID) {
+    const res = await pgPool.query({
+        text: "SELECT COUNT(*) FROM enrollment WHERE user_id = $1 AND course_id = $2;",
+        values: [userID, courseID]
+    });
+
+    return res.rows[0].count === "1";
+}
+
+export async function enrollPG(userID, courseID) {
+    // Ensure that user and course exist:
+    if (!(await getUserPG(userID))) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+    if (!(await doesCourseExistPG(courseID))) throwResErr(404, `Course (with course_id "${courseID}") does not exist`);
+
+    // Ensure user is not already enrolled in the course:
+    console.log("TEST:", await isUserEnrolledInCoursePG(userID, courseID));
+    if (await isUserEnrolledInCoursePG(userID, courseID)) throwResErr(409, "User already enrolled")
+
+    // Ensures that the class is not full yet:
+    const spaceLeftInClass = await getCourseMaxCapacityPG(courseID) - await getCourseUserCountPG(courseID);
+    if (spaceLeftInClass === 0) throwResErr(409, "Course is full");
+
+    // Updates enrollment table:
+    await pgPool.query({
+        text: `
+            INSERT INTO
+                enrollment (user_id, course_id)
+            VALUES
+                ($1, $2);
+        `,
+        values: [userID, courseID]
+    });
 }
