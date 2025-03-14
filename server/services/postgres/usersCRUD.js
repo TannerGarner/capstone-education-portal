@@ -15,7 +15,7 @@ export async function getUserPG(userID) {
     });
     const rawUserData = res.rows[0];
 
-    if (!rawUserData) return null;
+    if (!rawUserData) throwResErr(404, `User (with user_id "${userID}") does not exist`);
 
     const organizedUserData = {
         first_name: rawUserData.first_name,

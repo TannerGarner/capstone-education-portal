@@ -1,5 +1,5 @@
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxOTY3NTY3LCJleHAiOjE3NDE5NzExNjd9.b7iATMI2eGPbeAML4Hk5egr552mn41rDKtu1ipkmFpM
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY3Njc4OTQ0MCwiaWF0IjoxNzQxOTY4NjEyLCJleHAiOjE3NDE5NzIyMTJ9.xjLBg0LNcMnSIg8vdE4dvrK8zMGUyuD47d2AvVpcmTk
 
 
 ### Get all courses
@@ -15,7 +15,7 @@ GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
 
 ### Get user data
-GET http://localhost:3001/api/users/924183460
+GET http://localhost:3001/api/users/148537402
 Authorization: Bearer {{token}}
 
 ### Get user data
@@ -33,16 +33,16 @@ Content-Type: application/json
 
 {
 
-    "first_name": "Jill",
-    "last_name": "Ross",
-    "password": "JillPassword",
-    "email": "bestgmail@gmail.com",
-    "phone_number": 98348564,
+    "first_name": "Jacky",
+    "last_name": "Low",
+    "password": "JackyPassword",
+    "email": "something@gmail.com",
+    "phone_number": 452058,
     "is_admin": false,
     "address": {
         "street": "64 Hauptstraße",
         "city": "Berlin",
-        "state": "",
+        "state": null,
         "country": "DEU"
     }
 }
@@ -88,16 +88,14 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/924183460
+PUT http://localhost:3001/api/users/501694971
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
     "first_name": "Test Test",
-    "last_name": "Test Test Test",
-    "email": "123@gmail.com",
-    "phone_number": "404",
-    "is_admin": true
+    "last_name": "Test Test Test Test Test",
+    "phone_number": 404
 }
 
 ### Edit user
@@ -110,7 +108,7 @@ Content-Type: application/json
 }
 
 ### Delete user
-DELETE http://localhost:3001/api/users/704595540
+DELETE http://localhost:3001/api/users/501694971
 Authorization: Bearer {{token}}
 
 ### Login
@@ -141,7 +139,7 @@ GET http://localhost:3001/api/enrollment/user/195438213
 Authorization: Bearer {{token}}
 
 ### See users for course:
-GET http://localhost:3001/api/enrollment/course/ISYS-5000
+GET http://localhost:3001/api/enrollment/course/CHEM-1001
 Authorization: Bearer {{token}}
 
 
@@ -151,7 +149,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "user_id": 195438213,
+    "user_id": 148537402,
     "course_id": "CHEM-1001"
 }
 
