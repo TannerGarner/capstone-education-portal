@@ -24,6 +24,7 @@
             <button @click="changeDisplay(components.RegisteredCourses)">Registered Courses</button>
             <button @click="changeDisplay(components.Register)">Register</button>
             <button @click="changeDisplay(components.Account)">Account</button>
+            <button @click="changeDisplay(components.AdminAllCourses)">Admin All Courses</button>
         </nav>
     </div>
 </template>

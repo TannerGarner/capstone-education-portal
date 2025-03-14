@@ -6,6 +6,7 @@
     import { useRouter, RouterLink } from 'vue-router';
     import { ref, markRaw, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
+    import AdminAllCourses from '../components/AdminAllCourses.vue';
     const userStore = useUsersStore();
 
     const router = useRouter();
@@ -13,7 +14,8 @@
     const components = {
         Account: markRaw(Account),
         RegisteredCourses: markRaw(RegisteredCourses),
-        Register: markRaw(Register)
+        Register: markRaw(Register), 
+        AdminAllCourses: markRaw(AdminAllCourses)
     };
 
     const displayComp = ref(components.Account);

@@ -1,22 +1,19 @@
 import { defineStore } from "pinia";
-import userStore from "./users";
-import coursesStore from "./courses";
+import { useUsersStore } from "./users";
+import { useCoursesStore } from './courses.js';
 
 export const useEnrollmentStore = defineStore("enrollment",{
     state: () => ({
-        enrollmentUserData: {
-            User_id, 
-            listOfCourses: []
-        },
-        enrollmentCourseData: {
-            Course_id,
-            listOfUsers: []
-        }
+        enrollUserData: {},
+        enrollCourseData: {}
     }),
     actions: {
         async enrollUserInCourse(user_id, course_id) {
             try {
-                const response = await fetch(`/api/enroll`, {
+                const userStore = useUsersStore();
+                const courseStore = useCoursesStore();
+
+                const response = await fetch(`/api/enrollment/enroll`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -36,7 +33,10 @@ export const useEnrollmentStore = defineStore("enrollment",{
         },
         async dropCourseFromUser(user_id, course_id) {
             try {
-                const response = await fetch(`/api/drop`, {
+                const userStore = useUsersStore();
+                const courseStore = useCoursesStore();
+
+                const response = await fetch(`/api/enrollment/drop`, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
@@ -56,7 +56,10 @@ export const useEnrollmentStore = defineStore("enrollment",{
         },
         async getUsersInCourse(course_id) {
             try {
-                const response = await fetch(`/api/users/${course_id}`, {
+                const userStore = useUsersStore();
+                const courseStore = useCoursesStore();
+
+                const response = await fetch(`/api/enrollment/course/${course_id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -75,7 +78,10 @@ export const useEnrollmentStore = defineStore("enrollment",{
         },
         async getCoursesForUser(user_id) {
             try {
-                const response = await fetch(`/api/courses/${user_id}`, {
+                const userStore = useUsersStore();
+                const courseStore = useCoursesStore();
+
+                const response = await fetch(`/api/enrollment/user/${user_id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

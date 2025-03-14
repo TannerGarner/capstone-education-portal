@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import { useRouter } from 'vue-router';
     const userStore = useUsersStore();
@@ -19,15 +19,6 @@
         phone_number: "", 
         is_admin: false
     })
-
-    onMounted(async () => {
-    if (userStore.user?.user_id) {
-        const isAuthenticated = await userStore.fetchUser(userStore.user.user_id);
-        if (isAuthenticated) {
-            router.push("/");
-        }
-    }
-});
 
     async function onSubmit(){
         await userStore.createUser(newUser.value);

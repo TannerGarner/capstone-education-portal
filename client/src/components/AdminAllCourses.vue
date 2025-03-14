@@ -1,18 +1,36 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import { useCoursesStore } from '../stores/courses.js';
+    import EditCourseModal from './EditCourseModal.vue';
     const courseStore = useCoursesStore();
+    const selectedCourse = ref(null);
+    const isEditModalOpen = ref(false);
 
     onMounted(async () => {
         courseStore.fetchCourses();
     });
 
+
+    function openEditModal(course) {
+        selectedCourse.value = { ...course };
+        isEditModalOpen.value = true;
+    }
+
+    function closeEditModal() {
+        isEditModalOpen.value = false;
+        selectedCourse.value = null;
+    }
+
+    function saveCourse(updatedCourse) {
+        console.log('Saving updated course:', updatedCourse);
+        closeEditModal();
+    }
 </script>
 
 <template>
     <div class="container">
         <div class="header">
-            <h1>Register</h1>
+            <h1>All Courses</h1>
         </div>
         <div class="allCourses">
             <input class="searchBar" type="search" placeholder="Search All Courses"></input>
@@ -32,12 +50,22 @@
                     <p>{{course.credit_hours}}</p>
                     <p>{{course.maximum_capacity}}</p>
                     <p>{{course.tuition_cost}}</p>
-                    <button>
-                        Register
+                    <button class="details" @click="openEditModal(course)">
+                        Edit
+                    </button>
+                    <button class="delete" @click="deleteCourse(course.course_id)">
+                        Delete
                     </button>
                 </div>
+                
             </div>
         </div>
+        <EditCourseModal 
+            :course="selectedCourse"
+            :isOpen="isEditModalOpen"
+            @close="closeEditModal"
+            @save="saveCourse"
+        />
     </div>
 </template>
 
@@ -86,7 +114,7 @@
 
     .courseHeader{
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
         background-color: rgb(72, 159, 181);
         color: #F5F1ED;
@@ -114,7 +142,7 @@
         margin-top: 1px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
 
@@ -129,8 +157,16 @@
         transition: background-color 0.3s;
     }
 
-    button:hover {
+    .details:hover {
         background-color: #FE5E41;
+    }
+
+    .delete {
+        background-color: #E63946;
+    }
+
+    .delete:hover {
+        box-shadow: 0px 0px 5px #153131;
     }
 
     @media screen and (max-width: 1200px) {

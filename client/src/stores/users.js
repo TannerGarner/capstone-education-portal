@@ -4,6 +4,7 @@ export const useUsersStore = defineStore('users',{
     state: () => ({
         users: [],
         user: {},
+        editableUser: {}
     }),
     actions: {
         async fetchUsers() {
@@ -24,7 +25,7 @@ export const useUsersStore = defineStore('users',{
             }
         
             try {
-                const response = await fetch(`/api/user/${userID}`, {
+                const response = await fetch(`/api/users/${userID}`, {
                     method: "GET",
                     headers: { 
                         "Content-Type": "application/json",
@@ -46,7 +47,7 @@ export const useUsersStore = defineStore('users',{
         },
         async createUser(newUser) {
             try {
-                const response = await fetch("/api/user", {
+                const response = await fetch("/api/users", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newUser),
@@ -84,7 +85,7 @@ export const useUsersStore = defineStore('users',{
             this.user = { ...updateValues };
         
             try {
-                const response = await fetch(`/api/user/${this.user.user_id}`, {
+                const response = await fetch(`/api/users/${this.user.user_id}`, {
                     method: "PUT",
                     headers: { 
                         "Content-Type": "application/json",
@@ -127,7 +128,7 @@ export const useUsersStore = defineStore('users',{
         },
         async login(credentials) {
             try {
-                const response = await fetch("/api/login", {
+                const response = await fetch("/api/users/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(credentials),

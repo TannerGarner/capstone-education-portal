@@ -22,7 +22,7 @@ app.get("/test", async (req, res) => {
 // GET /api/users/{courseID}
 
 // Routes:
-app.use("/api", usersRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/courses", coursesRouter);
 
 // Error handling endpoint:
