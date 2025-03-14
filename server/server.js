@@ -1,9 +1,10 @@
 import logger from "./logging/logger.js";
-import { authMW, errMW, verifyTokenMW } from "./middleware/student-middleware.js";
 import usersRouter from "./routes/usersRouter.js";
 import coursesRouter from "./routes/coursesRouter.js";
 import createApp from "./services/express.js";
 import enrollmentRouter from "./routes/enrollmentRouter.js";
+import { authMW, verifyTokenMW } from "./middleware/authMW.js";
+import { errMW } from "./middleware/errMW.js";
 
 const app = createApp();
 const PORT = process.env.PORT || 3001;
