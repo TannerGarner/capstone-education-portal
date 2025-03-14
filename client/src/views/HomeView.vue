@@ -25,15 +25,11 @@
     };
 
     onMounted(async () => {
-    if (userStore.user?.user_id) {
-        const isAuthenticated = await userStore.fetchUser(userStore.user.user_id);
+        const isAuthenticated = await userStore.verifyToken();
         if (!isAuthenticated) {
             router.push("/auth");
         }
-    } else {
-        router.push("/auth");
-    }
-});
+    });
 </script>
 
 <template>

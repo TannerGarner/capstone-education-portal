@@ -153,10 +153,6 @@
         margin-left: 20px;
     }
 
-    button {
-        transition: background-color 0.3s;
-    }
-
     .details:hover {
         background-color: #FE5E41;
     }

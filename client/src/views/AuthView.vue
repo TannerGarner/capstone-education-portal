@@ -9,13 +9,11 @@
   const showSignUp = ref(true);
 
   onMounted(async () => {
-    if (userStore.user?.user_id) {
-      const isAuthenticated = await userStore.fetchUser(userStore.user.user_id);
+      const isAuthenticated = await userStore.verifyToken();
       if (isAuthenticated) {
-        router.push("/");
+          router.push("/");
       }
-    }
-  });
+    });
 
   const toggleAuthView = () => {
     showSignUp.value = !showSignUp.value;

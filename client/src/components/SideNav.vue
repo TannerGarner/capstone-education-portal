@@ -4,7 +4,14 @@
     import { useUsersStore } from '../stores/users.js';
     const userStore = useUsersStore();
     const router = useRouter();
-    defineProps(['changeDisplay', 'components']);
+    const props = defineProps(['changeDisplay', 'components']);
+
+    const activeComponent = ref(props.components.Account);
+
+    function changeActiveComponent(component) {
+        activeComponent.value = component;
+        props.changeDisplay(component); 
+    }
 
     function logout(){ 
         userStore.logout();
@@ -17,14 +24,30 @@
     <div class="sideNav">
         <div class="user">
             <img src="../assets/vue.svg" alt="user-picture" class="userPic">
-            <button @click="logout">Logout</button>
             <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
+            <button class="logout" @click="logout">Logout</button>
         </div>
         <nav class="links">
-            <button @click="changeDisplay(components.RegisteredCourses)">Registered Courses</button>
-            <button @click="changeDisplay(components.Register)">Register</button>
-            <button @click="changeDisplay(components.Account)">Account</button>
-            <button @click="changeDisplay(components.AdminAllCourses)">Admin All Courses</button>
+            <button 
+                @click="changeActiveComponent(components.RegisteredCourses)" 
+                :class="{ active: activeComponent === components.RegisteredCourses }">
+                Registered Courses
+            </button>
+            <button 
+                @click="changeActiveComponent(components.Register)" 
+                :class="{ active: activeComponent === components.Register }">
+                Register
+            </button>
+            <button 
+                @click="changeActiveComponent(components.Account)" 
+                :class="{ active: activeComponent === components.Account }">
+                Account
+            </button>
+            <button 
+                @click="changeActiveComponent(components.AdminAllCourses)" 
+                :class="{ active: activeComponent === components.AdminAllCourses }">
+                Admin All Courses
+            </button>
         </nav>
     </div>
 </template>
@@ -34,13 +57,27 @@
         background-color: #153131;
         color: #F5F1ED;
         padding: 30px;
+        min-width: 10%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
     }
 
     .user {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 20px;
+    }
+
+    .logout{
+        background-color: #489FB5;
+        color: #F5F1ED;
+    }
+
+    .logout:hover{
+        background-color: #E63946;
     }
 
     .links {
@@ -50,7 +87,7 @@
         gap: 10px;
     }
 
-    .links button {
+    button {
         background-color: #F5F1ED;
         color: #153131;
         padding: 15px;
@@ -62,6 +99,12 @@
     button:hover {
         background-color: #489FB5;
         color: #F5F1ED;
+    }
+
+    .active {
+        /* border: 1px solid #FE5E41; */
+        box-shadow: 1px 1px 5px #FE5E41;
+        font-weight: bold;
     }
 
 </style>

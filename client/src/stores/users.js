@@ -3,10 +3,34 @@ import { defineStore } from "pinia";
 export const useUsersStore = defineStore('users',{
     state: () => ({
         users: [],
-        user: {},
+        user: JSON.parse(localStorage.getItem("user")) || {},
         editableUser: {}
     }),
     actions: {
+        async verifyToken() {
+            const storedUser = localStorage.getItem("user");
+            if (!storedUser) return false;
+
+            const user = JSON.parse(storedUser);
+            const token = user?.token;
+            if (!token) return false;
+
+            try {
+                const response = await fetch("/api/verify-token", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    }
+                })
+                if(!response.ok) throw Error;
+
+                return true;
+            } catch (error) {
+                console.error("Error verifying token:", error);
+                return false;
+            }
+        },
         async fetchUsers() {
             try {
                 this.users = await (await fetch("/api/users", {
