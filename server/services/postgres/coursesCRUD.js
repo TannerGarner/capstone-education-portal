@@ -1,7 +1,16 @@
 import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/generalUtils.js";
 
-export async function getCoursesPG(searchTerm) {
+export async function getCoursePG(courseID) {
+    const res = await pgPool.query({
+        text: "SELECT * FROM courses WHERE course_id = $1;",
+        values: [courseID]
+    });
+
+    return res.rows[0] ?? null; // Return course data
+}
+
+export async function searchCoursesPG(searchTerm) {
     searchTerm = searchTerm ?? ""; // This ensures that the keyword is not undefined.
 
     const { rows: courses } = await pgPool.query({
@@ -35,8 +44,16 @@ export async function createCoursePG(courseData) {
     });
 }
 
-export async function doesCourseExistPG(courseID) {
-    const courses = await getCoursesPG(courseID);
+// export async function doesCourseExistPG(courseID) {
+//     const courses = await searchCoursesPG(courseID);
 
-    return courses[0] !== undefined;
+//     return courses[0] !== undefined;
+// }
+
+
+
+export async function ensureCourseExistsPG(courseID) {
+    const course = await getCoursePG(courseID);
+    
+    if (!course) throwResErr(404, `User (with user_id "${userID}") does not exist`);
 }

@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { genUserID, isUserIDSyntaxValid, sendErrRes, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, deleteUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
-import { getCoursesPG } from "../services/postgres/coursesCRUD.js";
+import { searchCoursesPG } from "../services/postgres/coursesCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 import { expressjwt } from "express-jwt";
 
@@ -123,7 +123,7 @@ export async function getCoursesMW(req, res) {
     try {
         const { searchTerm } = req.query;
 
-        const courses = await getCoursesPG(searchTerm);
+        const courses = await searchCoursesPG(searchTerm);
 
         res.json(courses);
     } catch (err) {
