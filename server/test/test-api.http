@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYwNzg1MTY3OSwiaWF0IjoxNzQxOTk4NzYyLCJleHAiOjE3NDIwMDIzNjJ9.Sg_OC3RnsGncycuEod3blop6QR-j_m02NlDyuF5bzVc
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpYXQiOjE3NDIwMDU1MDQsImV4cCI6MTc0MjAwOTEwNH0.I-aAQQfgYbGPzHWCbdbf4p4C7YGr77R3Mf02Ok7BwrM
 
 
 ### Get all courses
@@ -14,6 +14,23 @@ Authorization: Bearer {{token}}
 ### Get course based on search term
 GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
+
+### Create course
+POST http://localhost:3001/api/courses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "course_id": "ARTS-2001",
+    "title": "Modern Art History",
+    "description": "A comprehensive overview of art movements from the 20th century, focusing on surrealism, abstraction, and postmodernism.",
+    "schedule": "TTH 11-12",
+    "classroom_number": "LAB-3233",
+    "maximum_capacity": 5,
+    "credit_hours": 3,
+    "tuition_cost": 800
+}
+
 
 ### Get user data
 GET http://localhost:3001/api/users/148537402
@@ -143,6 +160,10 @@ Authorization: Bearer {{token}}
 GET http://localhost:3001/api/enrollment/course/CHEM-1001
 Authorization: Bearer {{token}}
 
+### See users for course:
+GET http://localhost:3001/api/enrollment/course/ARTS-2001
+Authorization: Bearer {{token}}
+
 
 ### Enroll in course
 POST http://localhost:3001/api/enrollment/enroll
@@ -160,8 +181,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "user_id": 846150586,
-    "course_id": "CSCI-2009"
+    "user_id": 195438213,
+    "course_id": "ARTS-2001"
 }
 
 ### Drop course

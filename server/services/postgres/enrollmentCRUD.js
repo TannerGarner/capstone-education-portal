@@ -4,6 +4,8 @@ import pgPool from "./pgPool.js";
 import { ensureUserExistsPG } from "./usersCRUD.js";
 
 export async function getCoursesForUserPG(userID) {
+    await ensureUserExistsPG(userID);
+
     const { rows: courses } = await pgPool.query({ 
         text: `
             SELECT
@@ -20,6 +22,8 @@ export async function getCoursesForUserPG(userID) {
 }
 
 export async function getUsersForCoursePG(courseID) {
+    await ensureCourseExistsPG(courseID);
+
     const { rows: users } = await pgPool.query({ 
         text: `
             SELECT
