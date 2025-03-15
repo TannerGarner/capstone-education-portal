@@ -78,7 +78,7 @@ export async function enrollPG(userID, courseID) {
             values: [userID, courseID]
         });
     } catch (err) {
-        // Reformat error caused when user is already enrolled:
+        // Error caused when user is already enrolled:
         if (err.message === `duplicate key value violates unique constraint "pk_enrollment"`) {
             err.message = "User already enrolled";
             err.statusCode = 409;

@@ -1,5 +1,5 @@
 import { sendErrRes } from "../utils/generalUtils.js";
-import { createCoursePG, searchCoursesPG } from "../services/postgres/coursesCRUD.js";
+import { createCoursePG, searchCoursesPG, updateCoursePG } from "../services/postgres/coursesCRUD.js";
 
 export async function searchCoursesMW(req, res) {
     try {
@@ -26,9 +26,24 @@ export async function postCourseMW(req, res) {
 }
 
 export async function putCourseMW(req, res) {
-    
+    try {
+        const { courseID } = req.params;
+        const newCourseData = { ...req.body };
+
+        await updateCoursePG(courseID, newCourseData);
+
+        res.json({ errorMessage: null });
+    } catch (err) {
+        sendErrRes(err, res);
+    }
 }
 
 export async function deleteCourseMW(req, res) {
-    
+    try {
+        const { courseID } = req.params;
+
+        
+    } catch (err) {
+        sendErrRes(err, res);
+    }
 }

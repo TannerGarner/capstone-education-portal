@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpYXQiOjE3NDIwNjM1NTYsImV4cCI6MTc0MjA2NzE1Nn0.V_ODT2oUPP4YtJibVYY-_gQpzbLh3hkSMZlpi1nVg24
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQyMDczODc0LCJleHAiOjE3NDIwNzc0NzR9.CoFbFBTVKOEM1ZtIAvkLiSl2ukTTb9PT5vFne1KPG4w
 
 
 ### Get all courses
@@ -31,6 +31,15 @@ Content-Type: application/json
     "tuition_cost": 800
 }
 
+### Edit course
+PUT http://localhost:3001/api/courses/ARTS-2001
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "classroom_number": "LAB-4040",
+    "maximum_capacity": 50
+}
 
 ### Get user data
 GET http://localhost:3001/api/users/148537402

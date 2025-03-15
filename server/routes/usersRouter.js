@@ -7,6 +7,6 @@ export default usersRouter;
 
 usersRouter.post("/login", loginMW);
 usersRouter.get("/:userID", jwtAuthMW, getUserMW);
-usersRouter.post("", jwtAuthMW, postUserMW);
+usersRouter.post("", postUserMW);
 usersRouter.put("/:userID", jwtAuthMW, putUserMW);
 usersRouter.delete("/:userID", jwtAuthMW, deleteUserMW);

@@ -4,6 +4,9 @@ import { throwResErr } from "../../utils/generalUtils.js";
 export async function getCoursePG(courseID) {
     const res = await pgPool.query({
         text: "SELECT * FROM courses WHERE course_id = $1;",
+        // text: `
+
+        // `,
         values: [courseID]
     });
 
@@ -14,7 +17,29 @@ export async function searchCoursesPG(searchTerm) {
     searchTerm = searchTerm ?? ""; // This ensures that the keyword is not undefined.
 
     const { rows: courses } = await pgPool.query({
-        text: "SELECT * FROM courses WHERE course_id ILIKE $1 OR title ILIKE $1;",
+        // text: "SELECT * FROM courses WHERE course_id ILIKE $1 OR title ILIKE $1;",
+        text: `
+            SELECT
+                course_id,
+                title,
+                description,
+                schedule,
+                classroom_number,
+                
+                -- Find the spots_available:
+                (SELECT
+                    maximum_capacity - (SELECT COUNT(*) FROM enrollment e WHERE e.course_id = c.course_id)::SMALLINT
+                AS
+                    spots_available),
+                
+                maximum_capacity,
+                credit_hours,
+                tuition_cost
+            FROM
+                courses c
+            WHERE
+                course_id ILIKE $1 OR title ILIKE $1;
+        `,
         values: [`%${searchTerm}%`]
     });
 
@@ -42,6 +67,46 @@ export async function createCoursePG(courseData) {
             courseData.tuition_cost
         ]
     });
+}
+
+export async function updateCoursePG(courseID, newCourseData) {
+    const oldCourseData = await getCoursePG(courseID);
+
+    newCourseData = {
+        ...oldCourseData,
+        ...newCourseData
+    };
+
+    await pgPool.query({
+        text: `
+            UPDATE
+                courses
+            SET
+                title = $1,
+                description = $2,
+                schedule = $3,
+                classroom_number = $4,
+                maximum_capacity = $5,
+                credit_hours = $6,
+                tuition_cost = $7
+            WHERE
+                course_id = $8;
+        `,
+        values: [
+            newCourseData.title,
+            newCourseData.description,
+            newCourseData.schedule,
+            newCourseData.classroom_number,
+            newCourseData.maximum_capacity,
+            newCourseData.credit_hours,
+            newCourseData.tuition_cost,
+            courseID
+        ]
+    });
+}
+
+export async function deleteCoursePG(courseID) {
+
 }
 
 // export async function doesCourseExistPG(courseID) {
