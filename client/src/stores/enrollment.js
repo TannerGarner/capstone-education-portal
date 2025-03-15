@@ -4,14 +4,13 @@ import { useCoursesStore } from './courses.js';
 
 export const useEnrollmentStore = defineStore("enrollment",{
     state: () => ({
-        enrollUserData: {},
-        enrollCourseData: {}
+        usersInCourse: {},
+        coursesForUser: {}
     }),
     actions: {
         async enrollUserInCourse(user_id, course_id) {
             try {
                 const userStore = useUsersStore();
-                const courseStore = useCoursesStore();
 
                 const response = await fetch(`/api/enrollment/enroll`, {
                     method: "POST",
@@ -26,9 +25,12 @@ export const useEnrollmentStore = defineStore("enrollment",{
 
                 const enrollData = await response.json();
 
+                alert(`Successfully enrolled in ${course_id}`)
+
                 return enrollData;
             } catch (error) {
                 console.error("Error enrolling user in course:", error);
+                alert(`Failed to enroll in ${course_id}, because ${error}`)
             }
         },
         async dropCourseFromUser(user_id, course_id) {
@@ -47,9 +49,9 @@ export const useEnrollmentStore = defineStore("enrollment",{
 
                 if(!response.ok) throw new Error("Failed to drop course from user");
 
-                const enrollData = await response.json();
+                await this.getCoursesForUser(user_id)
 
-                return enrollData;
+                return true;
             } catch (error) {
                 console.error("Error dropping course from user:", error);
             } 
@@ -70,7 +72,7 @@ export const useEnrollmentStore = defineStore("enrollment",{
                 if(!response.ok) throw new Error("Failed to drop course from user");
 
                 const enrollData = await response.json();
-
+                this.usersInCourse = enrollData;
                 return enrollData;
             } catch (error) {
                 console.error("Error dropping course from user:", error);
@@ -79,7 +81,6 @@ export const useEnrollmentStore = defineStore("enrollment",{
         async getCoursesForUser(user_id) {
             try {
                 const userStore = useUsersStore();
-                const courseStore = useCoursesStore();
 
                 const response = await fetch(`/api/enrollment/user/${user_id}`, {
                     method: "GET",
@@ -92,7 +93,7 @@ export const useEnrollmentStore = defineStore("enrollment",{
                 if(!response.ok) throw new Error("Failed to drop course from user");
 
                 const enrollData = await response.json();
-
+                this.coursesForUser = enrollData;
                 return enrollData;
             } catch (error) {
                 console.error("Error dropping course from user:", error);

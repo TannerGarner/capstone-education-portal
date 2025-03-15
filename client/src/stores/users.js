@@ -35,7 +35,10 @@ export const useUsersStore = defineStore('users',{
             try {
                 this.users = await (await fetch("/api/users", {
                     method: "GET",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${this.user.token}`
+                    },
                 })).json();
                 return this.users;
             } catch (error) {

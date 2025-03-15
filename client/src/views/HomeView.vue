@@ -7,6 +7,7 @@
     import { ref, markRaw, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import AdminAllCourses from '../components/AdminAllCourses.vue';
+    import AdminAllStudents from '../components/AdminAllStudents.vue';
     const userStore = useUsersStore();
 
     const router = useRouter();
@@ -15,7 +16,8 @@
         Account: markRaw(Account),
         RegisteredCourses: markRaw(RegisteredCourses),
         Register: markRaw(Register), 
-        AdminAllCourses: markRaw(AdminAllCourses)
+        AdminAllCourses: markRaw(AdminAllCourses),
+        AdminAllStudents: markRaw(AdminAllStudents)
     };
 
     const displayComp = ref(components.Account);

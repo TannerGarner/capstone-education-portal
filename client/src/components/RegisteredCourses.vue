@@ -8,44 +8,20 @@
     const courseStore = useCoursesStore();
     const userStore = useUsersStore();
 
-    onMounted(async ()=>{
-        
+    let userid;
+    onMounted(async ()=>{ 
+        if(userStore.user.is_admin){
+            userid = userStore.editableUser.user_id
+        } else {
+            userid = userStore.user.user_id
+        }
+        enrollmentStore.getCoursesForUser(userid)
     })
 
-    
-    
-
-    const courses = ref([
-        {
-            course_id:"CSCI-1001",
-            title:"Introduction to Computer Science",
-            description:"This course will introduce students to the fundamental concepts behind computers and computer programming. Topics covered include basic programming logic, algorithm development, computer architecture, and software engineering.",
-            schedule:"MWF 9-10",
-            classroom_number:"LAB-123",
-            maximum_capacity:"2",
-            credit_hours:"3",
-            tuition_cost: 900.00
-        },
-        {
-            course_id:"CSCI-2001",
-            title:"Data Structures",
-            description:"This course will cover the basics of data structures, algorithms, and data manipulation. Topics covered include linked lists, stacks, queues, trees, and hash tables. Students will also learn algorithms for sorting and searching data.",
-            schedule:"TTH 10-11",
-            classroom_number:"LAB-456",
-            maximum_capacity:"30",
-            credit_hours:"3",
-            tuition_cost: 900.00
-        }
-    ]);
-
     function dropCourse (course_id){
-        if (confirm("Are you sure you want to drop this course?")) {
-            console.log("User clicked OK!");
-            if (userStore.user.is_admin){
-                enrollmentStore.dropCourseFromUser(userStore.editableUser.user_id, course_id)
-            } else {
-                enrollmentStore.dropCourseFromUser(userStore.user.user_id, course_id)
-            }
+        if (confirm(`Are you sure you want to drop this course? ${course_id}`)) {
+            const dropped = enrollmentStore.dropCourseFromUser(userid, course_id);
+            alert(`${dropped ? "Dropped Successfully" : "Failed to Drop"}`)
         } else {
             console.log("User clicked Cancel!");
         }
@@ -66,7 +42,7 @@
             <h1>Registered Courses</h1>
         </div>
         <div class="courseList">
-            <div class="courseDisplay" v-for="course in courses" :key="course.course_id">
+            <div class="courseDisplay" v-for="course in enrollmentStore.coursesForUser" :key="course.course_id">
                 <div class="courseHeader">
                     <h2>{{course.title}}</h2>
                     <p>Schedule: {{course.schedule}}</p>
@@ -80,7 +56,7 @@
                     <p>Description: </p>
                     <p>{{course.description}}</p>
                     <p>Maximum Capacity: {{course.maximum_capacity}}</p>
-                    <p>Tuition Cost: ${{course.tuition_cost}}</p>
+                    <p>Tuition Cost: {{course.tuition_cost}}</p>
                     <button class="dropCourse" @click="dropCourse(course.course_id)">
                         Drop Course
                     </button>
