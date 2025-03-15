@@ -14,10 +14,10 @@ export async function loginMW(req, res) {
 
         if (!isUserIDSyntaxValid(user_id)) throwInvalidCredsErr();
 
-        const user = await getUserPG(user_id);
+        const user = await getUserPG(user_id, false);
 
         if (!user) throwInvalidCredsErr();
-        if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
+        else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
 
         delete user.password_hash;
 

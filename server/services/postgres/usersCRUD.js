@@ -1,7 +1,7 @@
 import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/generalUtils.js";
 
-export async function getUserPG(userID) {
+export async function getUserPG(userID, throwErrWhenUserNotFound = true) {
     const res = await pgPool.query({
         text: `
             SELECT
@@ -15,7 +15,10 @@ export async function getUserPG(userID) {
     });
     const rawUserData = res.rows[0];
 
-    if (!rawUserData) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+    if (!rawUserData) {
+        if (throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+        else return null;
+    }
 
     const organizedUserData = {
         first_name: rawUserData.first_name,
@@ -97,7 +100,9 @@ export async function updateUserPG(userID, newData) {
 }
 
 export async function deleteUserPG(userID) {
-    if (!(await getUserPG(userID))) throwResErr(404, "User does not exist");
+    // Verify that user exists to begin with:
+    await ensureUserExistsPG(userID)
+        // if (!(await getUserPG(userID))) throwResErr(404, "User does not exist");
 
     await pgPool.query({
         text: "DELETE FROM users WHERE user_id = $1;",
@@ -107,7 +112,12 @@ export async function deleteUserPG(userID) {
 
 
 export async function ensureUserExistsPG(userID) {
-    const user = await getUserPG(userID);
-        
-    if (!user) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+    const res = await pgPool.query({
+        text: "SELECT COUNT(*) FROM users WHERE user_id = $1;",
+        values: [userID]
+    });
+
+    const userExists = res.rows[0].count === "1";
+
+    if (!userExists) throwResErr(404, `User (with user_id "${userID}") does not exist`);
 }

@@ -15,7 +15,7 @@ app.get("/api/verify-token", authMW, verifyTokenMW);
 
 // Test Endpoint
 // app.get("/test", async (req, res) => {
-//     res.json({ value: await getCoursePG("CSCI-2008") });
+//     res.json({ value: await ensureUserExistsPG(99) });
 // });
 
 // Routes:
