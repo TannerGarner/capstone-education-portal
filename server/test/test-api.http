@@ -1,5 +1,6 @@
+# Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxOTk1OTA3LCJleHAiOjE3NDE5OTk1MDd9.w3mLb7aOMnXzYdvoQnE3xwu4E0wV_0vfwTTABVS2dXQ
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYwNzg1MTY3OSwiaWF0IjoxNzQxOTk4NzYyLCJleHAiOjE3NDIwMDIzNjJ9.Sg_OC3RnsGncycuEod3blop6QR-j_m02NlDyuF5bzVc
 
 
 ### Get all courses
@@ -95,7 +96,7 @@ Content-Type: application/json
 {
     "first_name": "Test Test",
     "last_name": "Test Test Test Test Test",
-    "phone_number": 404
+    "phone_number": 403
 }
 
 ### Edit user
@@ -104,7 +105,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "johnny@gmail.com"
+    "email": "johnny2@gmail.com"
 }
 
 ### Delete user

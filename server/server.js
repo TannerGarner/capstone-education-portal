@@ -3,15 +3,15 @@ import usersRouter from "./routes/usersRouter.js";
 import coursesRouter from "./routes/coursesRouter.js";
 import createApp from "./services/express.js";
 import enrollmentRouter from "./routes/enrollmentRouter.js";
-import { authMW, verifyTokenMW } from "./middleware/authMW.js";
-import { errMW } from "./middleware/errMW.js";
+import { jwtMW, verifyTokenMW } from "./middleware/authMW.js";
+import { jwtErrMW } from "./middleware/errMW.js";
 
 const app = createApp();
 const PORT = process.env.PORT || 3001;
 
 // Endpoints:
 app.get("/api", (_req, res) => res.json({ message: "Hello from server!" }));
-app.get("/api/verify-token", authMW, verifyTokenMW);
+app.get("/api/verify-token", jwtMW, verifyTokenMW);
 
 // Test Endpoint
 // app.get("/test", async (req, res) => {
@@ -24,6 +24,6 @@ app.use("/api/courses", coursesRouter);
 app.use("/api/enrollment", enrollmentRouter);
 
 // Error handling endpoint:
-app.use(errMW);
+app.use(jwtErrMW);
 
 app.listen(PORT, () => logger.info(`Server listening on ${PORT}`));

@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { searchCoursesMW, postCourseMW, putCourseMW } from "../middleware/coursesMW.js";
-import { authMW } from "../middleware/authMW.js";
+import { jwtMW } from "../middleware/authMW.js";
 
 const coursesRouter = Router();
 export default coursesRouter;
 
-coursesRouter.get("", authMW, searchCoursesMW);
-coursesRouter.post("", authMW, postCourseMW);
-coursesRouter.put("/:courseID", authMW, putCourseMW);
+coursesRouter.get("", jwtMW, searchCoursesMW);
+coursesRouter.post("", jwtMW, postCourseMW);
+coursesRouter.put("/:courseID", jwtMW, putCourseMW);
