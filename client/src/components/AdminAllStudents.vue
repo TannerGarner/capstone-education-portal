@@ -1,32 +1,36 @@
 <script setup>
     import { ref, onMounted } from 'vue';
-    import { useCoursesStore } from '../stores/courses.js';
-    import { useEnrollmentStore } from '../stores/enrollment.js';
     import { useUsersStore } from '../stores/users.js';
-    const courseStore = useCoursesStore();
-    const enrollmentStore = useEnrollmentStore();
+    import EditCourseModal from './EditCourseModal.vue';
     const userStore = useUsersStore();
+    const selectedCourse = ref(null);
+    const isEditModalOpen = ref(false);
 
     onMounted(async () => {
-        courseStore.fetchCourses();
+        userStore.fetchUsers();
     });
 
-    async function register(course_id){
-        let userid;
-        if(userStore.user.is_admin){
-            userid = userStore.editableUser.user_id
-        } else {
-            userid = userStore.user.user_id
-        }
-        enrollmentStore.enrollUserInCourse(userid, course_id)
+
+    function openEditModal(course) {
+        selectedCourse.value = { ...course };
+        isEditModalOpen.value = true;
     }
 
+    function closeEditModal() {
+        isEditModalOpen.value = false;
+        selectedCourse.value = null;
+    }
+
+    function saveCourse(updatedCourse) {
+        console.log('Saving updated course:', updatedCourse);
+        closeEditModal();
+    }
 </script>
 
 <template>
     <div class="container">
         <div class="header">
-            <h1>Register</h1>
+            <h1>All Courses</h1>
         </div>
         <div class="allCourses">
             <input class="searchBar" type="search" placeholder="Search All Courses"></input>
@@ -39,19 +43,26 @@
                     <p>Maximum Capacity</p>
                     <p>Tuition Cost</p>
                 </div>
-                <div class="course" v-for="course in courseStore.courses" :key="course.course_id">
-                    <p>{{course.title}}</p>
-                    <p>{{course.schedule}}</p>
-                    <p>{{course.classroom_number}}</p>
-                    <p>{{course.credit_hours}}</p>
-                    <p>{{course.maximum_capacity}}</p>
-                    <p>{{course.tuition_cost}}</p>
-                    <button @click="register(course.course_id)">
-                        Register
+                <div class="course" v-for="user in userStore.users" :key="user.user_id">
+                    <p>{{user.first_name}}</p>
+                    <p>{{user.last_name}}</p>
+                    <p>{{user.user_id}}</p>
+                    <button class="details" @click="openEditModal(user)">
+                        Edit
+                    </button>
+                    <button class="delete" @click="deleteCourse(user.user_id)">
+                        Delete
                     </button>
                 </div>
+                
             </div>
         </div>
+        <EditCourseModal 
+            :course="selectedCourse"
+            :isOpen="isEditModalOpen"
+            @close="closeEditModal"
+            @save="saveCourse"
+        />
     </div>
 </template>
 
@@ -61,6 +72,10 @@
         flex-direction: column;
         width: 100%;
         height: 100%;
+    }
+
+    .header {
+        background-color: #FE5E41;
     }
 
     .allCourses {
@@ -100,7 +115,7 @@
 
     .courseHeader{
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
         background-color: rgb(72, 159, 181);
         color: #F5F1ED;
@@ -128,7 +143,7 @@
         margin-top: 1px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
 
@@ -139,12 +154,16 @@
         margin-left: 20px;
     }
 
-    button {
-        transition: background-color 0.3s;
+    .details:hover {
+        background-color: #FE5E41;
     }
 
-    button:hover {
-        background-color: #FE5E41;
+    .delete {
+        background-color: #E63946;
+    }
+
+    .delete:hover {
+        box-shadow: 0px 0px 5px #153131;
     }
 
     @media screen and (max-width: 1200px) {

@@ -8,23 +8,27 @@ export const useCoursesStore = defineStore("courses",{
     }),
     actions: {
         async fetchCourses() {
-            this.loading = true;
+            const token = JSON.parse(localStorage.getItem('user')).token
             try {
                 this.courses = await (await fetch("/api/courses", {
                     method: "GET",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                 })).json();
             } catch (error) {
                 console.error("Error fetching courses:", error);
-            } finally {
-                this.loading = false;
             }
         },
         async fetchCourse(courseID) {
             try {
                 this.course = await (await fetch(`/api/courses/?searchTerm=${courseID}`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json", 
+                        "Authorization": `Bearer ${token}`
+                    },
                 })).json();
 
         
@@ -37,7 +41,10 @@ export const useCoursesStore = defineStore("courses",{
             try {
                 const response = await fetch("/api/courses", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}` 
+                    },
                     body: JSON.stringify(newCourse),
                 });
         

@@ -48,6 +48,11 @@
                 :class="{ active: activeComponent === components.AdminAllCourses }">
                 Admin All Courses
             </button>
+            <button 
+                @click="changeActiveComponent(components.AdminAllStudents)" 
+                :class="{ active: activeComponent === components.AdminAllStudents }">
+                Admin All Students
+            </button>
         </nav>
     </div>
 </template>
@@ -102,8 +107,8 @@
     }
 
     .active {
-        /* border: 1px solid #FE5E41; */
-        box-shadow: 1px 1px 5px #FE5E41;
+        background-color:  #489FB5;
+        color: #F5F1ED;
         font-weight: bold;
     }
 

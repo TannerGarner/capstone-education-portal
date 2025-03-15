@@ -77,6 +77,10 @@
         height: 100%;
     }
 
+    .header {
+        background-color: #FE5E41;
+    }
+
     .allCourses {
         display: flex;
         flex-direction: column;
