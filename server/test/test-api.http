@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzQyMjE5NDgyLCJleHAiOjE3NDIyMjMwODJ9.KXBpTOwKAGfaYsO8s31lS1PTsTsianSTr3qpc7P3X8A
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjIxNjAzLCJleHAiOjE3NDIyMjUyMDN9.LcPcH4arAj6M9vdz14__oWHPwyxDg6UpsPaPcb7naDw
 
 
 ### Get all courses
@@ -51,6 +51,10 @@ Authorization: Bearer {{token}}
 
 ### Get user data (with fake user id)
 GET http://localhost:3001/api/users/555555
+Authorization: Bearer {{token}}
+
+### Search for user
+GET http://localhost:3001/api/users?searchTerm=John Jefferson
 Authorization: Bearer {{token}}
 
 ### Create user
@@ -114,14 +118,12 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/501694971
+PUT http://localhost:3001/api/users/790263736
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "first_name": "Test Test",
-    "last_name": "Test Test Test Test Test",
-    "phone_number": 403
+    "last_name": "Jefferson"
 }
 
 ### Edit user

@@ -38,6 +38,44 @@ export async function getUserPG(userID, throwErrWhenUserNotFound = true) {
     return organizedUserData;
 }
 
+export async function getUsersPG(searchTerm) {
+    // Ensure that the searchTerm is not undefined and that it is trimmed:
+    searchTerm = (searchTerm ?? "").trim();
+
+    const mainQuery = `
+        SELECT
+            user_id,
+            first_name,
+            last_name
+        FROM
+            users
+        WHERE
+    `;
+    let whereClause = "";
+    let values = [];
+
+    if (searchTerm.includes(" ")) {
+        const splitSearchTerm = searchTerm.split(/\s+/gi);
+
+        const firstName = splitSearchTerm[0];
+        const lastName = splitSearchTerm[splitSearchTerm.length - 1];
+
+        whereClause = "first_name ILIKE $1 AND last_name ILIKE $2";
+        values = [`%${firstName}%`, `%${lastName}%`];
+    }
+    else {
+        whereClause = "user_id::VARCHAR(9) ILIKE $1 OR first_name ILIKE $2 OR last_name ILIKE $2;";
+        values = [`${searchTerm}%`, `%${searchTerm}%`];
+    }
+
+    const { rows: users } = await pgPool.query({
+        text: mainQuery + whereClause,
+        values: values
+    });
+
+    return users;
+}
+
 export async function createUserPG(userData) {
     const { rowCount } = await pgPool.query({
         text: `

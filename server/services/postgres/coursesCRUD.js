@@ -14,10 +14,10 @@ export async function getCoursePG(courseID) {
 }
 
 export async function searchCoursesPG(searchTerm) {
-    searchTerm = searchTerm ?? ""; // This ensures that the keyword is not undefined.
+    // Ensure that the searchTerm is not undefined:
+    searchTerm = searchTerm ?? "";
 
     const { rows: courses } = await pgPool.query({
-        // text: "SELECT * FROM courses WHERE course_id ILIKE $1 OR title ILIKE $1;",
         text: `
             SELECT
                 course_id,
@@ -26,11 +26,11 @@ export async function searchCoursesPG(searchTerm) {
                 schedule,
                 classroom_number,
                 
-                -- Find the spots_available:
+                -- Find the spots_taken:
                 (SELECT
-                    maximum_capacity - (SELECT COUNT(*) FROM enrollment e WHERE e.course_id = c.course_id)::SMALLINT
+                    (SELECT COUNT(*) FROM enrollment e WHERE e.course_id = c.course_id)::SMALLINT
                 AS
-                    spots_available),
+                    spots_taken),
                 
                 maximum_capacity,
                 credit_hours,

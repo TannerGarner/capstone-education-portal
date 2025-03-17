@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { genUserID, isUserIDSyntaxValid, sendErrRes, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
-import { createUserPG, deleteUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
+import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 
 export async function loginMW(req, res) {
@@ -37,6 +37,24 @@ export async function getUserMW(req, res) {
         
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });
+    } catch (err) {
+        sendErrRes(err, res);
+    }
+}
+
+export async function getUsersMW(req, res) {
+    try {
+        const { searchTerm } = req.query;
+
+        const users = await getUsersPG(searchTerm);
+
+        if (users.length === 1) {
+            const user = await getUserPG(users[0].user_id);
+            delete user.password_hash;
+            
+            res.json([user]);
+        }
+        else res.json(users);
     } catch (err) {
         sendErrRes(err, res);
     }
