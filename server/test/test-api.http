@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjIxNjAzLCJleHAiOjE3NDIyMjUyMDN9.LcPcH4arAj6M9vdz14__oWHPwyxDg6UpsPaPcb7naDw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc0MjIyNDg0MywiZXhwIjoxNzQyMjI4NDQzfQ.kWITVA7zR1-KwXEfJ0apGUF7fF5CDgxUrbk2Cg4h7C4
 
 
 ### Get all courses
@@ -54,7 +54,7 @@ GET http://localhost:3001/api/users/555555
 Authorization: Bearer {{token}}
 
 ### Search for user
-GET http://localhost:3001/api/users?searchTerm=John Jefferson
+GET http://localhost:3001/api/users
 Authorization: Bearer {{token}}
 
 ### Create user
@@ -63,12 +63,11 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-
-    "first_name": "Jacky",
+    "first_name": "Sally",
     "last_name": "Low",
-    "password": "JackyPassword",
-    "email": "something@gmail.com",
-    "phone_number": 452058,
+    "password": "SallyPassword",
+    "email": "xyz@gmail.com",
+    "phone_number": "144",
     "is_admin": false,
     "address": {
         "street": "64 Hauptstraße",
@@ -83,7 +82,6 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-
     "first_name": "Aria",
     "last_name": "Nakamura",
     "password": "AriaPassword",
@@ -127,12 +125,12 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/846150586
+PUT http://localhost:3001/api/users/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "thebestemailever@gmail.com"
+    "phone_number": 4
 }
 
 ### Delete user
@@ -155,6 +153,15 @@ Content-Type: application/json
 {
     "user_id": 98,
     "password": "JohnPassword"
+}
+
+### Login
+POST http://localhost:3001/api/users/login
+Content-Type: application/json
+
+{
+    "user_id": 2,
+    "password": "WilliamPassword"
 }
 
 ### Verify token

@@ -85,12 +85,21 @@ export async function postUserMW(req, res) {
 }
 
 export async function putUserMW(req, res) {
+    function ensureRoleNotChanged() {
+        if ("is_admin" in req.body) {
+            const { sub, isAdmin } = req.auth;
+
+            if (!isAdmin || +(sub) === +(userID)) throwResErr(403, "User cannot change their role");
+        }
+    }
+
+    const { userID } = req.params;
+
     try {
-        const { userID } = req.params;
+        ensureRoleNotChanged();
 
         // Update general user data:
         const oldUserData = await getUserPG(userID);
-
         let newUserData = {
             ...oldUserData,
             ...req.body // new user data
