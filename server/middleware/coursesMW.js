@@ -1,5 +1,5 @@
 import { sendErrRes } from "../utils/generalUtils.js";
-import { createCoursePG, searchCoursesPG, updateCoursePG } from "../services/postgres/coursesCRUD.js";
+import { createCoursePG, deleteCoursePG, searchCoursesPG, updateCoursePG } from "../services/postgres/coursesCRUD.js";
 
 export async function searchCoursesMW(req, res) {
     try {
@@ -42,7 +42,9 @@ export async function deleteCourseMW(req, res) {
     try {
         const { courseID } = req.params;
 
-        
+        await deleteCoursePG(courseID);
+
+        res.json({ errorMessage: null });
     } catch (err) {
         sendErrRes(err, res);
     }

@@ -1,25 +1,49 @@
 import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/generalUtils.js";
 
-export async function getUserPG(userID, throwErrWhenUserNotFound = true) {
-    const res = await pgPool.query({
-        text: `
-            SELECT
-                first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
-            FROM
-                users u LEFT JOIN addresses a ON u.address_id = a.address_id
-            WHERE
-                user_id = $1;
-        `,
-        values: [userID]
-    });
+export async function getUserPG(userID, config) {
+    // Set up configuration variable:
+    const defaultConfig = {
+        throwErrWhenUserNotFound: true,
+        returnPasswordHash: false,
+        returnAddressDataOrID: "DATA"
+    };
+    config = {
+        ...defaultConfig,
+        ...config
+    };
+
+    // Get user data:
+    let res;
+    if (config.returnAddressDataOrID === "DATA") {
+        res = await pgPool.query({
+            text: `
+                SELECT
+                    first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+                FROM
+                    users u LEFT JOIN addresses a ON u.address_id = a.address_id
+                WHERE
+                    user_id = $1;
+            `,
+            values: [userID]
+        });
+    }
+    else if (config.returnAddressDataOrID === "ID") {
+        res = await pgPool.query({
+            text: "SELECT * FROM users WHERE user_id = $1;",
+            values: [userID]
+        });
+    }
+    else throwResErr(500, `Invalid value for config.returnAddressDataOrID ("${config.returnAddressDataOrID}") in getUserPG()`);
     const rawUserData = res.rows[0];
 
+    // Handle the event of the user not being found:
     if (!rawUserData) {
-        if (throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+        if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
         else return null;
     }
 
+    // Organize the user data:
     const organizedUserData = {
         first_name: rawUserData.first_name,
         last_name: rawUserData.last_name,
@@ -35,7 +59,47 @@ export async function getUserPG(userID, throwErrWhenUserNotFound = true) {
         }
     };
 
+    if (!returnPasswordHash) delete organizedUserData.password_hash;
+
     return organizedUserData;
+}
+
+export async function getUsersPG(searchTerm) {
+    // Ensure that the searchTerm is not undefined and that it is trimmed:
+    searchTerm = (searchTerm ?? "").trim();
+
+    const mainQuery = `
+        SELECT
+            user_id,
+            first_name,
+            last_name
+        FROM
+            users
+        WHERE
+    `;
+    let whereClause = "";
+    let values = [];
+
+    if (searchTerm.includes(" ")) {
+        const splitSearchTerm = searchTerm.split(/\s+/gi);
+
+        const firstName = splitSearchTerm[0];
+        const lastName = splitSearchTerm[splitSearchTerm.length - 1];
+
+        whereClause = "first_name ILIKE $1 AND last_name ILIKE $2";
+        values = [`%${firstName}%`, `%${lastName}%`];
+    }
+    else {
+        whereClause = "user_id::VARCHAR(9) ILIKE $1 OR first_name ILIKE $2 OR last_name ILIKE $2;";
+        values = [`${searchTerm}%`, `%${searchTerm}%`];
+    }
+
+    const { rows: users } = await pgPool.query({
+        text: mainQuery + whereClause,
+        values: values
+    });
+
+    return users;
 }
 
 export async function createUserPG(userData) {
@@ -102,7 +166,6 @@ export async function updateUserPG(userID, newData) {
 export async function deleteUserPG(userID) {
     // Verify that user exists to begin with:
     await ensureUserExistsPG(userID)
-        // if (!(await getUserPG(userID))) throwResErr(404, "User does not exist");
 
     await pgPool.query({
         text: "DELETE FROM users WHERE user_id = $1;",

@@ -14,9 +14,9 @@ app.get("/api", (_req, res) => res.json({ message: "Hello from server!" }));
 app.get("/api/verify-token", jwtAuthMW, verifyTokenMW);
 
 // Test Endpoint
-// app.get("/test", async (req, res) => {
-//     res.json({ value: await ensureUserExistsPG(99) });
-// });
+app.get("/test", async (req, res) => {
+    res.json({ value: await getUserPG(98) });
+});
 
 // Routes:
 app.use("/api/users?", usersRouter);

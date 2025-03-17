@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQyMDczODc0LCJleHAiOjE3NDIwNzc0NzR9.CoFbFBTVKOEM1ZtIAvkLiSl2ukTTb9PT5vFne1KPG4w
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjI4NzI5LCJleHAiOjE3NDIyMzIzMjl9.FIlA5tUf4so6FTE9FzHIO399C7QJGHJ_mM1vN0-vgak
 
 
 ### Get all courses
@@ -16,7 +16,7 @@ GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
 
 ### Create course
-POST http://localhost:3001/api/courses
+POST http://localhost:3001/api/course
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -31,15 +31,33 @@ Content-Type: application/json
     "tuition_cost": 800
 }
 
-### Edit course
-PUT http://localhost:3001/api/courses/ARTS-2001
+### Create course
+POST http://localhost:3001/api/course
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "classroom_number": "LAB-4040",
-    "maximum_capacity": 50
+    "course_id": "QUAN-1001",
+    "title": "Introduction to Quantum Mechanics",
+    "description": "A foundational course exploring the principles of quantum physics, including wave-particle duality and quantum entanglement.",
+    "maximum_capacity": 30,
+    "credit_hours": 4,
+    "tuition_cost": 1500
 }
+
+### Edit course
+PUT http://localhost:3001/api/courses/CHEM-1001
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "description": "This is an introductory course that covers the fundamental concepts and principles of chemistry. It provides a foundation for understanding the structure, properties, and behaviors of matter."
+}
+
+### Delete course
+DELETE http://localhost:3001/api/course/ARTS-2001
+Authorization: Bearer {{token}}
+Content-Type: application/json
 
 ### Get user data
 GET http://localhost:3001/api/users/148537402
@@ -53,18 +71,21 @@ Authorization: Bearer {{token}}
 GET http://localhost:3001/api/users/555555
 Authorization: Bearer {{token}}
 
+### Search for user
+GET http://localhost:3001/api/users
+Authorization: Bearer {{token}}
+
 ### Create user
 POST http://localhost:3001/api/users
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-
-    "first_name": "Jacky",
+    "first_name": "Sally",
     "last_name": "Low",
-    "password": "JackyPassword",
-    "email": "something@gmail.com",
-    "phone_number": 452058,
+    "password": "SallyPassword",
+    "email": "xyz@gmail.com",
+    "phone_number": "144",
     "is_admin": false,
     "address": {
         "street": "64 Hauptstraße",
@@ -79,7 +100,6 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-
     "first_name": "Aria",
     "last_name": "Nakamura",
     "password": "AriaPassword",
@@ -99,7 +119,6 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-
     "first_name": "Kelly",
     "last_name": "Lake",
     "password": "KellyPassword",
@@ -115,23 +134,21 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/501694971
+PUT http://localhost:3001/api/users/790263736
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "first_name": "Test Test",
-    "last_name": "Test Test Test Test Test",
-    "phone_number": 403
+    "last_name": "Jefferson"
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/846150586
+PUT http://localhost:3001/api/users/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "johnny2@gmail.com"
+    "phone_number": 4
 }
 
 ### Delete user
@@ -156,17 +173,26 @@ Content-Type: application/json
     "password": "JohnPassword"
 }
 
+### Login
+POST http://localhost:3001/api/users/login
+Content-Type: application/json
+
+{
+    "user_id": 2,
+    "password": "WilliamPassword"
+}
+
 ### Verify token
 GET http://localhost:3001/api/verify-token
 Authorization: Bearer {{token}}
 
 
 ### See courses for user:
-GET http://localhost:3001/api/enrollment/user/195438213
+GET http://localhost:3001/api/enrollment/user/98
 Authorization: Bearer {{token}}
 
 ### See users for course:
-GET http://localhost:3001/api/enrollment/course/CHEM-1001
+GET http://localhost:3001/api/enrollment/course/CSCI-1001
 Authorization: Bearer {{token}}
 
 ### See users for course:
@@ -190,7 +216,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "user_id": 195438213,
+    "user_id": 98,
     "course_id": "ARTS-2001"
 }
 

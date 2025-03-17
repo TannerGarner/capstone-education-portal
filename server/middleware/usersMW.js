@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { genUserID, isUserIDSyntaxValid, sendErrRes, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
-import { createUserPG, deleteUserPG, getUserPG, updateUserPG } from "../services/postgres/usersCRUD.js";
+import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersCRUD.js";
 import { getAddressPG } from "../services/postgres/addressesCRUD.js";
 
 export async function loginMW(req, res) {
@@ -14,7 +14,10 @@ export async function loginMW(req, res) {
 
         if (!isUserIDSyntaxValid(user_id)) throwInvalidCredsErr();
 
-        const user = await getUserPG(user_id, false);
+        const user = await getUserPG(user_id, {
+            throwErrWhenUserNotFound: false,
+            returnPasswordHash: true
+        });
 
         if (!user) throwInvalidCredsErr();
         else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
@@ -22,7 +25,7 @@ export async function loginMW(req, res) {
         delete user.password_hash;
 
         res.json({
-            token: genToken(user_id),
+            token: genToken(user_id, user.is_admin),
             user: user
         });
     } catch (err) {
@@ -37,6 +40,24 @@ export async function getUserMW(req, res) {
         
         if (user) res.json(user);
         else res.status(404).json({ errorMessage: "User does not exist" });
+    } catch (err) {
+        sendErrRes(err, res);
+    }
+}
+
+export async function getUsersMW(req, res) {
+    try {
+        const { searchTerm } = req.query;
+
+        const users = await getUsersPG(searchTerm);
+
+        if (users.length === 1) {
+            const user = await getUserPG(users[0].user_id);
+            delete user.password_hash;
+            
+            res.json([user]);
+        }
+        else res.json(users);
     } catch (err) {
         sendErrRes(err, res);
     }
@@ -67,35 +88,67 @@ export async function postUserMW(req, res) {
 }
 
 export async function putUserMW(req, res) {
-    try {
-        const { userID } = req.params;
+    function ensureRoleNotChanged() {
+        if ("is_admin" in req.body) {
+            const { sub, isAdmin } = req.auth;
 
-        // Update general user data:
-        const oldUserData = await getUserPG(userID);
+            if (!isAdmin || +(sub) === +(userID)) throwResErr(403, "User cannot change their role");
+        }
+    }
 
-        let newUserData = {
-            ...oldUserData,
-            ...req.body // new user data
-        };
+    // async function mergeOldAndNewData() {
+    //     const oldUserData = await getUserPG(userID);
+    //     const mergedUserData = {
+    //         ...oldUserData,
+    //         ...req.body // new user data
+    //     };
 
-        // Update address user data:
-        const oldAddressData = await getAddressPG(oldUserData.address_id);
+    //     return { oldUserData, mergedUserData }
+    // }
+
+    async function mergeOldAndNewAddressData(addressID) {
+        const oldAddressData = await getAddressPG(addressID);
         
-        const newAddressData = {
+        const mergedAddressData = {
             ...oldAddressData,
             ...req.body?.address // new address data
         };
 
+        return mergedAddressData;
+    }
+
+    const { userID } = req.params;
+
+    try {
+        ensureRoleNotChanged();
+
+        // Update general user data:
+        const oldUserData = await getUserPG(userID, { returnAddressDataOrID: "ID" });
+        let mergedUserData = {
+            ...oldUserData,
+            ...req.body // new user data
+        };
+        // let { oldUserData, mergedUserData } = await mergeOldAndNewData();
+
+        // Update address user data:
+        await mergeOldAndNewAddressData(oldUserData.address_id);
+        // const oldAddressData = await getAddressPG(oldUserData.address_id);
+        
+        // const mergedAddressData = {
+        //     ...oldAddressData,
+        //     ...req.body?.address // new address data
+        // };
+
         // Update newUserData.address with new address data:
-        newUserData.address = newAddressData;
+        mergedUserData.address = mergedAddressData;
 
         // Update information on database and return updated user:
-        newUserData = await updateUserPG(userID, newUserData);
+        updatedUserData = await updateUserPG(userID, mergedUserData);
 
         // Delete password_hash from userData:
-        delete newUserData.password_hash;
+        // delete updatedUserData.password_hash;
 
-        res.json(newUserData);
+        res.json(updatedUserData);
     } catch (err) {
         sendErrRes(err, res);
     }
