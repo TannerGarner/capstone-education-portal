@@ -14,7 +14,10 @@ export async function loginMW(req, res) {
 
         if (!isUserIDSyntaxValid(user_id)) throwInvalidCredsErr();
 
-        const user = await getUserPG(user_id, false);
+        const user = await getUserPG(user_id, {
+            throwErrWhenUserNotFound: false,
+            returnPasswordHash: true
+        });
 
         if (!user) throwInvalidCredsErr();
         else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
@@ -93,36 +96,59 @@ export async function putUserMW(req, res) {
         }
     }
 
+    // async function mergeOldAndNewData() {
+    //     const oldUserData = await getUserPG(userID);
+    //     const mergedUserData = {
+    //         ...oldUserData,
+    //         ...req.body // new user data
+    //     };
+
+    //     return { oldUserData, mergedUserData }
+    // }
+
+    async function mergeOldAndNewAddressData(addressID) {
+        const oldAddressData = await getAddressPG(addressID);
+        
+        const mergedAddressData = {
+            ...oldAddressData,
+            ...req.body?.address // new address data
+        };
+
+        return mergedAddressData;
+    }
+
     const { userID } = req.params;
 
     try {
         ensureRoleNotChanged();
 
         // Update general user data:
-        const oldUserData = await getUserPG(userID);
-        let newUserData = {
+        const oldUserData = await getUserPG(userID, { returnAddressDataOrID: "ID" });
+        let mergedUserData = {
             ...oldUserData,
             ...req.body // new user data
         };
+        // let { oldUserData, mergedUserData } = await mergeOldAndNewData();
 
         // Update address user data:
-        const oldAddressData = await getAddressPG(oldUserData.address_id);
+        await mergeOldAndNewAddressData(oldUserData.address_id);
+        // const oldAddressData = await getAddressPG(oldUserData.address_id);
         
-        const newAddressData = {
-            ...oldAddressData,
-            ...req.body?.address // new address data
-        };
+        // const mergedAddressData = {
+        //     ...oldAddressData,
+        //     ...req.body?.address // new address data
+        // };
 
         // Update newUserData.address with new address data:
-        newUserData.address = newAddressData;
+        mergedUserData.address = mergedAddressData;
 
         // Update information on database and return updated user:
-        newUserData = await updateUserPG(userID, newUserData);
+        updatedUserData = await updateUserPG(userID, mergedUserData);
 
         // Delete password_hash from userData:
-        delete newUserData.password_hash;
+        // delete updatedUserData.password_hash;
 
-        res.json(newUserData);
+        res.json(updatedUserData);
     } catch (err) {
         sendErrRes(err, res);
     }
