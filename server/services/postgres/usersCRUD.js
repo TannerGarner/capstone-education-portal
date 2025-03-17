@@ -2,6 +2,13 @@ import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/generalUtils.js";
 
 export async function getUserPG(userID, config) {
+    function verifyUserExists(userData) {
+        if (!userData) {
+            if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+            else return null;
+        }
+    }
+
     // Set up configuration variable:
     const defaultConfig = {
         throwErrWhenUserNotFound: true,
@@ -14,9 +21,8 @@ export async function getUserPG(userID, config) {
     };
 
     // Get user data:
-    let res;
     if (config.returnAddressDataOrID === "DATA") {
-        res = await pgPool.query({
+        const res = await pgPool.query({
             text: `
                 SELECT
                     first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
@@ -27,41 +33,67 @@ export async function getUserPG(userID, config) {
             `,
             values: [userID]
         });
+        const rawUserData = res.rows[0];
+
+        verifyUserExists(rawUserData);
+
+        const organizedUserData = {
+            first_name: rawUserData.first_name,
+            last_name: rawUserData.last_name,
+            password_hash: rawUserData.password_hash,
+            email: rawUserData.email,
+            phone_number: rawUserData.phone_number,
+            is_admin: rawUserData.is_admin,
+            address: {
+                street: rawUserData.street,
+                city: rawUserData.city,
+                state: rawUserData.state_or_region,
+                country: rawUserData.country
+            }
+        };
+
+        if (!config.returnPasswordHash) delete organizedUserData.password_hash;
+
+        return organizedUserData;
     }
     else if (config.returnAddressDataOrID === "ID") {
         res = await pgPool.query({
             text: "SELECT * FROM users WHERE user_id = $1;",
             values: [userID]
         });
-    }
-    else throwResErr(500, `Invalid value for config.returnAddressDataOrID ("${config.returnAddressDataOrID}") in getUserPG()`);
-    const rawUserData = res.rows[0];
 
-    // Handle the event of the user not being found:
-    if (!rawUserData) {
-        if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
-        else return null;
+        const user = res.rows[0];
+
+        if (!config.returnPasswordHash) delete user.password_hash;
+
+        return user;
     }
 
-    // Organize the user data:
-    const organizedUserData = {
-        first_name: rawUserData.first_name,
-        last_name: rawUserData.last_name,
-        password_hash: rawUserData.password_hash,
-        email: rawUserData.email,
-        phone_number: rawUserData.phone_number,
-        is_admin: rawUserData.is_admin,
-        address: {
-            street: rawUserData.street,
-            city: rawUserData.city,
-            state: rawUserData.state_or_region,
-            country: rawUserData.country
-        }
-    };
+    // // Handle the event of the user not being found:
+    // if (!rawUserData) {
+    //     if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+    //     else return null;
+    // }
 
-    if (!returnPasswordHash) delete organizedUserData.password_hash;
+    // // Organize the user data:
+    // const organizedUserData = {
+    //     first_name: rawUserData.first_name,
+    //     last_name: rawUserData.last_name,
+    //     password_hash: rawUserData.password_hash,
+    //     email: rawUserData.email,
+    //     phone_number: rawUserData.phone_number,
+    //     is_admin: rawUserData.is_admin,
+    //     address: {
+    //         street: rawUserData.street,
+    //         city: rawUserData.city,
+    //         state: rawUserData.state_or_region,
+    //         country: rawUserData.country
+    //     }
+    // };
 
-    return organizedUserData;
+    // if (!config.returnPasswordHash) delete organizedUserData.password_hash;
+
+    // return organizedUserData;
 }
 
 export async function getUsersPG(searchTerm) {

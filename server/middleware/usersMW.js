@@ -131,16 +131,15 @@ export async function putUserMW(req, res) {
         // let { oldUserData, mergedUserData } = await mergeOldAndNewData();
 
         // Update address user data:
-        await mergeOldAndNewAddressData(oldUserData.address_id);
-        // const oldAddressData = await getAddressPG(oldUserData.address_id);
-        
-        // const mergedAddressData = {
-        //     ...oldAddressData,
-        //     ...req.body?.address // new address data
-        // };
+            // const oldAddressData = await getAddressPG(oldUserData.address_id);
+            
+            // const mergedAddressData = {
+            //     ...oldAddressData,
+            //     ...req.body?.address // new address data
+            // };
 
         // Update newUserData.address with new address data:
-        mergedUserData.address = mergedAddressData;
+        mergedUserData.address = await mergeOldAndNewAddressData(oldUserData.address_id);;
 
         // Update information on database and return updated user:
         updatedUserData = await updateUserPG(userID, mergedUserData);
