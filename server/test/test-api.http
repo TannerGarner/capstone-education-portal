@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQyMDczODc0LCJleHAiOjE3NDIwNzc0NzR9.CoFbFBTVKOEM1ZtIAvkLiSl2ukTTb9PT5vFne1KPG4w
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzQyMjE5NDgyLCJleHAiOjE3NDIyMjMwODJ9.KXBpTOwKAGfaYsO8s31lS1PTsTsianSTr3qpc7P3X8A
 
 
 ### Get all courses
@@ -99,7 +99,6 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-
     "first_name": "Kelly",
     "last_name": "Lake",
     "password": "KellyPassword",
@@ -131,7 +130,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "email": "johnny2@gmail.com"
+    "email": "thebestemailever@gmail.com"
 }
 
 ### Delete user
@@ -162,7 +161,7 @@ Authorization: Bearer {{token}}
 
 
 ### See courses for user:
-GET http://localhost:3001/api/enrollment/user/195438213
+GET http://localhost:3001/api/enrollment/user/98
 Authorization: Bearer {{token}}
 
 ### See users for course:
@@ -190,7 +189,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "user_id": 195438213,
+    "user_id": 98,
     "course_id": "ARTS-2001"
 }
 

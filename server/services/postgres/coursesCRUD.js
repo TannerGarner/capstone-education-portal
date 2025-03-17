@@ -49,24 +49,34 @@ export async function searchCoursesPG(searchTerm) {
 export async function createCoursePG(courseData) {
     // if (await doesCourseExistPG(courseData.course_id)) throwResErr(409, "Course already exists");
 
-    await pgPool.query({
-        text: `
-            INSERT INTO
-                courses (course_id, title, description, schedule, classroom_number, maximum_capacity, credit_hours, tuition_cost)
-            VALUES
-                ($1, $2, $3, $4, $5, $6, $7, $8);
-        `,
-        values: [
-            courseData.course_id,
-            courseData.title,
-            courseData.description,
-            courseData.schedule,
-            courseData.classroom_number,
-            courseData.maximum_capacity,
-            courseData.credit_hours,
-            courseData.tuition_cost
-        ]
-    });
+    try {
+        await pgPool.query({
+            text: `
+                INSERT INTO
+                    courses (course_id, title, description, schedule, classroom_number, maximum_capacity, credit_hours, tuition_cost)
+                VALUES
+                    ($1, $2, $3, $4, $5, $6, $7, $8);
+            `,
+            values: [
+                courseData.course_id,
+                courseData.title,
+                courseData.description,
+                courseData.schedule,
+                courseData.classroom_number,
+                courseData.maximum_capacity,
+                courseData.credit_hours,
+                courseData.tuition_cost
+            ]
+        });
+    } catch (err) {
+        // Error caused when user is already enrolled:
+        if (err.message === `duplicate key value violates unique constraint "courses_pkey"`) {
+            err.message = `Course already exists`;
+            err.statusCode = 409;
+        }
+
+        throw err;
+    }
 }
 
 export async function updateCoursePG(courseID, newCourseData) {

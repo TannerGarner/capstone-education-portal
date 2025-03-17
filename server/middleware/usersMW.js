@@ -22,7 +22,7 @@ export async function loginMW(req, res) {
         delete user.password_hash;
 
         res.json({
-            token: genToken(user_id),
+            token: genToken(user_id, user.is_admin),
             user: user
         });
     } catch (err) {
