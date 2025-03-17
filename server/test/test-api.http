@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc0MjIyNDg0MywiZXhwIjoxNzQyMjI4NDQzfQ.kWITVA7zR1-KwXEfJ0apGUF7fF5CDgxUrbk2Cg4h7C4
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjI4NzI5LCJleHAiOjE3NDIyMzIzMjl9.FIlA5tUf4so6FTE9FzHIO399C7QJGHJ_mM1vN0-vgak
 
 
 ### Get all courses
@@ -16,7 +16,7 @@ GET http://localhost:3001/api/courses?searchTerm=Networking
 Authorization: Bearer {{token}}
 
 ### Create course
-POST http://localhost:3001/api/courses
+POST http://localhost:3001/api/course
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -31,15 +31,33 @@ Content-Type: application/json
     "tuition_cost": 800
 }
 
-### Edit course
-PUT http://localhost:3001/api/courses/ARTS-2001
+### Create course
+POST http://localhost:3001/api/course
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "classroom_number": "LAB-4040",
-    "maximum_capacity": 50
+    "course_id": "QUAN-1001",
+    "title": "Introduction to Quantum Mechanics",
+    "description": "A foundational course exploring the principles of quantum physics, including wave-particle duality and quantum entanglement.",
+    "maximum_capacity": 30,
+    "credit_hours": 4,
+    "tuition_cost": 1500
 }
+
+### Edit course
+PUT http://localhost:3001/api/courses/CHEM-1001
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "description": "This is an introductory course that covers the fundamental concepts and principles of chemistry. It provides a foundation for understanding the structure, properties, and behaviors of matter."
+}
+
+### Delete course
+DELETE http://localhost:3001/api/course/ARTS-2001
+Authorization: Bearer {{token}}
+Content-Type: application/json
 
 ### Get user data
 GET http://localhost:3001/api/users/148537402
@@ -174,7 +192,7 @@ GET http://localhost:3001/api/enrollment/user/98
 Authorization: Bearer {{token}}
 
 ### See users for course:
-GET http://localhost:3001/api/enrollment/course/CHEM-1001
+GET http://localhost:3001/api/enrollment/course/CSCI-1001
 Authorization: Bearer {{token}}
 
 ### See users for course:

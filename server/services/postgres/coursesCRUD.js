@@ -1,12 +1,10 @@
 import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/generalUtils.js";
+import { getUsersForCoursePG } from "./enrollmentCRUD.js";
 
 export async function getCoursePG(courseID) {
     const res = await pgPool.query({
         text: "SELECT * FROM courses WHERE course_id = $1;",
-        // text: `
-
-        // `,
         values: [courseID]
     });
 
@@ -47,8 +45,6 @@ export async function searchCoursesPG(searchTerm) {
 }
 
 export async function createCoursePG(courseData) {
-    // if (await doesCourseExistPG(courseData.course_id)) throwResErr(409, "Course already exists");
-
     try {
         await pgPool.query({
             text: `
@@ -116,14 +112,15 @@ export async function updateCoursePG(courseID, newCourseData) {
 }
 
 export async function deleteCoursePG(courseID) {
+    const usersInCourse = await getUsersForCoursePG(courseID);
 
+    if (usersInCourse.length > 0) throwResErr(400, "Cannot delete course; users are enrolled in course");
+
+    await pgPool.query({
+        text: "DELETE FROM courses WHERE course_id = $1;",
+        values: [courseID]
+    });
 }
-
-// export async function doesCourseExistPG(courseID) {
-//     const courses = await searchCoursesPG(courseID);
-
-//     return courses[0] !== undefined;
-// }
 
 export async function ensureCourseExistsPG(courseID) {
     const course = await getCoursePG(courseID);
