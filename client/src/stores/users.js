@@ -162,16 +162,15 @@ export const useUsersStore = defineStore('users',{
                 });
         
                 if (!response.ok) throw new Error("Login failed");
-                
+
+                const { user } = await response.json();
                 const { token } = await response.json();
 
-                const password = credentials.password;
                 this.user = {
-                    user_id: credentials.user_id,
-                    password_length: password.length,
+                    ... user,
+                    password_length: credentials.password.length,
                     token: token,
                 };
-                await this.fetchUser(this.user.user_id);
                 
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
