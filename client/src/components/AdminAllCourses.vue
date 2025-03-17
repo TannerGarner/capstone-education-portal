@@ -5,10 +5,14 @@
     const courseStore = useCoursesStore();
     const selectedCourse = ref(null);
     const isEditModalOpen = ref(false);
+    const isNew = ref(false);
+
 
     onMounted(async () => {
         courseStore.fetchCourses();
     });
+
+
 
 
     function openEditModal(course) {
@@ -17,14 +21,41 @@
     }
 
     function closeEditModal() {
+        isNew.value = false;
         isEditModalOpen.value = false;
         selectedCourse.value = null;
     }
 
-    function saveCourse(updatedCourse) {
-        console.log('Saving updated course:', updatedCourse);
+    function saveCourse(courseInfo) {
+        if(isNew.value === true){
+            courseStore.createCourse(courseInfo)
+        } else {
+            courseStore.updateCourse(courseInfo);
+        }
+        console.log('Saving course:', courseInfo);
         closeEditModal();
     }
+
+    function createCourse(){
+        isNew.value = true;
+        const coursePattern = {
+            course_id: "",
+            title:"",
+            schedule: "",
+            classroom_number:"",
+            maximum_capacity:"",
+            credit_hours:"",
+            description: "",            
+            tuition_cost: ""
+        }
+        selectedCourse.value = { ...coursePattern }
+        openEditModal(coursePattern)
+    }
+
+    function deleteCourse(course_id) {
+        courseStore.deleteCourse(course_id)
+    }
+
 </script>
 
 <template>
@@ -33,7 +64,13 @@
             <h1>All Courses</h1>
         </div>
         <div class="allCourses">
-            <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+            <div class="courseInputs">
+                <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+                <div class="newCourse">
+                    <p>Create a New Course</p>
+                    <button @click="createCourse" class="createCourse">+</button>
+                </div>
+            </div>
             <div class="courseList">
                 <div class="courseHeader">
                     <p>Course Title</p>
@@ -57,11 +94,11 @@
                         Delete
                     </button>
                 </div>
-                
             </div>
         </div>
         <EditCourseModal 
             :course="selectedCourse"
+            :isNew="isNew"
             :isOpen="isEditModalOpen"
             @close="closeEditModal"
             @save="saveCourse"
@@ -87,6 +124,30 @@
         align-items: center;
         padding: 20px 1px 0px 1px;
         height: 86%;
+    }
+
+    .courseInputs{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+    }
+
+    .newCourse{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .createCourse{
+        font-weight: bold;
+        font-size: 36px;
+        width: 60px;
+        border-radius: 100px;
+    }
+
+    .createCourse:hover{
+        background-color: #FE5E41;
     }
 
     .courseList{

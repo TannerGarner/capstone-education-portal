@@ -23,6 +23,7 @@ export const useCoursesStore = defineStore("courses",{
         },
         async fetchCourse(courseID) {
             try {
+                const token = JSON.parse(localStorage.getItem('user')).token
                 this.course = await (await fetch(`/api/courses/?searchTerm=${courseID}`, {
                     method: "GET",
                     headers: { 
@@ -39,6 +40,7 @@ export const useCoursesStore = defineStore("courses",{
         },
         async createCourse(newCourse) {
             try {
+                const token = JSON.parse(localStorage.getItem('user')).token
                 const response = await fetch("/api/courses", {
                     method: "POST",
                     headers: { 
@@ -52,14 +54,14 @@ export const useCoursesStore = defineStore("courses",{
                     throw new Error("Failed to create course");
                 }
         
-                this.course = await response.json();
-                this.courses.push(this.course);
+                this.courses.push(newCourse);
             } catch (error) {
                 console.error("Failed to create course:", error);
             }
         },
         async updateCourse(updateValues) {
-            const index = this.courses.findIndex(course => course.id === updateValues.id);
+            const token = JSON.parse(localStorage.getItem('user')).token
+            const index = this.courses.findIndex(course => course.course_id === updateValues.course_id);
             if (index === -1) return;
         
             const oldCourse = { ...this.courses[index] };
@@ -67,9 +69,12 @@ export const useCoursesStore = defineStore("courses",{
             this.courses[index] = { ...this.courses[index], ...updateValues };
         
             try {
-                const response = await fetch(`/api/courses/${updateValues.id}`, {
+                const response = await fetch(`/api/courses/${updateValues.course_id}`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}` 
+                    },
                     body: JSON.stringify(updateValues),
                 });
         
@@ -90,8 +95,13 @@ export const useCoursesStore = defineStore("courses",{
             this.courses.splice(index, 1);
         
             try {
+                const token = JSON.parse(localStorage.getItem('user')).token
                 const response = await fetch(`/api/courses/${courseID}`, {
                     method: "DELETE",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}` 
+                    },
                 });
         
                 if (!response.ok) {

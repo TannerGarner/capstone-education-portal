@@ -30,7 +30,7 @@
 <template>
     <div class="container">
         <div class="header">
-            <h1>All Courses</h1>
+            <h1>All Students</h1>
         </div>
         <div class="allCourses">
             <input class="searchBar" type="search" placeholder="Search All Courses"></input>
@@ -43,7 +43,7 @@
                     <p>Maximum Capacity</p>
                     <p>Tuition Cost</p>
                 </div>
-                <div class="course" v-for="user in userStore.users" :key="user.user_id">
+                <div class="student" v-for="user in userStore.users" :key="user.user_id">
                     <p>{{user.first_name}}</p>
                     <p>{{user.last_name}}</p>
                     <p>{{user.user_id}}</p>
