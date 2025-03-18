@@ -29,6 +29,11 @@
         </div>
         <nav class="links">
             <button 
+                @click="changeActiveComponent(components.Account)" 
+                :class="{ active: activeComponent === components.Account }">
+                Account
+            </button>
+            <button 
                 @click="changeActiveComponent(components.RegisteredCourses)" 
                 :class="{ active: activeComponent === components.RegisteredCourses }">
                 Registered Courses
@@ -39,16 +44,13 @@
                 Register
             </button>
             <button 
-                @click="changeActiveComponent(components.Account)" 
-                :class="{ active: activeComponent === components.Account }">
-                Account
-            </button>
-            <button 
+                v-if="userStore.user.is_admin"
                 @click="changeActiveComponent(components.AdminAllCourses)" 
                 :class="{ active: activeComponent === components.AdminAllCourses }">
                 Admin All Courses
             </button>
             <button 
+                v-if="userStore.user.is_admin"
                 @click="changeActiveComponent(components.AdminAllStudents)" 
                 :class="{ active: activeComponent === components.AdminAllStudents }">
                 Admin All Students
@@ -77,12 +79,12 @@
     }
 
     .logout{
-        background-color: #489FB5;
-        color: #F5F1ED;
+        background-color: #F5F1ED;
     }
 
     .logout:hover{
         background-color: #E63946;
+        color: #F5F1ED;
     }
 
     .links {
@@ -95,6 +97,7 @@
     button {
         background-color: #F5F1ED;
         color: #153131;
+        width: 160px;
         padding: 15px;
         border-radius: 5px;
         cursor:default;

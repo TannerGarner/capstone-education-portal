@@ -93,6 +93,7 @@ export const useCoursesStore = defineStore("courses",{
             const oldCourse = { ...this.courses[index] };
         
             this.courses.splice(index, 1);
+            console.log(courseID)
         
             try {
                 const token = JSON.parse(localStorage.getItem('user')).token
@@ -103,6 +104,7 @@ export const useCoursesStore = defineStore("courses",{
                         "Authorization": `Bearer ${token}` 
                     },
                 });
+                console.log(response)
         
                 if (!response.ok) {
                     throw new Error("Failed to delete course");

@@ -25,23 +25,30 @@
         console.log('Saving updated course:', updatedCourse);
         closeEditModal();
     }
+
+    async function deleteUser(user_id){
+        console.log('deleting user', user_id)
+        await userStore.deleteUser(user_id)
+    }
 </script>
 
 <template>
-    <div class="container">
+    <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
             <h1>All Students</h1>
         </div>
-        <div class="allCourses">
-            <input class="searchBar" type="search" placeholder="Search All Courses"></input>
-            <div class="courseList">
-                <div class="courseHeader">
-                    <p>Course Title</p>
-                    <p>Schedule</p>
-                    <p>Classroom</p>
-                    <p>Credit Hours</p>
-                    <p>Maximum Capacity</p>
-                    <p>Tuition Cost</p>
+        <div class="allStudents">
+            <div class="studentInputs">
+                <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+                <div class="newStudent">
+                    <p>Create a New User</p>
+                    <button @click="createUser" class="createUser">+</button>
+                </div>
+            </div>            <div class="studentList">
+                <div class="studentHeader">
+                    <p>First Name</p>
+                    <p>Last Name</p>
+                    <p>User ID</p>
                 </div>
                 <div class="student" v-for="user in userStore.users" :key="user.user_id">
                     <p>{{user.first_name}}</p>
@@ -50,7 +57,7 @@
                     <button class="details" @click="openEditModal(user)">
                         Edit
                     </button>
-                    <button class="delete" @click="deleteCourse(user.user_id)">
+                    <button class="delete" @click="deleteUser(user.user_id)">
                         Delete
                     </button>
                 </div>
@@ -71,27 +78,52 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: 100%;
+        height: 100vh;
     }
 
     .header {
         background-color: #FE5E41;
     }
 
-    .allCourses {
+    .allStudents {
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 20px 1px 0px 1px;
-        height: 86%;
+        flex-grow: 1;
+        overflow: hidden;
     }
 
-    .courseList{
+    .studentInputs{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+    }
+
+    .newStudent{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .createUser{
+        font-weight: bold;
+        font-size: 36px;
+        width: 60px;
+        border-radius: 100px;
+    }
+
+    .createUser:hover{
+        background-color: #FE5E41;
+    }
+
+    .studentList{
         display: flex;
         flex-direction: column;
         width: 100%;
-        padding: 20px, 2px, 0px, 2px;
-        height: 100%;
+        padding: 0px 2px 0px 2px;
+        flex-grow: 1;
         overflow-y: auto;
         overflow-x: hidden;
         position: relative;
@@ -113,41 +145,37 @@
         color: #489FB5;
     }
 
-    .courseHeader{
+    .studentHeader{
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
         background-color: rgb(72, 159, 181);
         color: #F5F1ED;
-        padding: 20px;
+        padding: 20px 5px;
         border-radius: 1px;
         position: sticky;
         top: 0;
     }
 
-    .courseHeader > * {
-        margin-left: 20px;
-    }
-
-    .courseHeader > * {
+    .studentHeader > * {
         overflow: hidden;       
         text-overflow: ellipsis; 
         white-space: nowrap;
         margin-left: 20px;
     }
 
-    .course{
+    .student{
         background-color: rgba(72, 159, 181, 0.25);
         border: solid 2px #489FB5;
         padding: 5px;
         margin-top: 1px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
 
-    .course > * {
+    .student > * {
         overflow: hidden;       
         text-overflow: ellipsis; 
         white-space: nowrap;
