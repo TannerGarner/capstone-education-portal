@@ -35,18 +35,36 @@
 
     const editorState = ref({});
 
-    const toggleEditor = (fieldId) => {
-        editorState.value[fieldId] = !editorState.value[fieldId];
+    const toggleEditor = (fieldId, isNested = false) => {
+        if (isNested) {
+            editorState.value.address = editorState.value.address || {};
+            editorState.value.address[fieldId] = !editorState.value.address[fieldId];
+        } else {
+            editorState.value[fieldId] = !editorState.value[fieldId];
+        }
     };
 
-    const isEditorOpen = (fieldId) => editorState.value[fieldId] || false;
+
+    const isEditorOpen = (fieldId, isNested = false) => {
+        if (isNested) {
+            return editorState.value.address?.[fieldId] || false;
+        }
+        return editorState.value[fieldId] || false;
+    };
 
     watch(() => props.isOpen, (newVal) => {
         if (newVal) {
             editUser.value = { ...props.user };
             if (props.isNew) {
                 Object.keys(props.user).forEach(key => {
-                    editorState.value[key] = true;
+                    if (key === 'address') {
+                        editorState.value.address = {};
+                        Object.keys(props.user.address).forEach(addressKey => {
+                            editorState.value.address[addressKey] = true;
+                        });
+                    } else {
+                        editorState.value[key] = true;
+                    }
                 });
             }
         }
@@ -59,7 +77,7 @@
             <div class="studentInfo">
                 <div class="smallFields column">
                     <div 
-                    v-for="([key, value]) in Object.entries(user)"
+                    v-for="([key, value]) in Object.entries(user).filter(([k]) => k !== 'user_id' && k !== 'address')"
                     :key="key" 
                     class="row">
                         <p>{{ fixString(key) }}</p>
@@ -67,6 +85,19 @@
                         <input v-else v-model="editUser[key]" type="text">
                         <button @click="toggleEditor(key)">
                             {{ isEditorOpen(key) ? 'Cancel' : 'Edit' }}
+                        </button>
+                    </div>
+                </div>
+                <div v-if="user.address?.street" class="column">
+                    <div
+                    v-for="([key, value]) in Object.entries(user.address)"
+                    :key="key" 
+                    class="row">
+                        <p>{{ fixString(key) }}</p>
+                        <p v-if="!isEditorOpen(key, true)">{{ value }}</p>
+                        <input v-else v-model="editUser[key]" type="text">
+                        <button @click="toggleEditor(key, true)">
+                            {{ isEditorOpen(key, true) ? 'Cancel' : 'Edit' }}
                         </button>
                     </div>
                 </div>

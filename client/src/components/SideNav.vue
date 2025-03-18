@@ -34,11 +34,13 @@
                 Account
             </button>
             <button 
+                v-if="!userStore.user.is_admin"
                 @click="changeActiveComponent(components.RegisteredCourses)" 
                 :class="{ active: activeComponent === components.RegisteredCourses }">
                 Registered Courses
             </button>
-            <button 
+            <button
+                v-if="!userStore.user.is_admin" 
                 @click="changeActiveComponent(components.Register)" 
                 :class="{ active: activeComponent === components.Register }">
                 Register
@@ -47,13 +49,13 @@
                 v-if="userStore.user.is_admin"
                 @click="changeActiveComponent(components.AdminAllCourses)" 
                 :class="{ active: activeComponent === components.AdminAllCourses }">
-                Admin All Courses
+                All Courses
             </button>
             <button 
                 v-if="userStore.user.is_admin"
                 @click="changeActiveComponent(components.AdminAllStudents)" 
                 :class="{ active: activeComponent === components.AdminAllStudents }">
-                Admin All Students
+                All Students
             </button>
         </nav>
     </div>

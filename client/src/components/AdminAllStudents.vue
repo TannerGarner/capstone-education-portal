@@ -5,6 +5,7 @@
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
+    const isNew = ref(false)
 
     onMounted(async () => {
         userStore.fetchUsers();
@@ -19,16 +20,45 @@
     function closeEditModal() {
         isEditStudentModalOpen.value = false;
         selectedUser.value = null;
+        isNew.value = false;
     }
 
-    function saveStudent(userInfo) {
-        console.log('Saving updated course:', userInfo);
+    async function saveStudent(userInfo) {
+        if(isNew.value === true){
+            await userStore.createUser(userInfo)
+            alert(`Successfully created user`)
+        } else {
+            await userStore.updateUser(userInfo);
+        }
         closeEditModal();
     }
 
+    function createUser(){
+        isNew.value = true;
+        const userPattern = {
+            first_name:"",
+            last_name: "",
+            email:"",
+            password: "",
+            phone_number:"",
+            address:{
+                street: " ",
+                city: "",
+                state: "",
+                country: "",
+            },          
+            is_admin: ""
+        }
+        selectedUser.value = { ...userPattern }
+        openEditModal(userPattern)
+    }
+
     async function deleteUser(user_id){
-        console.log('deleting user', user_id)
-        await userStore.deleteUser(user_id)
+        if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
+            const deleted = await userStore.deleteUser(user_id)
+            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`)
+            router.push("/auth")
+        }
     }
 </script>
 
@@ -39,7 +69,7 @@
         </div>
         <div class="allStudents">
             <div class="studentInputs">
-                <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+                <input class="searchBar" type="search" placeholder="Search All Students"></input>
                 <div class="newStudent">
                     <p>Create a New User</p>
                     <button @click="createUser" class="createUser">+</button>
@@ -49,11 +79,13 @@
                     <p>First Name</p>
                     <p>Last Name</p>
                     <p>User ID</p>
+                    <p>Email</p>
                 </div>
                 <div class="student" v-for="user in userStore.users" :key="user.user_id">
                     <p>{{user.first_name}}</p>
                     <p>{{user.last_name}}</p>
                     <p>{{user.user_id}}</p>
+                    <p>{{user.email}}</p>
                     <button class="details" @click="openEditModal(user)">
                         Edit
                     </button>
@@ -66,6 +98,7 @@
         </div>
         <EditStudentModal 
             :user="selectedUser"
+            :isNew="isNew"
             :isOpen="isEditStudentModalOpen"
             @close="closeEditModal"
             @save="saveStudent"
@@ -147,7 +180,7 @@
 
     .studentHeader{
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
         background-color: rgb(72, 159, 181);
         color: #F5F1ED;
@@ -171,7 +204,7 @@
         margin-top: 1px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
 

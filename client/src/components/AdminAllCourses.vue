@@ -14,9 +14,6 @@
         courseStore.fetchCourses();
     });
 
-
-
-
     function openEditModal(course) {
         selectedCourse.value = { ...course };
         isEditModalOpen.value = true;
@@ -55,8 +52,11 @@
     }
 
     async function deleteCourse(course_id) {
-        console.log('delete course', course_id)
-        await courseStore.deleteCourse(course_id)
+        if (confirm(`Are you sure you want to delete course with courseid: ${course_id}`)) {
+            const deleted = await courseStore.deleteCourse(course_id)
+            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`)
+            router.push("/auth")
+        }
     }
 
 </script>
