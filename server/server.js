@@ -5,6 +5,7 @@ import createApp from "./services/express.js";
 import enrollmentRouter from "./routes/enrollmentRouter.js";
 import { jwtAuthMW, verifyTokenMW } from "./middleware/authMW.js";
 import { jwtErrMW } from "./middleware/errMW.js";
+import { ensureUserIsNotAdminPG } from "./services/postgres/usersCRUD.js";
 
 const app = createApp();
 const PORT = process.env.PORT || 3001;
@@ -15,7 +16,7 @@ app.get("/api/verify-token", jwtAuthMW, verifyTokenMW);
 
 // Test Endpoint
 app.get("/test", async (req, res) => {
-    res.json({ value: await getUserPG(98) });
+    res.json({ value: await ensureUserIsNotAdminPG(5) });
 });
 
 // Routes:

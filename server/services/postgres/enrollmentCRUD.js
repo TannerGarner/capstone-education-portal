@@ -1,7 +1,7 @@
 import { throwResErr } from "../../utils/generalUtils.js";
 import { ensureCourseExistsPG } from "./coursesCRUD.js";
 import pgPool from "./pgPool.js";
-import { ensureUserExistsPG } from "./usersCRUD.js";
+import { ensureUserExistsPG, ensureUserIsNotAdminPG } from "./usersCRUD.js";
 
 export async function getCoursesForUserPG(userID) {
     await ensureUserExistsPG(userID);
@@ -61,6 +61,7 @@ export async function enrollPG(userID, courseID) {
     // Ensure that user and course exist:
     await ensureUserExistsPG(userID);
     await ensureCourseExistsPG(courseID);
+    await ensureUserIsNotAdminPG(userID);
 
     // Ensure that the class is not full yet:
     const spaceLeftInClass = await getCourseMaxCapacityPG(courseID) - await getCourseUserCountPG(courseID);

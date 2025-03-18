@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjM4MDMyLCJleHAiOjE3NDIyNDE2MzJ9.i3pQazsQvVAPExm_iLqzwq9erDzGyStk0VfKaF6ZyRA
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjQxNzU1LCJleHAiOjE3NDIyNDUzNTV9.GaWq5Jsyv1X9qmAPk56FWqkkZytaWO7wWmaRfd_5mik
 
 
 ### Get all courses
@@ -58,6 +58,9 @@ Content-Type: application/json
 DELETE http://localhost:3001/api/course/ARTS-2001
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
+
+
 
 ### Get user data
 GET http://localhost:3001/api/users/148537402
@@ -139,7 +142,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "last_name": "Jefferson"
+    "phone": "505404303"
 }
 
 ### Edit user
@@ -152,7 +155,7 @@ Content-Type: application/json
 }
 
 ### Delete user
-DELETE http://localhost:3001/api/users/501694971
+DELETE http://localhost:3001/api/users/690355948
 Authorization: Bearer {{token}}
 
 ### Login

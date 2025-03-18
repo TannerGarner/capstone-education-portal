@@ -25,7 +25,7 @@ export async function getUserPG(userID, config) {
         const res = await pgPool.query({
             text: `
                 SELECT
-                    first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+                    user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
                 FROM
                     users u LEFT JOIN addresses a ON u.address_id = a.address_id
                 WHERE
@@ -38,6 +38,7 @@ export async function getUserPG(userID, config) {
         verifyUserExists(rawUserData);
 
         const organizedUserData = {
+            user_id: rawUserData.user_id,
             first_name: rawUserData.first_name,
             last_name: rawUserData.last_name,
             password_hash: rawUserData.password_hash,
@@ -57,7 +58,7 @@ export async function getUserPG(userID, config) {
         return organizedUserData;
     }
     else if (config.returnAddressDataOrID === "ID") {
-        res = await pgPool.query({
+        const res = await pgPool.query({
             text: "SELECT * FROM users WHERE user_id = $1;",
             values: [userID]
         });
@@ -171,10 +172,10 @@ export async function updateUserPG(userID, newData) {
                 last_name = $2,
                 email = $3,
                 phone_number = $4,
-                is_admin = $5,
-                address_id = find_or_create_address($6, $7, $8, $9)
+                is_admin = $5
+                -- address_id = find_or_create_address($6, $7, $8, $9)
             WHERE
-                user_id = $10;
+                user_id = $6;
         `,
         values: [
             newData.first_name,
@@ -183,16 +184,16 @@ export async function updateUserPG(userID, newData) {
             newData.phone_number,
             newData.is_admin,
 
-            newData.address.street,
-            newData.address.city,
-            newData.address.state,
-            newData.address.country,
+            // newData.address.street,
+            // newData.address.city,
+            // newData.address.state,
+            // newData.address.country,
 
             userID
         ]
     });
-
-    return await getUserPG(userID); // Return updated user
+    
+    // return await getUserPG(userID); // Return updated user
 }
 
 export async function deleteUserPG(userID) {
@@ -215,4 +216,15 @@ export async function ensureUserExistsPG(userID) {
     const userExists = res.rows[0].count === "1";
 
     if (!userExists) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+}
+
+export async function ensureUserIsNotAdminPG(userID) {
+    const res = await pgPool.query({
+        text: "SELECT is_admin FROM users WHERE user_id = $1;",
+        values: [userID]
+    });
+
+    const isAdmin = res.rows[0].is_admin;
+
+    if (isAdmin) throwResErr(403, "Admins cannot enroll in courses");
 }
