@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { genUserID, isUserIDSyntaxValid, sendErrRes, separateAddressFromGeneralData, throwResErr } from "../utils/generalUtils.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersCRUD.js";
-import { getAddressPG } from "../services/postgres/addressesCRUD.js";
+import { createAddressPG, getAddressPG, updateAddressPG } from "../services/postgres/addressesCRUD.js";
 
 export async function loginMW(req, res) {
     function throwInvalidCredsErr() {
@@ -71,17 +71,19 @@ export async function postUserMW(req, res) {
             user_id: genUserID()
         };
 
-        // Add user to database: 
-        const success = await createUserPG(userData);
+        const { generalData, address } = separateAddressFromGeneralData(userData);
+
+        // Update DB:
+        await createUserPG(generalData);
+        await createAddressPG(generalData.user_id, address);
 
         // Delete password_hash from userData:
         delete userData.password_hash;
 
-        if (success) res.json({
+        res.json({
             token: genToken(userData.user_id, userData.is_admin),
             user_id: userData.user_id
         });
-        else res.status(500).json({ errorMessage: "Internal server error" });
     } catch (err) {
         sendErrRes(err, res);
     }
@@ -96,33 +98,12 @@ export async function putUserMW(req, res) {
         }
     }
 
-    // async function mergeOldAndNewData() {
-    //     const oldUserData = await getUserPG(userID);
-    //     const mergedUserData = {
-    //         ...oldUserData,
-    //         ...req.body // new user data
-    //     };
-
-    //     return { oldUserData, mergedUserData }
-    // }
-
-    async function mergeOldAndNewAddressData(addressID) {
-        const oldAddressData = await getAddressPG(addressID);
-        
-        const mergedAddressData = {
-            ...oldAddressData,
-            ...req.body?.address // new address data
-        };
-
-        return mergedAddressData;
-    }
-
     const { userID } = req.params;
 
     try {
         // Get old and new user data (separated into general and address data):
         const { generalData: newGeneralData, address: newAddress } = separateAddressFromGeneralData(req.body);
-        const { generalData: oldGeneralData, oldAddress } = separateAddressFromGeneralData(await getUserPG(userID));
+        const { generalData: oldGeneralData, address: oldAddress } = separateAddressFromGeneralData(await getUserPG(userID));
 
         // Ensure user cannot change their role (changing from student to admin or otherwise):
         ensureRoleNotChanged(newGeneralData);        
@@ -139,7 +120,7 @@ export async function putUserMW(req, res) {
 
         // Update data in DB:
         await updateUserPG(userID, mergedGeneralData);
-        // await updateAddressPG(userID, mergedAddress);
+        await updateAddressPG(userID, mergedAddress);
 
         // Put address inside general data:
         mergedGeneralData.address = mergedAddress;

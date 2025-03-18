@@ -25,11 +25,11 @@ export async function getUserPG(userID, config) {
         const res = await pgPool.query({
             text: `
                 SELECT
-                    user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+                    u.user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
                 FROM
-                    users u LEFT JOIN addresses a ON u.address_id = a.address_id
+                    users u LEFT JOIN addresses a ON u.user_id = a.user_id
                 WHERE
-                    user_id = $1;
+                    u.user_id = $1;
             `,
             values: [userID]
         });
@@ -136,12 +136,18 @@ export async function getUsersPG(searchTerm) {
 }
 
 export async function createUserPG(userData) {
-    const { rowCount } = await pgPool.query({
+    await pgPool.query({
+        // text: `
+        //     INSERT INTO
+        //         users (user_id, first_name, last_name, password_hash, email, phone_number, is_admin, address_id)
+        //     VALUES
+        //         ($1, $2, $3, $4, $5, $6, $7, find_or_create_address($8, $9, $10, $11));
+        // `,
         text: `
             INSERT INTO
-                users (user_id, first_name, last_name, password_hash, email, phone_number, is_admin, address_id)
+                users (user_id, first_name, last_name, password_hash, email, phone_number, is_admin)
             VALUES
-                ($1, $2, $3, $4, $5, $6, $7, find_or_create_address($8, $9, $10, $11));
+                ($1, $2, $3, $4, $5, $6, $7);
         `,
         values: [
             userData.user_id, // $1
@@ -152,14 +158,14 @@ export async function createUserPG(userData) {
             userData.phone_number, // $6
             userData.is_admin, // $7
 
-            userData.address.street, // $8
-            userData.address.city, // $9
-            userData.address.state, // $10
-            userData.address.country // $11
+            // userData.address.street, // $8
+            // userData.address.city, // $9
+            // userData.address.state, // $10
+            // userData.address.country // $11
         ]
     });
 
-    return !!rowCount;
+    // return !!rowCount;
 }
 
 export async function updateUserPG(userID, newData) {
@@ -192,8 +198,6 @@ export async function updateUserPG(userID, newData) {
             userID
         ]
     });
-    
-    // return await getUserPG(userID); // Return updated user
 }
 
 export async function deleteUserPG(userID) {

@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMjQxNzU1LCJleHAiOjE3NDIyNDUzNTV9.GaWq5Jsyv1X9qmAPk56FWqkkZytaWO7wWmaRfd_5mik
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMzEwMzgzLCJleHAiOjE3NDIzMTM5ODN9.DjHO3E-vdqujj1tYWV5PnuYRPPOXkMqsrtGGwU7Acsk
 
 
 ### Get all courses
@@ -63,7 +63,7 @@ Content-Type: application/json
 
 
 ### Get user data
-GET http://localhost:3001/api/users/148537402
+GET http://localhost:3001/api/users/790263736
 Authorization: Bearer {{token}}
 
 ### Get user data
@@ -84,9 +84,9 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "first_name": "Sally",
-    "last_name": "Low",
-    "password": "SallyPassword",
+    "first_name": "Test Test Test",
+    "last_name": "Test",
+    "password": "TestPassword",
     "email": "xyz@gmail.com",
     "phone_number": "144",
     "is_admin": false,
@@ -103,7 +103,7 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-    "first_name": "Aria",
+    "first_name": "Mil",
     "last_name": "Nakamura",
     "password": "AriaPassword",
     "email": "awesome@gmail.com",
@@ -142,16 +142,21 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "phone": "505404303"
+    "phone_number": "Not a Number"
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/2
+PUT http://localhost:3001/api/users/956245149
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "phone_number": 4
+    "phone_number": 123212321,
+    "address": {
+        "city": "Los Angeles",
+        "country": "USA",
+        "state": "California"
+    }
 }
 
 ### Delete user
