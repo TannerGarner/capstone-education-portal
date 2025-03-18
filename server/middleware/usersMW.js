@@ -120,12 +120,12 @@ export async function putUserMW(req, res) {
     const { userID } = req.params;
 
     try {
+        // Get old and new user data (separated into general and address data):
         const { generalData: newGeneralData, address: newAddress } = separateAddressFromGeneralData(req.body);
-
-        ensureRoleNotChanged(newGeneralData);
-
-        // Merge old user data to new user data:
         const { generalData: oldGeneralData, oldAddress } = separateAddressFromGeneralData(await getUserPG(userID));
+
+        // Ensure user cannot change their role (changing from student to admin or otherwise):
+        ensureRoleNotChanged(newGeneralData);        
 
         // Merge general data and address data:
         const mergedGeneralData = {
@@ -140,23 +140,6 @@ export async function putUserMW(req, res) {
         // Update data in DB:
         await updateUserPG(userID, mergedGeneralData);
         // await updateAddressPG(userID, mergedAddress);
-
-        // // Update address user data:
-        //     // const oldAddressData = await getAddressPG(oldUserData.address_id);
-            
-        //     // const mergedAddressData = {
-        //     //     ...oldAddressData,
-        //     //     ...req.body?.address // new address data
-        //     // };
-
-        // // Update newUserData.address with new address data:
-        // mergedUserData.address = await mergeOldAndNewAddressData(oldUserData.address_id);;
-
-        // // Update information on database and return updated user:
-        // const updatedUserData = await updateUserPG(userID, mergedUserData);
-
-        // // Delete password_hash from userData:
-        // // delete updatedUserData.password_hash;
 
         // Put address inside general data:
         mergedGeneralData.address = mergedAddress;
