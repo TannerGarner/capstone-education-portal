@@ -105,7 +105,11 @@ export async function getUsersPG(searchTerm) {
         SELECT
             user_id,
             first_name,
-            last_name
+            last_name,
+            email,
+            phone_number,
+            address_id,
+            is_admin
         FROM
             users
         WHERE

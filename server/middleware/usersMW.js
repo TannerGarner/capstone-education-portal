@@ -90,11 +90,13 @@ export async function postUserMW(req, res) {
 }
 
 export async function putUserMW(req, res) {
-    function ensureRoleNotChanged(generalData) {
-        if ("is_admin" in generalData) {
+    function ensureRoleNotChanged(newGeneralData) {
+        if ("is_admin" in newGeneralData) {
             const { sub, isAdmin } = req.auth;
 
-            if (!isAdmin || +(sub) === +(userID)) throwResErr(403, "User cannot change their role");
+            if (newGeneralData.is_admin !== isAdmin && (!isAdmin || +(sub) === +(userID))) {
+                throwResErr(403, "User cannot change their role");
+            }
         }
     }
 
