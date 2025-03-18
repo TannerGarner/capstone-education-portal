@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt";
-import { genUserID, isUserIDSyntaxValid, sendErrRes, separateAddressFromGeneralData, throwResErr } from "../utils/generalUtils.js";
+import { genUserID, isUserIDSyntaxValid } from "../utils/userIDUtils.js";
 import { genToken } from "../services/jwt.js";
-import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersCRUD.js";
-import { createAddressPG, getAddressPG, updateAddressPG } from "../services/postgres/addressesCRUD.js";
+import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersPG.js";
+import { createAddressPG, updateAddressPG } from "../services/postgres/addressesPG.js";
+import { sendErrRes, throwResErr } from "../utils/errHandling.js";
+import { separateAddressFromGeneralData } from "../utils/otherUtils.js";
 
 export async function loginMW(req, res) {
     function throwInvalidCredsErr() {

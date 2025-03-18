@@ -1,5 +1,6 @@
 import { expressjwt } from "express-jwt";
-import { getUserIDFromBodyOrParams, sendErrRes } from "../utils/generalUtils.js";
+import { getUserIDFromBodyOrParams } from "../utils/userIDUtils.js";
+import { sendErrRes } from "../utils/errHandling.js";
 
 export const jwtAuthMW = expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] });
 

@@ -1,6 +1,6 @@
 import pgPool from "./pgPool.js";
-import { throwResErr } from "../../utils/generalUtils.js";
-import { getUsersForCoursePG } from "./enrollmentCRUD.js";
+import { getUsersForCoursePG } from "./enrollmentPG.js";
+import { throwResErr } from "../../utils/errHandling.js";
 
 export async function getCoursePG(courseID) {
     const res = await pgPool.query({

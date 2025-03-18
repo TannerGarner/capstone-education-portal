@@ -1,5 +1,5 @@
 import pgPool from "./pgPool.js";
-import { throwResErr } from "../../utils/generalUtils.js";
+import { throwResErr } from "../../utils/errHandling.js";
 
 export async function getUserPG(userID, config) {
     function verifyUserExists(userData) {
@@ -69,32 +69,6 @@ export async function getUserPG(userID, config) {
 
         return user;
     }
-
-    // // Handle the event of the user not being found:
-    // if (!rawUserData) {
-    //     if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
-    //     else return null;
-    // }
-
-    // // Organize the user data:
-    // const organizedUserData = {
-    //     first_name: rawUserData.first_name,
-    //     last_name: rawUserData.last_name,
-    //     password_hash: rawUserData.password_hash,
-    //     email: rawUserData.email,
-    //     phone_number: rawUserData.phone_number,
-    //     is_admin: rawUserData.is_admin,
-    //     address: {
-    //         street: rawUserData.street,
-    //         city: rawUserData.city,
-    //         state: rawUserData.state_or_region,
-    //         country: rawUserData.country
-    //     }
-    // };
-
-    // if (!config.returnPasswordHash) delete organizedUserData.password_hash;
-
-    // return organizedUserData;
 }
 
 export async function getUsersPG(searchTerm) {
@@ -108,7 +82,6 @@ export async function getUsersPG(searchTerm) {
             last_name,
             email,
             phone_number,
-            address_id,
             is_admin
         FROM
             users

@@ -1,5 +1,5 @@
-import { dropPG, enrollPG, getCoursesForUserPG, getUsersForCoursePG } from "../services/postgres/enrollmentCRUD.js";
-import { sendErrRes } from "../utils/generalUtils.js";
+import { dropPG, enrollPG, getCoursesForUserPG, getUsersForCoursePG } from "../services/postgres/enrollmentPG.js";
+import { sendErrRes } from "../utils/errHandling.js";
 
 export async function getCoursesForUserMW(req, res) {
     try {

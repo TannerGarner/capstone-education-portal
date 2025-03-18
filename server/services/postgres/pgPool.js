@@ -6,7 +6,7 @@ const connectionString = process.env.DB_URI || "postgres://postgres:postgres@loc
 logger.silly(`connectionString: ${connectionString}`);
 
 const pgPool = new Pool({
-    connectionString,
+    connectionString: connectionString,
     ssl: { rejectUnauthorized: false }
 });
 export default pgPool;

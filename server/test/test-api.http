@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMzEwMzgzLCJleHAiOjE3NDIzMTM5ODN9.DjHO3E-vdqujj1tYWV5PnuYRPPOXkMqsrtGGwU7Acsk
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMzQxNDE1LCJleHAiOjE3NDIzNDUwMTV9.e6BJGafgFD7BJxy6eZk542pIyWWPGfK8Hzom7cWoITw
 
 
 ### Get all courses
@@ -37,8 +37,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "course_id": "QUAN-1001",
-    "title": "Introduction to Quantum Mechanics",
+    "course_id": "QUAN-1002",
+    "title": "Secondary Quantum Mechanics",
     "description": "A foundational course exploring the principles of quantum physics, including wave-particle duality and quantum entanglement.",
     "maximum_capacity": 30,
     "credit_hours": 4,
@@ -154,7 +154,7 @@ Content-Type: application/json
     "phone_number": 123212321,
     "address": {
         "city": "Los Angeles",
-        "country": "USA",
+        "country": "United States",
         "state": "California"
     }
 }
@@ -234,8 +234,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "user_id": 195438213,
-    "course_id": "CHEM-1001"
+    "user_id": 98,
+    "course_id": "ARTS-2001"
 }
 
 ### Drop course
@@ -249,4 +249,4 @@ Content-Type: application/json
 }
 
 ### Test endpoint
-GET http://localhost:3001/test
+# GET http://localhost:3001/test

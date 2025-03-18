@@ -1,7 +1,7 @@
-import { throwResErr } from "../../utils/generalUtils.js";
-import { ensureCourseExistsPG } from "./coursesCRUD.js";
+import { throwResErr } from "../../utils/errHandling.js";
 import pgPool from "./pgPool.js";
-import { ensureUserExistsPG, ensureUserIsNotAdminPG } from "./usersCRUD.js";
+import { ensureCourseExistsPG } from "./coursesPG.js";
+import { ensureUserExistsPG, ensureUserIsNotAdminPG } from "./usersPG.js";
 
 export async function getCoursesForUserPG(userID) {
     await ensureUserExistsPG(userID);
