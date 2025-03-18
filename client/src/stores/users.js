@@ -133,7 +133,9 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async deleteUser(userID) {
-            const index = this.users.findIndex(user => user.id === userID);
+            const index = this.users.findIndex(user => user.user_id === userID);
+            console.log(index)
+            console.log(this.user)
             if (index === -1) return;
         
             const oldUser = { ...this.users[index] };
@@ -143,6 +145,11 @@ export const useUsersStore = defineStore('users',{
             try {
                 const response = await fetch(`/api/users/${userID}`, {
                     method: "DELETE",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${this.user.token}`,
+                    },
+
                 });
         
                 if (!response.ok) {
@@ -163,8 +170,7 @@ export const useUsersStore = defineStore('users',{
         
                 if (!response.ok) throw new Error("Login failed");
 
-                const { user } = await response.json();
-                const { token } = await response.json();
+                const { token, user } = await response.json();
 
                 this.user = {
                     ... user,

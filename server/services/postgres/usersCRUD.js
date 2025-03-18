@@ -25,11 +25,11 @@ export async function getUserPG(userID, config) {
         const res = await pgPool.query({
             text: `
                 SELECT
-                    first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+                    u.user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
                 FROM
                     users u LEFT JOIN addresses a ON u.address_id = a.address_id
                 WHERE
-                    user_id = $1;
+                    u.user_id = $1;
             `,
             values: [userID]
         });
@@ -38,6 +38,7 @@ export async function getUserPG(userID, config) {
         verifyUserExists(rawUserData);
 
         const organizedUserData = {
+            user_id: rawUserData.user_id,
             first_name: rawUserData.first_name,
             last_name: rawUserData.last_name,
             password_hash: rawUserData.password_hash,

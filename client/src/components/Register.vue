@@ -36,7 +36,9 @@
                     <p>Schedule</p>
                     <p>Classroom</p>
                     <p>Credit Hours</p>
-                    <p>Maximum Capacity</p>
+                    <p>Enrolled</p>
+                    <p>Spots Available</p>
+                    <p>Max Capacity</p>
                     <p>Tuition Cost</p>
                 </div>
                 <div class="course" v-for="course in courseStore.courses" :key="course.course_id">
@@ -44,6 +46,8 @@
                     <p>{{course.schedule}}</p>
                     <p>{{course.classroom_number}}</p>
                     <p>{{course.credit_hours}}</p>
+                    <p>{{ course.spots_taken }}</p>
+                    <p>{{ course.maximum_capacity-course.spots_taken }}</p>
                     <p>{{course.maximum_capacity}}</p>
                     <p>{{course.tuition_cost}}</p>
                     <button @click="register(course.course_id)">
@@ -60,7 +64,7 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: 100%;
+        height: 100vh;
     }
 
     .allCourses {
@@ -68,15 +72,16 @@
         flex-direction: column;
         align-items: center;
         padding: 20px 1px 0px 1px;
-        height: 86%;
+        flex-grow: 1;
+        overflow: hidden;
     }
 
     .courseList{
         display: flex;
         flex-direction: column;
         width: 100%;
-        padding: 20px, 2px, 0px, 2px;
-        height: 100%;
+        padding: 0px 2px 0px 2px;
+        flex-grow: 1;
         overflow-y: auto;
         overflow-x: hidden;
         position: relative;
@@ -100,7 +105,7 @@
 
     .courseHeader{
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
         background-color: rgb(72, 159, 181);
         color: #F5F1ED;
@@ -128,7 +133,7 @@
         margin-top: 1px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
 
