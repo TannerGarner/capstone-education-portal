@@ -1,28 +1,28 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
-    import EditCourseModal from './EditCourseModal.vue';
+    import EditStudentModal from './EditStudentModal.vue';
     const userStore = useUsersStore();
-    const selectedCourse = ref(null);
-    const isEditModalOpen = ref(false);
+    const selectedUser = ref(null);
+    const isEditStudentModalOpen = ref(false);
 
     onMounted(async () => {
         userStore.fetchUsers();
     });
 
 
-    function openEditModal(course) {
-        selectedCourse.value = { ...course };
-        isEditModalOpen.value = true;
+    async function openEditModal(user) {
+        selectedUser.value = { ...user };
+        isEditStudentModalOpen.value = true;
     }
 
     function closeEditModal() {
-        isEditModalOpen.value = false;
-        selectedCourse.value = null;
+        isEditStudentModalOpen.value = false;
+        selectedUser.value = null;
     }
 
-    function saveCourse(updatedCourse) {
-        console.log('Saving updated course:', updatedCourse);
+    function saveStudent(userInfo) {
+        console.log('Saving updated course:', userInfo);
         closeEditModal();
     }
 
@@ -64,11 +64,11 @@
                 
             </div>
         </div>
-        <EditCourseModal 
-            :course="selectedCourse"
-            :isOpen="isEditModalOpen"
+        <EditStudentModal 
+            :user="selectedUser"
+            :isOpen="isEditStudentModalOpen"
             @close="closeEditModal"
-            @save="saveCourse"
+            @save="saveStudent"
         />
     </div>
 </template>

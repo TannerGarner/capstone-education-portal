@@ -30,13 +30,10 @@
     const editorState = ref(new Map());
 
     const toggleEditor = (fieldId) => {
-
         const isOpen = editorState.value.get(fieldId) || false;
-
         if (!isOpen) {
             editUser.value = { ...userStore.user, address: { ...userStore.user.address } };
         }
-
         editorState.value.set(fieldId, !isOpen);
     };
 
@@ -50,6 +47,16 @@
         await userStore.updateUser(editUser.value);
         toggleEditor(fieldId);
     };
+
+    async function deleteAccount(userID){
+        if (confirm(`Are you sure you want to delete account with userid: ${userID}`)) {
+            const deleted = userStore.deleteUser(userID)
+            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`)
+            router.push("/auth")
+        } else {
+            console.log("User clicked Cancel!");
+        }
+    }
 
 </script>
 
@@ -130,6 +137,7 @@
                 <button @click="toggleEditor('phone_number')">{{ isEditorOpen('phone_number') ? 'Cancel' : 'Edit' }}</button>
                 <button v-if="isEditorOpen('phone_number')" @click="saveChanges('phone_number')">Save</button>
             </div>
+            <button @click="deleteAccount(userStore.user.user_id)" class="deleteAccount">Delete My Account</button>
         </div>
     </div>
 </template>
@@ -178,4 +186,11 @@
         background-color: #FE5E41;
     }
 
+    .deleteAccount{
+        background-color: #E63946;
+        width: 200px;
+        padding: 20px;
+        align-self: center;
+        margin-top: 50px;
+    }
 </style>

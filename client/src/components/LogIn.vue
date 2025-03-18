@@ -14,7 +14,6 @@
 
     async function onSubmit(){
         login.value.user_id = parseInt(login.value.user_id);
-        console.log(login.value)
         if (await userStore.login(login.value)){
             router.push("/");
         };
