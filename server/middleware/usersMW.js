@@ -121,8 +121,6 @@ export async function putUserMW(req, res) {
         // Update password hash:
         updatePassword(newGeneralData);
 
-        console.log("newGeneralData:", newGeneralData);
-
         // Merge general data and address data:
         const mergedGeneralData = {
             ...oldGeneralData,
