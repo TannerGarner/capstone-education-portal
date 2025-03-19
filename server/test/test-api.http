@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzQyMzQxNDE1LCJleHAiOjE3NDIzNDUwMTV9.e6BJGafgFD7BJxy6eZk542pIyWWPGfK8Hzom7cWoITw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjg0NTQ5NzU0NCwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTc0MjM1NTk4NCwiZXhwIjoxNzQyMzU5NTg0fQ.1UiWnukthB1fk99yU0_l27mBwW4J228z1S_asvvIizI
 
 
 ### Get all courses
@@ -137,12 +137,12 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/790263736
+PUT http://localhost:3001/api/users/845497544
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "phone_number": "Not a Number"
+    "password": "123"
 }
 
 ### Edit user
@@ -168,8 +168,8 @@ POST http://localhost:3001/api/users/login
 Content-Type: application/json
 
 {
-    "user_id": 195438213,
-    "password": "AriaPassword"
+    "user_id": 845497544,
+    "password": "NewPassword"
 }
 
 ### Login

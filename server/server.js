@@ -10,7 +10,6 @@ const app = createApp();
 const PORT = process.env.PORT || 3001;
 
 // Endpoints:
-app.get("/api", (_req, res) => res.json({ message: "Hello from server!" }));
 app.get("/api/verify-token", jwtAuthMW, verifyTokenMW);
 
 // Test Endpoint

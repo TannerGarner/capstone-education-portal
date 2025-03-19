@@ -153,25 +153,20 @@ export async function updateUserPG(userID, newData) {
             SET
                 first_name = $1,
                 last_name = $2,
-                email = $3,
-                phone_number = $4,
-                is_admin = $5
-                -- address_id = find_or_create_address($6, $7, $8, $9)
+                password_hash = $3,
+                email = $4,
+                phone_number = $5,
+                is_admin = $6
             WHERE
-                user_id = $6;
+                user_id = $7;
         `,
         values: [
             newData.first_name,
             newData.last_name,
+            newData.password_hash,
             newData.email,
             newData.phone_number,
             newData.is_admin,
-
-            // newData.address.street,
-            // newData.address.city,
-            // newData.address.state,
-            // newData.address.country,
-
             userID
         ]
     });

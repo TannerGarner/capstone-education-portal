@@ -102,6 +102,12 @@ export async function putUserMW(req, res) {
         }
     }
 
+    function updatePassword(newGeneralData) {
+        if ("password" in newGeneralData) {
+            newGeneralData.password_hash = bcrypt.hashSync(newGeneralData.password, 10);
+        }
+    }
+
     const { userID } = req.params;
 
     try {
@@ -110,7 +116,12 @@ export async function putUserMW(req, res) {
         const { generalData: oldGeneralData, address: oldAddress } = separateAddressFromGeneralData(await getUserPG(userID));
 
         // Ensure user cannot change their role (changing from student to admin or otherwise):
-        ensureRoleNotChanged(newGeneralData);        
+        ensureRoleNotChanged(newGeneralData);
+
+        // Update password hash:
+        updatePassword(newGeneralData);
+
+        console.log("newGeneralData:", newGeneralData);
 
         // Merge general data and address data:
         const mergedGeneralData = {
