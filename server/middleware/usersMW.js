@@ -113,7 +113,8 @@ export async function putUserMW(req, res) {
     try {
         // Get old and new user data (separated into general and address data):
         const { generalData: newGeneralData, address: newAddress } = separateAddressFromGeneralData(req.body);
-        const { generalData: oldGeneralData, address: oldAddress } = separateAddressFromGeneralData(await getUserPG(userID));
+        const querriedUserData = await getUserPG(userID, { returnPasswordHash: true });
+        const { generalData: oldGeneralData, address: oldAddress } = separateAddressFromGeneralData(querriedUserData);
 
         // Ensure user cannot change their role (changing from student to admin or otherwise):
         ensureRoleNotChanged(newGeneralData);

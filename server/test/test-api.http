@@ -142,7 +142,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "password": "123"
+    "phone_number": 404
 }
 
 ### Edit user
