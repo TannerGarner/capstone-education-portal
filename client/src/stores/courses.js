@@ -87,7 +87,7 @@ export const useCoursesStore = defineStore("courses",{
             }
         },
         async deleteCourse(courseID) {
-            const index = this.courses.findIndex(course => course.id === courseID);
+            const index = this.courses.findIndex(course => course.course_id === courseID);
             if (index === -1) return;
         
             const oldCourse = { ...this.courses[index] };

@@ -101,14 +101,6 @@
                         </button>
                     </div>
                 </div>
-                <!-- <div class="descriptionBox column">
-                    <h3>Description</h3>
-                    <p v-if="!isEditorOpen('description')" class="description">{{ user.description }}</p>
-                    <textarea v-else v-model="editUser.description" class="descriptionInput">{{ user.description }}</textarea>
-                    <button @click="toggleEditor('description')">
-                        {{ isEditorOpen("description") ? 'Cancel' : 'Edit' }}
-                    </button>
-                </div> -->
             </div>
             <div class="modalButtons">
                 <button class="cancel" @click="closeModal(user.user_id)">
