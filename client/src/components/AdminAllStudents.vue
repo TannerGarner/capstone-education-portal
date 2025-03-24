@@ -13,6 +13,7 @@
 
 
     async function openEditModal(user) {
+        console.log(user)
         selectedUser.value = { ...user };
         isEditStudentModalOpen.value = true;
     }
@@ -28,6 +29,7 @@
             await userStore.createUser(userInfo)
             alert(`Successfully created user`)
         } else {
+            console.log(userInfo)
             await userStore.updateUser(userInfo);
         }
         closeEditModal();
