@@ -53,13 +53,14 @@ export async function getUsersMW(req, res) {
 
         const users = await getUsersPG(searchTerm);
 
-        if (users.length === 1) {
-            const user = await getUserPG(users[0].user_id);
-            delete user.password_hash;
+        // if (users.length === 1) {
+        //     const user = await getUserPG(users[0].user_id);
+        //     delete user.password_hash;
             
-            res.json([user]);
-        }
-        else res.json(users);
+        //     res.json([user]);
+        // }
+        // else
+        res.json(users);
     } catch (err) {
         sendErrRes(err, res);
     }

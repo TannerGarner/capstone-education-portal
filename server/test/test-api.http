@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjg0NTQ5NzU0NCwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTc0MjM1NTk4NCwiZXhwIjoxNzQyMzU5NTg0fQ.1UiWnukthB1fk99yU0_l27mBwW4J228z1S_asvvIizI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc0MjUyMzM4MSwiZXhwIjoxNzQyNTI2OTgxfQ.MzFupgTTqXelTDDVA_JMTmHVC7Pe6-bIC9NEx3Bnbvw
 
 
 ### Get all courses
@@ -74,7 +74,7 @@ Authorization: Bearer {{token}}
 GET http://localhost:3001/api/users/555555
 Authorization: Bearer {{token}}
 
-### Search for user
+### Search for user(s)
 GET http://localhost:3001/api/users
 Authorization: Bearer {{token}}
 
