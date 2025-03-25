@@ -1,7 +1,7 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
-    import EditStudentModal from './EditStudentModal.vue';
+    import EditStudentModal from './modals/EditStudentModal.vue';
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);

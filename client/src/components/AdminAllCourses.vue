@@ -1,7 +1,7 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import { useCoursesStore } from '../stores/courses.js';
-    import EditCourseModal from './EditCourseModal.vue';
+    import EditCourseModal from './modals/EditCourseModal.vue';
     import { useUsersStore } from '../stores/users.js';
     const courseStore = useCoursesStore();
     const userStore = useUsersStore();

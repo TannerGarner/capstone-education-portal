@@ -22,8 +22,8 @@ export const useUsersStore = defineStore('users',{
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
                     }
-                })
-                if(!response.ok) throw Error;
+                });
+                if (!response.ok) throw new Error ("invalid token");
 
                 return true;
             } catch (error) {
