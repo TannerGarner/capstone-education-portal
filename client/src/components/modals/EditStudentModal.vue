@@ -17,7 +17,7 @@
 
     function saveChanges() {
         for (const [key, value] of Object.entries(editUser.value)) {
-            if (!value) {
+            if (value === "") {
                 alert(`The field "${fixString(key)}" cannot be empty.`);
                 return;
             }
@@ -26,8 +26,9 @@
     }
 
     function fixString(string){
-        let fixed = string.replace("_", " ")
+        let fixed = string.replaceAll("_", " ");
         fixed = fixed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+        fixed = fixed.replaceAll("Or", "or");
         return fixed;
     }
 

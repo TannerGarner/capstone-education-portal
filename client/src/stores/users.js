@@ -112,8 +112,11 @@ export const useUsersStore = defineStore('users',{
         async updateUser(updateValues) {
             // const index = this.users.findIndex(user => user.id === updateValues.user_id);
             // if (index === -1) return;
-        
+            
+            console.log("updateValues:", updateValues);
             const oldUser = { ...this.user };
+            console.log("oldUser:", oldUser);
+            console.log("this.users:", this.users);
         
             // this.users[index] = { ...this.users[index], ...updateValues };
 
