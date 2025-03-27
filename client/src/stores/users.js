@@ -23,7 +23,7 @@ export const useUsersStore = defineStore('users',{
                         "Authorization": `Bearer ${token}`,
                     }
                 });
-                if (!response.ok) throw new Error ("invalid token");
+                if (!response.ok) throw new Error ("Invalid token");
 
                 return true;
             } catch (error) {
@@ -110,37 +110,39 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async updateUser(updateValues) {
-            // const index = this.users.findIndex(user => user.id === updateValues.user_id);
-            // if (index === -1) return;
-            
-            console.log("updateValues:", updateValues);
-            const oldUser = { ...this.user };
-            console.log("oldUser:", oldUser);
-            console.log("this.users:", this.users);
-        
-            // this.users[index] = { ...this.users[index], ...updateValues };
+            const updatingSelf = updateValues.user_id === this.user.user_id;
 
-            this.user = { ...updateValues };
-        
+            // Get old user data (whether it be from the logged in user or another user):
+            let oldUser = updatingSelf ? this.user : this.users.find(user => user.user_id === updateValues.user_id);
+
+            // Merge old and new data:
+                // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
+            const mergedUser = { ...oldUser, ...updateValues };
+
             try {
-                const response = await fetch(`/api/users/${this.user.user_id}`, {
+                const response = await fetch(`/api/users/${mergedUser.user_id}`, {
                     method: "PUT",
                     headers: { 
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
-                    body: JSON.stringify(this.user),
+                    body: JSON.stringify(mergedUser),
                 });
         
+                // Check if response is okay:
                 if (!response.ok) {
                     throw new Error("Failed to update user");
                 }
 
-                localStorage.setItem("user", JSON.stringify(this.user));
+                // Update local storage if necessary:
+                if (updatingSelf) localStorage.setItem("user", JSON.stringify(this.user));
+
+                // This will take the old user state and update it:
+                    // oldUser is a pointer to user data that is being edited.
+                    // This means that editing this variable will update the this.user or this.users.
+                oldUser = mergedUser;
             } catch (error) {
-                console.error("Update failed, rolling back:", error);
-                // this.users[index] = oldUser; 
-                this.user = oldUser;
+                console.error("Update failed:", error);
             }
         },
         async deleteUser(userID) {
