@@ -112,12 +112,15 @@ export const useUsersStore = defineStore('users',{
         async updateUser(updateValues) {
             const updatingSelf = updateValues.user_id === this.user.user_id;
 
+            console.log(updatingSelf)
             // Get old user data (whether it be from the logged in user or another user):
             let oldUser = updatingSelf ? this.user : this.users.find(user => user.user_id === updateValues.user_id);
 
+            console.log(oldUser)
             // Merge old and new data:
                 // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
             const mergedUser = { ...oldUser, ...updateValues };
+            console.log(mergedUser)
 
             try {
                 const response = await fetch(`/api/users/${mergedUser.user_id}`, {
