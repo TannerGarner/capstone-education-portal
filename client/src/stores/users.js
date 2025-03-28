@@ -133,15 +133,22 @@ export const useUsersStore = defineStore('users',{
                 if (!response.ok) throw new Error("Failed to update user");
 
                 // Update local storage if necessary:
-                if (updatingSelf) localStorage.setItem("user", JSON.stringify(this.user));
+                if (updatingSelf) {
+                    this.user = mergedUser;
+                    localStorage.setItem("user", JSON.stringify(this.user));
+                }
+                else {
+                    oldUser = mergedUser;
+                    this.users = [...this.users];
+                }
 
-                // Update user data:
-                    // oldUser is a pointer to the user data that is being edited.
-                    // This means that editing this variable will also update this.user or this.users.
-                oldUser = mergedUser;
+                // // Update user data:
+                //     // oldUser is a pointer to the user data that is being edited.
+                //     // This means that editing this variable will also update this.user or this.users.
+                // oldUser = mergedUser;
 
-                // Ensure a re-render is triggered when this.users changes:
-                if (!updatingSelf) this.users = [...this.users];
+                // // Ensure a re-render is triggered when this.users changes:
+                // if (!updatingSelf) this.users = [...this.users];
             } catch (error) {
                 console.error("Update failed:", error);
             }
