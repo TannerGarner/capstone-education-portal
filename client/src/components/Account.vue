@@ -21,7 +21,7 @@
         address: {
             street: "",
             city: "",
-            state: "",
+            state_or_region: "",
             country: "",
         },
         phone_number: ""
@@ -29,23 +29,42 @@
 
     const editorState = ref(new Map());
 
-    const toggleEditor = (fieldId) => {
-        const isOpen = editorState.value.get(fieldId) || false;
-        if (!isOpen) {
-            editUser.value = { ...userStore.user, address: { ...userStore.user.address } };
+    const toggleEditor = (fieldId, isNested = false) => {
+        if (isNested) {
+            const [parent, child] = fieldId.split('.');
+            editorState.value.set(parent, {
+                ...editorState.value.get(parent),
+                [child]: !(editorState.value.get(parent)?.[child] || false),
+            });
+        } else {
+            const isOpen = editorState.value.get(fieldId) || false;
+            if (!isOpen) {
+                editUser.value = { ...userStore.user, address: { ...userStore.user.address } };
+            }
+            editorState.value.set(fieldId, !isOpen);
         }
-        editorState.value.set(fieldId, !isOpen);
     };
 
-    const isEditorOpen = (fieldId) => editorState.value.get(fieldId) || false;
-
-    const saveChanges = async (fieldId) => {
-        if (editUser.value[fieldId] === "") {
-            alert("Field cannot be empty");
+    const isEditorOpen = (fieldId, isNested = false) => {
+        if (isNested) {
+            const [parent, child] = fieldId.split('.');
+            return editorState.value.get(parent)?.[child] || false;
+        }
+        return editorState.value.get(fieldId) || false;
+    };
+    const saveChanges = async (fieldId, isNested = false) => {
+        if (isNested) {
+            const [parent, child] = fieldId.split('.');
+            if (!editUser.value[parent][child]) {
+                alert('Field cannot be empty');
+                return;
+            }
+        } else if (!editUser.value[fieldId]) {
+            alert('Field cannot be empty');
             return;
         }
         await userStore.updateUser(editUser.value);
-        toggleEditor(fieldId);
+        toggleEditor(fieldId, isNested);
     };
 
     async function deleteAccount(userID){
@@ -104,31 +123,44 @@
             </div>
             <div class="row">
                 <p>Street Address</p>
-                <p v-if="!isEditorOpen('address.street')" class="userDetail">{{userStore.user.address?.street}}</p>
+                <p v-if="!isEditorOpen('address.street', true)" class="userDetail">{{userStore.user.address?.street}}</p>
                 <input v-else v-model="editUser.address.street" class="userDetail"/>
-                <button @click="toggleEditor('address.street')">{{ isEditorOpen('address.street') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.street')" @click="saveChanges('address.street')">Save</button>
+                <button @click="toggleEditor('address.street', true)">{{ isEditorOpen('address.street', true) ? 'Cancel' : 'Edit' }}</button>
+                <button v-if="isEditorOpen('address.street', true)" @click="saveChanges('address.street', true)">Save</button>
             </div>
             <div class="row">
                 <p>City</p>
-                <p v-if="!isEditorOpen('address.city')" class="userDetail">{{userStore.user.address?.city}}</p>
+                <p v-if="!isEditorOpen('address.city', true)" class="userDetail">{{userStore.user.address?.city}}</p>
                 <input v-else v-model="editUser.address.city" class="userDetail"/>
-                <button @click="toggleEditor('address.city')">{{ isEditorOpen('address.city') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.city')" @click="saveChanges('address.city')">Save</button>
+                <button @click="toggleEditor('address.city', true)">{{ isEditorOpen('address.city', true) ? 'Cancel' : 'Edit' }}</button>
+                <button v-if="isEditorOpen('address.city', true)" @click="saveChanges('address.city', true)">Save</button>
             </div>
             <div class="row">
-                <p>State</p>
-                <p v-if="!isEditorOpen('address.state')" class="userDetail">{{userStore.user.address?.state}}</p>
-                <input v-else v-model="editUser.address.state" class="userDetail"/>
-                <button @click="toggleEditor('address.state')">{{ isEditorOpen('address.state') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.state')" @click="saveChanges('address.state')">Save</button>
+                <p>State or Region</p>
+                <p v-if="!isEditorOpen('address.state_or_region', true)" class="userDetail">
+                    {{ userStore.user.address?.state_or_region }}
+                </p>
+                <input
+                    v-else
+                    v-model="editUser.address.state_or_region"
+                    class="userDetail"
+                />
+                <button @click="toggleEditor('address.state_or_region', true)">
+                    {{ isEditorOpen('address.state_or_region', true) ? 'Cancel' : 'Edit' }}
+                </button>
+                <button
+                    v-if="isEditorOpen('address.state_or_region', true)"
+                    @click="saveChanges('address.state_or_region', true)"
+                >
+                    Save
+                </button>
             </div>
             <div class="row">
                 <p>Country</p>
-                <p v-if="!isEditorOpen('address.country')" class="userDetail">{{userStore.user.address?.country}}</p>
+                <p v-if="!isEditorOpen('address.country', true)" class="userDetail">{{userStore.user.address?.country}}</p>
                 <input v-else v-model="editUser.address.country" class="userDetail"/>
-                <button @click="toggleEditor('address.country')">{{ isEditorOpen('address.country') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.country')" @click="saveChanges('address.country')">Save</button>
+                <button @click="toggleEditor('address.country', true)">{{ isEditorOpen('address.country', true) ? 'Cancel' : 'Edit' }}</button>
+                <button v-if="isEditorOpen('address.country', true)" @click="saveChanges('address.country', true)">Save</button>
             </div>
             <div class="row">
                 <p>Phone Number</p>
