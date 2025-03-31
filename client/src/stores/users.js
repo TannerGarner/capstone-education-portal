@@ -27,7 +27,7 @@ export const useUsersStore = defineStore('users',{
 
                 return true;
             } catch (error) {
-                console.error("Error verifying token:", error);
+                console.error("Error verifying token:", error.message);
                 return false;
             }
         },
@@ -42,7 +42,7 @@ export const useUsersStore = defineStore('users',{
                 })).json();
                 return this.users;
             } catch (error) {
-                console.error("Error fetching users:", error);
+                console.error("Error fetching users:", error.message);
             }
         },
         async fetchUser(userID) {
@@ -66,7 +66,7 @@ export const useUsersStore = defineStore('users',{
                 this.user = { ...this.user, ...userData };                
                 return true;
             } catch (error) {
-                console.error("Error fetching user:", error);
+                console.error("Error fetching user:", error.message);
                 this.user = null;
                 localStorage.removeItem("user"); 
                 return false;
@@ -106,23 +106,29 @@ export const useUsersStore = defineStore('users',{
                     })
                 }
             } catch (error) {
-                console.error("Failed to create user:", error);
+                console.error("Failed to create user:", error.message);
             }
         },
         async updateUser(updateValues) {
-            const updatingSelf = updateValues.user_id === this.user.user_id;
-
-            console.log(updatingSelf)
-            // Get old user data (whether it be from the logged in user or another user):
-            let oldUser = updatingSelf ? this.user : this.users.find(user => user.user_id === updateValues.user_id);
-
-            console.log(oldUser)
-            // Merge old and new data:
-                // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
-            const mergedUser = { ...oldUser, ...updateValues };
-            console.log(mergedUser)
-
             try {
+                // See if the user is updating themselves:
+                const updatingSelf = updateValues.user_id === this.user.user_id;
+                console.log("updatingSelf:", updatingSelf);
+
+                // Get index of updated user:
+                const index = updatingSelf ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
+                if (index === -1 ) throw Error("User could not be found");
+
+                // Get old user data (whether it be from the logged in user or another user):
+                const oldUser = updatingSelf ? this.user : this.users[index];
+
+                console.log("oldUser:", oldUser);
+                // Merge old and new data:
+                    // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
+                const mergedUser = { ...oldUser, ...updateValues };
+                console.log("mergedUser:", mergedUser);
+
+                // Make request to update user:
                 const response = await fetch(`/api/users/${mergedUser.user_id}`, {
                     method: "PUT",
                     headers: { 
@@ -131,21 +137,22 @@ export const useUsersStore = defineStore('users',{
                     },
                     body: JSON.stringify(mergedUser),
                 });
-        
+                
                 // Check if response is okay:
-                if (!response.ok) {
-                    throw new Error("Failed to update user");
+                if (!response.ok) throw new Error("Failed to update user");
+
+                // Update state and local storage if necessary:
+                if (updatingSelf) {
+                    this.user = mergedUser;
+                    console.log("this.user:", this.user);
+                    localStorage.setItem("user", JSON.stringify(this.user));
                 }
-
-                // Update local storage if necessary:
-                if (updatingSelf) localStorage.setItem("user", JSON.stringify(this.user));
-
-                // This will take the old user state and update it:
-                    // oldUser is a pointer to user data that is being edited.
-                    // This means that editing this variable will update the this.user or this.users.
-                oldUser = mergedUser;
+                else {
+                    this.users[index] = mergedUser;
+                    console.log("this.users:", this.users);
+                }
             } catch (error) {
-                console.error("Update failed:", error);
+                console.error("Update failed:", error.message);
             }
         },
         async deleteUser(userID) {
@@ -168,11 +175,9 @@ export const useUsersStore = defineStore('users',{
 
                 });
         
-                if (!response.ok) {
-                    throw new Error("Failed to delete user");
-                }
+                if (!response.ok) throw new Error("Failed to delete user");
             } catch (error) {
-                console.error("Delete failed, rolling back:", error);
+                console.error("Delete failed, rolling back:", error.message);
                 this.users.splice(index, 0, oldUser);
             }
         },
@@ -197,7 +202,7 @@ export const useUsersStore = defineStore('users',{
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
             } catch (error) {
-                console.error("Login failed:", error);
+                console.error("Login failed:", error.message);
                 return false;
             }
         },

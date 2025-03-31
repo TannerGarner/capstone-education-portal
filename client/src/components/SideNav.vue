@@ -1,5 +1,5 @@
 <script setup>
-    import { useRouter, RouterLink } from 'vue-router';
+    import { useRouter } from 'vue-router';
     import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     const userStore = useUsersStore();
@@ -8,7 +8,10 @@
 
     const activeComponent = ref(props.components.Account);
 
+    const isAdmin = userStore.user.is_admin;
+
     function changeActiveComponent(component) {
+        console.log("userStore.users:", userStore.users);
         activeComponent.value = component;
         props.changeDisplay(component); 
     }
@@ -34,25 +37,25 @@
                 Account
             </button>
             <button 
-                v-if="!userStore.user.is_admin"
+                v-if="!isAdmin"
                 @click="changeActiveComponent(components.RegisteredCourses)" 
                 :class="{ active: activeComponent === components.RegisteredCourses }">
                 Registered Courses
             </button>
             <button
-                v-if="!userStore.user.is_admin" 
+                v-if="!isAdmin" 
                 @click="changeActiveComponent(components.Register)" 
                 :class="{ active: activeComponent === components.Register }">
                 Register
             </button>
             <button 
-                v-if="userStore.user.is_admin"
+                v-if="isAdmin"
                 @click="changeActiveComponent(components.AdminAllCourses)" 
                 :class="{ active: activeComponent === components.AdminAllCourses }">
                 All Courses
             </button>
             <button 
-                v-if="userStore.user.is_admin"
+                v-if="isAdmin"
                 @click="changeActiveComponent(components.AdminAllStudents)" 
                 :class="{ active: activeComponent === components.AdminAllStudents }">
                 All Students
