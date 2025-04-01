@@ -32,6 +32,7 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async fetchUsers() {
+            console.log("I was called!");
             try {
                 this.users = await (await fetch("/api/users", {
                     method: "GET",
@@ -115,11 +116,14 @@ export const useUsersStore = defineStore('users',{
                 const updatingSelf = updateValues.user_id === this.user.user_id;
 
                 // Get index of updated user:
-                const index = updatingSelf ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
-                if (index === -1 ) throw Error("User could not be found");
+                const index = this.users.length ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
+                if (index === -1 ) throw new Error("User could not be found");
+                // const index = updatingSelf ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
+                // if (index === -1 ) throw Error("User could not be found");
 
                 // Get old user data (whether it be from the logged in user or another user):
-                const oldUser = updatingSelf ? this.user : this.users[index];
+                const oldUser = this.users.length ? this.user : this.users[index];
+                // const oldUser = updatingSelf ? this.user : this.users[index];
                 console.log("oldUser:", oldUser);
 
                 // Merge old and new data:
