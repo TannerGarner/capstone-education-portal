@@ -11,22 +11,32 @@
     const isAdmin = userStore.user.is_admin;
 
     function changeActiveComponent(component) {
-        console.log("userStore.users:", userStore.users);
         activeComponent.value = component;
-        props.changeDisplay(component); 
+        props.changeDisplay(component);
     }
 
-    function logout(){ 
+    function logout() {
         userStore.logout();
         router.push("/auth");
     }
 
+    function showUserStateForDebugging() {
+        console.log("=".repeat(25));
+        console.log("userStore.user:", userStore.user);
+        console.log("userStore.users:", userStore.users);
+        console.log("=".repeat(25));
+    }
 </script>
 
 <template>
     <div class="sideNav">
         <div class="user">
-            <img src="../assets/vue.svg" alt="user-picture" class="userPic">
+            <img
+                src="../assets/vue.svg"
+                alt="user-picture"
+                class="userPic"
+                @dblclick="showUserStateForDebugging()"
+            />
             <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
             <button class="logout" @click="logout">Logout</button>
         </div>

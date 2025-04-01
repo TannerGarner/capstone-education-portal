@@ -46,7 +46,7 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async fetchUser(userID) {
-            if (!userID) {
+            if (!userID && userID !== 0) {
                 console.error("fetchUser: No userID provided");
                 return;
             }
@@ -113,7 +113,6 @@ export const useUsersStore = defineStore('users',{
             try {
                 // See if the user is updating themselves:
                 const updatingSelf = updateValues.user_id === this.user.user_id;
-                console.log("updatingSelf:", updatingSelf);
 
                 // Get index of updated user:
                 const index = updatingSelf ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
@@ -121,8 +120,8 @@ export const useUsersStore = defineStore('users',{
 
                 // Get old user data (whether it be from the logged in user or another user):
                 const oldUser = updatingSelf ? this.user : this.users[index];
-
                 console.log("oldUser:", oldUser);
+
                 // Merge old and new data:
                     // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
                 const mergedUser = { ...oldUser, ...updateValues };
@@ -131,29 +130,27 @@ export const useUsersStore = defineStore('users',{
                 // Make request to update user:
                 const response = await fetch(`/api/users/${mergedUser.user_id}`, {
                     method: "PUT",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
                     body: JSON.stringify(mergedUser),
                 });
-                
+
                 // Check if response is okay:
                 if (!response.ok) throw new Error("Failed to update user");
 
                 // Update state and local storage if necessary:
+                console.log("this.users:", this.users);
+                if (this.users.length) this.users[index] = mergedUser;
                 if (updatingSelf) {
-                    this.user = mergedUser;
-                    console.log("this.user:", this.user);
+                    this.user = { ...this.user, ...mergedUser };
                     localStorage.setItem("user", JSON.stringify(this.user));
-                }
-                else {
-                    this.users[index] = mergedUser;
-                    console.log("this.users:", this.users);
                 }
             } catch (error) {
                 console.error("Update failed:", error.message);
             }
+            console.log("");
         },
         async deleteUser(userID) {
             const index = this.users.findIndex(user => user.user_id === userID);
