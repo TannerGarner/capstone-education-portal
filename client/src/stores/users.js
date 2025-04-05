@@ -112,12 +112,15 @@ export const useUsersStore = defineStore('users',{
         },
         async updateUser(updateValues) {
             try {
+                console.log("updateValues:", updateValues);
+
                 // See if the user is updating themselves:
                 const updatingSelf = updateValues.user_id === this.user.user_id;
 
                 // Get index of updated user:
-                const index = this.users.length ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
+                const index = this.users.length ? this.users.findIndex(user => user.user_id === updateValues.user_id) : null;
                 if (index === -1 ) throw new Error("User could not be found");
+                console.log("index:", index);
                 // const index = updatingSelf ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
                 // if (index === -1 ) throw Error("User could not be found");
 
