@@ -32,7 +32,6 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async fetchUsers() {
-            console.log("I was called!");
             try {
                 this.users = await (await fetch("/api/users", {
                     method: "GET",
@@ -41,7 +40,7 @@ export const useUsersStore = defineStore('users',{
                         "Authorization": `Bearer ${this.user.token}`
                     },
                 })).json();
-                return this.users;
+                // return this.users;
             } catch (error) {
                 console.error("Error fetching users:", error.message);
             }
@@ -68,10 +67,17 @@ export const useUsersStore = defineStore('users',{
                 return true;
             } catch (error) {
                 console.error("Error fetching user:", error.message);
-                this.user = null;
+                this.user = {};
                 localStorage.removeItem("user"); 
                 return false;
             }
+        },
+        async updateAllUserState() {
+            if (this.user.is_admin) this.fetchUsers();
+
+            this.fetchUser(this.user.user_id);
+
+            // await Promise.all([this.fetchUsers(), this.fetchUser(this.user.user_id)]);
         },
         async createUser(newUser) {
             try {
@@ -110,31 +116,21 @@ export const useUsersStore = defineStore('users',{
                 console.error("Failed to create user:", error.message);
             }
         },
-        async updateUser(updateValues) {
+        async updateUser(updateValues, updatingUserFromUsersList = false) {
             try {
                 console.log("updateValues:", updateValues);
 
-                // See if the user is updating themselves:
-                const updatingSelf = updateValues.user_id === this.user.user_id;
-
-                // Get index of updated user:
-                const index = this.users.length ? this.users.findIndex(user => user.user_id === updateValues.user_id) : null;
-                if (index === -1 ) throw new Error("User could not be found");
-                console.log("index:", index);
-                // const index = updatingSelf ? null : this.users.findIndex(user => user.user_id === updateValues.user_id);
-                // if (index === -1 ) throw Error("User could not be found");
-
-                // Get old user data (whether it be from the logged in user or another user):
-                const oldUser = this.users.length ? this.user : this.users[index];
-                // const oldUser = updatingSelf ? this.user : this.users[index];
-                console.log("oldUser:", oldUser);
+                // Get the old user data:
+                const oldUser = updatingUserFromUsersList
+                    ? this.users.find(user => user.user_id === updateValues.user_id)
+                    : this.user;
 
                 // Merge old and new data:
                     // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
                 const mergedUser = { ...oldUser, ...updateValues };
                 console.log("mergedUser:", mergedUser);
 
-                // Make request to update user:
+                // Make request to update user in database:
                 const response = await fetch(`/api/users/${mergedUser.user_id}`, {
                     method: "PUT",
                     headers: {
@@ -147,17 +143,11 @@ export const useUsersStore = defineStore('users',{
                 // Check if response is okay:
                 if (!response.ok) throw new Error("Failed to update user");
 
-                // Update state and local storage if necessary:
-                console.log("this.users:", this.users);
-                if (this.users.length) this.users[index] = mergedUser;
-                if (updatingSelf) {
-                    this.user = { ...this.user, ...mergedUser };
-                    localStorage.setItem("user", JSON.stringify(this.user));
-                }
+                // Update state:
+                this.updateAllUserState();
             } catch (error) {
                 console.error("Update failed:", error.message);
             }
-            console.log("");
         },
         async deleteUser(userID) {
             const index = this.users.findIndex(user => user.user_id === userID);

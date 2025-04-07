@@ -30,7 +30,7 @@
             alert(`Successfully created user`)
         } else {
             console.log(userInfo);
-            await userStore.updateUser(userInfo);
+            await userStore.updateUser(userInfo, true);
         }
         closeEditModal();
     }
@@ -76,7 +76,8 @@
                     <p>Create a New User</p>
                     <button @click="createUser" class="createUser">+</button>
                 </div>
-            </div>            <div class="studentList">
+            </div>
+            <div class="studentList">
                 <div class="studentHeader">
                     <p>First Name</p>
                     <p>Last Name</p>
@@ -95,7 +96,6 @@
                         Delete
                     </button>
                 </div>
-                
             </div>
         </div>
         <EditStudentModal 
