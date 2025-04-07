@@ -76,8 +76,6 @@ export const useUsersStore = defineStore('users',{
             if (this.user.is_admin) this.fetchUsers();
 
             this.fetchUser(this.user.user_id);
-
-            // await Promise.all([this.fetchUsers(), this.fetchUser(this.user.user_id)]);
         },
         async createUser(newUser) {
             try {
@@ -86,7 +84,7 @@ export const useUsersStore = defineStore('users',{
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newUser),
                 });
-        
+
                 if (!response.ok) {
                     throw new Error("Failed to create user");
                 }
@@ -101,9 +99,9 @@ export const useUsersStore = defineStore('users',{
                         password_length: password.length,
                         token: token,
                     };
-    
+
                     localStorage.setItem("user", JSON.stringify(this.user));
-    
+
                     this.users.push(this.user);
                 } else {
                     this.users.push({
@@ -116,14 +114,14 @@ export const useUsersStore = defineStore('users',{
                 console.error("Failed to create user:", error.message);
             }
         },
-        async updateUser(updateValues, updatingUserFromUsersList = false) {
+        async updateUser(updateValues) {
             try {
                 console.log("updateValues:", updateValues);
 
                 // Get the old user data:
-                const oldUser = updatingUserFromUsersList
-                    ? this.users.find(user => user.user_id === updateValues.user_id)
-                    : this.user;
+                const oldUser = this.user.user_id === updateValues.user_id
+                    ? this.user
+                    : this.users.find(user => user.user_id === updateValues.user_id);
 
                 // Merge old and new data:
                     // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
@@ -154,11 +152,11 @@ export const useUsersStore = defineStore('users',{
             console.log(index)
             console.log(this.user)
             if (index === -1) return;
-        
+
             const oldUser = { ...this.users[index] };
-        
+
             this.users.splice(index, 1);
-        
+
             try {
                 const response = await fetch(`/api/users/${userID}`, {
                     method: "DELETE",
@@ -166,9 +164,8 @@ export const useUsersStore = defineStore('users',{
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
-
                 });
-        
+
                 if (!response.ok) throw new Error("Failed to delete user");
             } catch (error) {
                 console.error("Delete failed, rolling back:", error.message);
@@ -182,7 +179,7 @@ export const useUsersStore = defineStore('users',{
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(credentials),
                 });
-        
+
                 if (!response.ok) throw new Error("Login failed");
 
                 const { token, user } = await response.json();
@@ -192,7 +189,7 @@ export const useUsersStore = defineStore('users',{
                     password_length: credentials.password.length,
                     token: token,
                 };
-                
+
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
             } catch (error) {

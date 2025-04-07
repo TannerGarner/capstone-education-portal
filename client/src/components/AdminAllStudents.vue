@@ -30,7 +30,7 @@
             alert(`Successfully created user`)
         } else {
             console.log(userInfo);
-            await userStore.updateUser(userInfo, true);
+            await userStore.updateUser(userInfo);
         }
         closeEditModal();
     }
