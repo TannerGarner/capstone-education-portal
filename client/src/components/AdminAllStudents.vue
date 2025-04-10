@@ -1,7 +1,7 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
-    import EditStudentModal from './EditStudentModal.vue';
+    import EditStudentModal from './modals/EditStudentModal.vue';
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
@@ -29,7 +29,7 @@
             await userStore.createUser(userInfo)
             alert(`Successfully created user`)
         } else {
-            console.log(userInfo)
+            console.log(userInfo);
             await userStore.updateUser(userInfo);
         }
         closeEditModal();
@@ -76,7 +76,8 @@
                     <p>Create a New User</p>
                     <button @click="createUser" class="createUser">+</button>
                 </div>
-            </div>            <div class="studentList">
+            </div>
+            <div class="studentList">
                 <div class="studentHeader">
                     <p>First Name</p>
                     <p>Last Name</p>
@@ -95,7 +96,6 @@
                         Delete
                     </button>
                 </div>
-                
             </div>
         </div>
         <EditStudentModal 

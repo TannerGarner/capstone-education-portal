@@ -1,5 +1,5 @@
 <script setup>
-    import { useRouter, RouterLink } from 'vue-router';
+    import { useRouter } from 'vue-router';
     import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     const userStore = useUsersStore();
@@ -8,22 +8,35 @@
 
     const activeComponent = ref(props.components.Account);
 
+    const isAdmin = userStore.user.is_admin;
+
     function changeActiveComponent(component) {
         activeComponent.value = component;
-        props.changeDisplay(component); 
+        props.changeDisplay(component);
     }
 
-    function logout(){ 
+    function logout() {
         userStore.logout();
         router.push("/auth");
     }
 
+    function showUserStateForDebugging() {
+        console.log("=".repeat(25));
+        console.log("userStore.user:", userStore.user);
+        console.log("userStore.users:", userStore.users);
+        console.log("=".repeat(25));
+    }
 </script>
 
 <template>
     <div class="sideNav">
         <div class="user">
-            <img src="../assets/vue.svg" alt="user-picture" class="userPic">
+            <img
+                src="../assets/vue.svg"
+                alt="user-picture"
+                class="userPic"
+                @dblclick="showUserStateForDebugging()"
+            />
             <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
             <button class="logout" @click="logout">Logout</button>
         </div>
@@ -34,25 +47,25 @@
                 Account
             </button>
             <button 
-                v-if="!userStore.user.is_admin"
+                v-if="!isAdmin"
                 @click="changeActiveComponent(components.RegisteredCourses)" 
                 :class="{ active: activeComponent === components.RegisteredCourses }">
                 Registered Courses
             </button>
             <button
-                v-if="!userStore.user.is_admin" 
+                v-if="!isAdmin" 
                 @click="changeActiveComponent(components.Register)" 
                 :class="{ active: activeComponent === components.Register }">
                 Register
             </button>
             <button 
-                v-if="userStore.user.is_admin"
+                v-if="isAdmin"
                 @click="changeActiveComponent(components.AdminAllCourses)" 
                 :class="{ active: activeComponent === components.AdminAllCourses }">
                 All Courses
             </button>
             <button 
-                v-if="userStore.user.is_admin"
+                v-if="isAdmin"
                 @click="changeActiveComponent(components.AdminAllStudents)" 
                 :class="{ active: activeComponent === components.AdminAllStudents }">
                 All Students

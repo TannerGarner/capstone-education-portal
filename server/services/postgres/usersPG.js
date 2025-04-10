@@ -1,125 +1,78 @@
 import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/errHandling.js";
+import { organizeAddressUserData } from "../../utils/otherUtils.js";
 
 export async function getUserPG(userID, config) {
-    function verifyUserExists(userData) {
-        if (!userData) {
-            if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
-            else return null;
-        }
-    }
-
     // Set up configuration variable:
     const defaultConfig = {
         throwErrWhenUserNotFound: true,
-        returnPasswordHash: false,
-        returnAddressDataOrID: "DATA"
+        returnPasswordHash: false
     };
     config = {
         ...defaultConfig,
         ...config
     };
 
-    // Get user data:
-    if (config.returnAddressDataOrID === "DATA") {
-        const res = await pgPool.query({
-            text: `
-                SELECT
-                    u.user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
-                FROM
-                    users u LEFT JOIN addresses a ON u.user_id = a.user_id
-                WHERE
-                    u.user_id = $1;
-            `,
-            values: [userID]
-        });
-        const rawUserData = res.rows[0];
+    const res = await pgPool.query({
+        text: `
+            SELECT
+                u.user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+            FROM
+                users u LEFT JOIN addresses a ON u.user_id = a.user_id
+            WHERE
+                u.user_id = $1;
+        `,
+        values: [userID]
+    });
+    const rawUserData = res.rows[0];
 
-        verifyUserExists(rawUserData);
-
-        const organizedUserData = {
-            user_id: rawUserData.user_id,
-            first_name: rawUserData.first_name,
-            last_name: rawUserData.last_name,
-            password_hash: rawUserData.password_hash,
-            email: rawUserData.email,
-            phone_number: rawUserData.phone_number,
-            is_admin: rawUserData.is_admin,
-            address: {
-                street: rawUserData.street,
-                city: rawUserData.city,
-                state: rawUserData.state_or_region,
-                country: rawUserData.country
-            }
-        };
-
-        if (!config.returnPasswordHash) delete organizedUserData.password_hash;
-
-        return organizedUserData;
+    // Verify the user exists:
+    if (!rawUserData) {
+        if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
+        else return null;
     }
-    else if (config.returnAddressDataOrID === "ID") {
-        const res = await pgPool.query({
-            text: "SELECT * FROM users WHERE user_id = $1;",
-            values: [userID]
-        });
 
-        const user = res.rows[0];
+    // Organize the user's data (put address data into an address property):
+    const organizedUserData = organizeAddressUserData(rawUserData);
 
-        if (!config.returnPasswordHash) delete user.password_hash;
+    if (!config.returnPasswordHash) delete organizedUserData.password_hash;
 
-        return user;
-    }
+    return organizedUserData;
 }
 
-export async function getUsersPG(searchTerm) {
+export async function getUsersPG(searchTerm, config) {
+    // Set up configuration variable:
+    const defaultConfig = {
+        returnPasswordHash: false
+    };
+    config = {
+        ...defaultConfig,
+        ...config
+    };
+
     // Ensure that the searchTerm is not undefined and that it is trimmed:
     searchTerm = (searchTerm ?? "").trim();
 
-    const mainQuery = `
-        SELECT
-            user_id,
-            first_name,
-            last_name,
-            email,
-            phone_number,
-            is_admin
-        FROM
-            users
-        WHERE
-    `;
-    let whereClause = "";
-    let values = [];
-
-    if (searchTerm.includes(" ")) {
-        const splitSearchTerm = searchTerm.split(/\s+/gi);
-
-        const firstName = splitSearchTerm[0];
-        const lastName = splitSearchTerm[splitSearchTerm.length - 1];
-
-        whereClause = "first_name ILIKE $1 AND last_name ILIKE $2";
-        values = [`%${firstName}%`, `%${lastName}%`];
-    }
-    else {
-        whereClause = "user_id::VARCHAR(9) ILIKE $1 OR first_name ILIKE $2 OR last_name ILIKE $2;";
-        values = [`${searchTerm}%`, `%${searchTerm}%`];
-    }
-
-    const { rows: users } = await pgPool.query({
-        text: mainQuery + whereClause,
-        values: values
+    let { rows: users } = await pgPool.query({
+        text: `
+            SELECT
+                u.user_id, first_name, last_name, email, phone_number, is_admin, street, city, state_or_region, country
+            FROM
+                users u LEFT JOIN addresses a ON u.user_id = a.user_id
+            WHERE
+                u.user_id::VARCHAR(9) ILIKE $1 OR first_name ILIKE $2 OR last_name ILIKE $2 OR email ILIKE $2;
+        `,
+        values: [`${searchTerm}%`, `%${searchTerm}%`]
     });
+
+    // Put all address data in its own property on each user:
+    users = users.map((user) => organizeAddressUserData(user));
 
     return users;
 }
 
 export async function createUserPG(userData) {
     await pgPool.query({
-        // text: `
-        //     INSERT INTO
-        //         users (user_id, first_name, last_name, password_hash, email, phone_number, is_admin, address_id)
-        //     VALUES
-        //         ($1, $2, $3, $4, $5, $6, $7, find_or_create_address($8, $9, $10, $11));
-        // `,
         text: `
             INSERT INTO
                 users (user_id, first_name, last_name, password_hash, email, phone_number, is_admin)
@@ -127,22 +80,15 @@ export async function createUserPG(userData) {
                 ($1, $2, $3, $4, $5, $6, $7);
         `,
         values: [
-            userData.user_id, // $1
-            userData.first_name, // $2
-            userData.last_name, // $3
-            userData.password_hash, // $4
-            userData.email, // $5
-            userData.phone_number, // $6
-            userData.is_admin, // $7
-
-            // userData.address.street, // $8
-            // userData.address.city, // $9
-            // userData.address.state, // $10
-            // userData.address.country // $11
+            userData.user_id,
+            userData.first_name,
+            userData.last_name,
+            userData.password_hash,
+            userData.email,
+            userData.phone_number,
+            userData.is_admin,
         ]
     });
-
-    // return !!rowCount;
 }
 
 export async function updateUserPG(userID, newData) {

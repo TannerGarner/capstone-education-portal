@@ -22,12 +22,12 @@ export const useUsersStore = defineStore('users',{
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
                     }
-                })
-                if(!response.ok) throw Error;
+                });
+                if (!response.ok) throw new Error ("Invalid token");
 
                 return true;
             } catch (error) {
-                console.error("Error verifying token:", error);
+                console.error("Error verifying token:", error.message);
                 return false;
             }
         },
@@ -40,13 +40,13 @@ export const useUsersStore = defineStore('users',{
                         "Authorization": `Bearer ${this.user.token}`
                     },
                 })).json();
-                return this.users;
+                // return this.users;
             } catch (error) {
-                console.error("Error fetching users:", error);
+                console.error("Error fetching users:", error.message);
             }
         },
         async fetchUser(userID) {
-            if (!userID) {
+            if (!userID && userID !== 0) {
                 console.error("fetchUser: No userID provided");
                 return;
             }
@@ -66,11 +66,16 @@ export const useUsersStore = defineStore('users',{
                 this.user = { ...this.user, ...userData };                
                 return true;
             } catch (error) {
-                console.error("Error fetching user:", error);
-                this.user = null;
+                console.error("Error fetching user:", error.message);
+                this.user = {};
                 localStorage.removeItem("user"); 
                 return false;
             }
+        },
+        async updateAllUserState() {
+            if (this.user.is_admin) this.fetchUsers();
+
+            this.fetchUser(this.user.user_id);
         },
         async createUser(newUser) {
             try {
@@ -79,7 +84,7 @@ export const useUsersStore = defineStore('users',{
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newUser),
                 });
-        
+
                 if (!response.ok) {
                     throw new Error("Failed to create user");
                 }
@@ -94,9 +99,9 @@ export const useUsersStore = defineStore('users',{
                         password_length: password.length,
                         token: token,
                     };
-    
+
                     localStorage.setItem("user", JSON.stringify(this.user));
-    
+
                     this.users.push(this.user);
                 } else {
                     this.users.push({
@@ -106,38 +111,40 @@ export const useUsersStore = defineStore('users',{
                     })
                 }
             } catch (error) {
-                console.error("Failed to create user:", error);
+                console.error("Failed to create user:", error.message);
             }
         },
         async updateUser(updateValues) {
-            // const index = this.users.findIndex(user => user.id === updateValues.user_id);
-            // if (index === -1) return;
-        
-            const oldUser = { ...this.user };
-        
-            // this.users[index] = { ...this.users[index], ...updateValues };
-
-            this.user = { ...updateValues };
-        
             try {
-                const response = await fetch(`/api/users/${this.user.user_id}`, {
+                console.log("updateValues:", updateValues);
+
+                // Get the old user data:
+                const oldUser = this.user.user_id === updateValues.user_id
+                    ? this.user
+                    : this.users.find(user => user.user_id === updateValues.user_id);
+
+                // Merge old and new data:
+                    // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
+                const mergedUser = { ...oldUser, ...updateValues };
+                console.log("mergedUser:", mergedUser);
+
+                // Make request to update user in database:
+                const response = await fetch(`/api/users/${mergedUser.user_id}`, {
                     method: "PUT",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
-                    body: JSON.stringify(this.user),
+                    body: JSON.stringify(mergedUser),
                 });
-        
-                if (!response.ok) {
-                    throw new Error("Failed to update user");
-                }
 
-                localStorage.setItem("user", JSON.stringify(this.user));
+                // Check if response is okay:
+                if (!response.ok) throw new Error("Failed to update user");
+
+                // Update state:
+                this.updateAllUserState();
             } catch (error) {
-                console.error("Update failed, rolling back:", error);
-                // this.users[index] = oldUser; 
-                this.user = oldUser;
+                console.error("Update failed:", error.message);
             }
         },
         async deleteUser(userID) {
@@ -145,11 +152,11 @@ export const useUsersStore = defineStore('users',{
             console.log(index)
             console.log(this.user)
             if (index === -1) return;
-        
+
             const oldUser = { ...this.users[index] };
-        
+
             this.users.splice(index, 1);
-        
+
             try {
                 const response = await fetch(`/api/users/${userID}`, {
                     method: "DELETE",
@@ -157,16 +164,11 @@ export const useUsersStore = defineStore('users',{
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
-
                 });
-        
-                if (!response.ok) {
-                    throw new Error("Failed to delete user");
-                    return false;
-                }
-                return true;
+
+                if (!response.ok) throw new Error("Failed to delete user");
             } catch (error) {
-                console.error("Delete failed, rolling back:", error);
+                console.error("Delete failed, rolling back:", error.message);
                 this.users.splice(index, 0, oldUser);
             }
         },
@@ -177,7 +179,7 @@ export const useUsersStore = defineStore('users',{
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(credentials),
                 });
-        
+
                 if (!response.ok) throw new Error("Login failed");
 
                 const { token, user } = await response.json();
@@ -187,11 +189,11 @@ export const useUsersStore = defineStore('users',{
                     password_length: credentials.password.length,
                     token: token,
                 };
-                
+
                 localStorage.setItem("user", JSON.stringify(this.user));
                 return true;
             } catch (error) {
-                console.error("Login failed:", error);
+                console.error("Login failed:", error.message);
                 return false;
             }
         },
