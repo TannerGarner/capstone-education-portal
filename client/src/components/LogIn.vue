@@ -23,13 +23,15 @@
 <template>
     <div class="container">
         <form @submit.prevent="onSubmit" class="login">
+            <div class="logo-container">
+                <img src="/logo.png" alt="logo" class="logo">
+                <h2>Vision<br>Academy</h2>
+            </div>
             <h1>Login</h1>
             <input v-model="login.user_id" required type="text" name="user_id" placeholder="User Id"></input>
             <input v-model="login.password" required type="password" name="password" placeholder="Password"></input>
             <button type="submit">Login</button>
-            <button @type="button" @click="emit('toggle')">
-                Switch to Sign Up
-            </button>
+            <p>Don't have an Account? <span @click="emit('toggle')">Sign Up</span></p>
         </form>
     </div>
 </template>
@@ -40,37 +42,72 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
+        width: 100%;
+        color: #153131;
+        background-color: #F5F1ED;
     }
 
     .login {
-        background-color: rgb(21,49,49);
         border-radius: 15px;
         padding: 30px 10px;
-        width: 500px;
-        height: 400px;
-        color: #F5F1ED;
+        width: 70%;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: space-around;
+        align-items: start;
+        gap: 30px;
+    }
+
+    .logo-container{
+        position: relative;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+        padding-right: 5%;
+    }
+
+    .logo{
+        width: 100px;
+        height: 100px;
     }
 
     .login input {
-        padding: 15px;
-        border-radius: 5px;
+        padding: 15px 0px;
         border: none;
-        background-color: #FE5E41;
+        color: #153131;
+        border-bottom: #153131 solid 2px;
+        background-color: #F5F1ED;
         font-size: 24px;
-        color: #F5F1ED;
+        display: flex;
+        width: 100%;
+        max-width: 100%;
     }
 
     .login input::placeholder{
-        color: #F5F1ED;
+        color: #153131;
         opacity: 50%;
+    }
+
+    input:focus {
+        border-color: #489FB5;        
+        box-shadow: 0 0 5px #489FB5;  
+        outline: none;                
+        padding: 15px;
     }
 
     button {
         background-color: #489FB5;
+        width: 100%;
+        font-size: 24px;
     }
 
+    button:hover{
+        background-color: #FE5E41;
+    }
+
+    span{
+        color: #489FB5;
+        cursor: pointer;
+    }
 </style>
