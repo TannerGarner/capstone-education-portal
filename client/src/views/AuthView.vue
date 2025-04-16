@@ -22,7 +22,7 @@
 </script>
 
 <template>
-  <div class="container">
+  <div class="view">
     <div class="auth">
       <SignUp v-if="showSignUp" @toggle="toggleAuthView"></SignUp>
       <LogIn v-else @toggle="toggleAuthView" ></LogIn>
@@ -31,7 +31,7 @@
 </template>
 
 <style scoped>
-  .container {
+  .view {
     display: flex;
     justify-content: center;
     align-items: center;

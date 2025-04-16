@@ -21,7 +21,7 @@
 </script>
 
 <template>
-    <div class="container">
+    <div class="view">
         <form @submit.prevent="onSubmit" class="login">
             <div class="logo-container">
                 <img src="/logo.png" alt="logo" class="logo">
@@ -37,7 +37,7 @@
 </template>
 
 <style scoped>
-    .container {
+    .view {
         display: flex;
         justify-content: center;
         align-items: center;

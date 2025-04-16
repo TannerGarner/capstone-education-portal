@@ -1,14 +1,29 @@
 html body {
-  font-family: 'Inter', sans-serif;;
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
   background-color: #F5F1ED;
 }
 
 .header{
-  background-color: #489FB5;
-  color: #F5F1ED;
+  background-color: rgba(72, 159, 181, 10%);
+  color: rgb(72, 159, 181);
+  border-bottom: rgb(72, 159, 181) solid 2px;
+  border-radius: 30px 30px 0 0;
   padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  height: 80vh;
+  border: #489FB5 2px solid;
+  border-radius: 30px;
+  overflow: hidden;
 }
 
 h1 {
@@ -24,6 +39,11 @@ h2{
 }
 
 h3 {
+  margin: 0;
+  padding: 0;
+}
+
+h4 {
   margin: 0;
   padding: 0;
 }
@@ -44,6 +64,27 @@ button {
   background-color: #153131;
   color: #F5F1ED;
   transition: background-color 0.3s, box-shadow 0.2s;
+}
+
+.logo{
+  width: 70px;
+  height: 70px;
+  margin: 0;
+}
+
+.searchBar {
+  padding: 10px 30px;
+  border-radius: 50px;
+  border: 2px solid #489FB5;
+  background-color: rgba(72, 159, 181, 0.25);
+  font-size: 24px;
+  color: #489FB5;
+  display: flex;
+  width: 50%;
+}
+
+.searchBar::placeholder {
+  color: #489FB5;
 }
 
 @media screen and (max-width: 768px) {

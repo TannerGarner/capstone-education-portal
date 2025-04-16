@@ -67,16 +67,11 @@
 <template>
     <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
-            <h1>All Students</h1>
+            <h2>Manage Users</h2>
+            <input class="searchBar" type="search" placeholder="Search All Users"></input>
+            <p @click="createUser" class="createUser">+ Create a New User</p>
         </div>
         <div class="allStudents">
-            <div class="studentInputs">
-                <input class="searchBar" type="search" placeholder="Search All Students"></input>
-                <div class="newStudent">
-                    <p>Create a New User</p>
-                    <button @click="createUser" class="createUser">+</button>
-                </div>
-            </div>
             <div class="studentList">
                 <div class="studentHeader">
                     <p>First Name</p>
@@ -84,7 +79,12 @@
                     <p>User ID</p>
                     <p>Email</p>
                 </div>
-                <div class="student" v-for="user in userStore.users" :key="user.user_id">
+                <div 
+                class="student" 
+                v-for="(user, index) in userStore.users" 
+                :key="user.user_id"
+                :class="{ firstStudent: index === 0 }"
+                >
                     <p>{{user.first_name}}</p>
                     <p>{{user.last_name}}</p>
                     <p>{{user.user_id}}</p>
@@ -109,54 +109,31 @@
 </template>
 
 <style scoped>
-    .container {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100vh;
-    }
-
-    .header {
-        background-color: #FE5E41;
-    }
 
     .allStudents {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 20px 1px 0px 1px;
         flex-grow: 1;
         overflow: hidden;
-    }
-
-    .studentInputs{
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        width: 100%;
-    }
-
-    .newStudent{
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        height: 80vh;
     }
 
     .createUser{
         font-weight: bold;
-        font-size: 36px;
-        width: 60px;
-        border-radius: 100px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #FE5E41;
     }
 
     .createUser:hover{
-        background-color: #FE5E41;
+        color: #489FB5;
     }
 
     .studentList{
         display: flex;
         flex-direction: column;
-        width: 100%;
+        width: 80vw;
         padding: 0px 2px 0px 2px;
         flex-grow: 1;
         overflow-y: auto;
@@ -164,32 +141,16 @@
         position: relative;
     }
 
-    .searchBar {
-        padding: 20px 40px;
-        border-radius: 50px;
-        border: 2px solid #489FB5;
-        background-color: rgba(72, 159, 181, 0.25);
-        font-size: 24px;
-        color: #489FB5;
-        display: flex;
-        width: 50%;
-        margin-bottom: 20px;
-    }
-
-    .searchBar::placeholder {
-        color: #489FB5;
-    }
-
     .studentHeader{
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
-        background-color: rgb(72, 159, 181);
-        color: #F5F1ED;
-        padding: 20px 5px;
-        border-radius: 1px;
+        background-color: #F5F1ED;
+        color: #153131;
+        padding: 25px 15px;
         position: sticky;
         top: 0;
+        border-bottom: #489FB5 2px solid;;
     }
 
     .studentHeader > * {
@@ -200,10 +161,8 @@
     }
 
     .student{
-        background-color: rgba(72, 159, 181, 0.25);
-        border: solid 2px #489FB5;
-        padding: 5px;
-        margin-top: 1px;
+        border-top: solid 2px #489FB5;
+        padding: 15px;
         border-radius: 1px;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -215,6 +174,10 @@
         text-overflow: ellipsis; 
         white-space: nowrap;
         margin-left: 20px;
+    }
+
+    .firstStudent {
+        border-top: none;
     }
 
     .details:hover {

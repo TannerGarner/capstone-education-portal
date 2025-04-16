@@ -39,12 +39,12 @@
 <template>
     <div class="container">
         <div class="header">
-            <h1>Registered Courses</h1>
+            <h2>Registered Courses</h2>
         </div>
         <div class="courseList">
             <div class="courseDisplay" v-for="course in enrollmentStore.coursesForUser" :key="course.course_id">
                 <div class="courseHeader">
-                    <h2>{{course.title}}</h2>
+                    <h3>{{course.title}}</h3>
                     <p>Schedule: {{course.schedule}}</p>
                     <p>Classroom: {{course.classroom_number}}</p>
                     <p>Credit Hours: {{course.credit_hours}}</p>
@@ -104,9 +104,5 @@
 
     button:hover{
         box-shadow: 0px 1px 5px #153131;
-    }
-
-    h2{
-        font-size: 18px;
     }
 </style>

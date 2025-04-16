@@ -82,7 +82,8 @@
 <template>
     <div class="container">
         <div class="header">
-            <h1>Account</h1>
+            <h2>My Account</h2>
+            <p>Delete My Account</p>
         </div>
         <div v-if="userStore.user" class="accountInfo">
             <div class="row">
@@ -178,8 +179,8 @@
     .container {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        height: 100%;
+        border: #489FB5 2px solid;
+        border-radius: 30px;
     }
 
     .accountInfo{
