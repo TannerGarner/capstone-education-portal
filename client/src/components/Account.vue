@@ -2,6 +2,7 @@
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     const userStore = useUsersStore();
+    const editMode = ref(false);
 
     onMounted(async () => {
         if (userStore.user){
@@ -25,46 +26,62 @@
             country: "",
         },
         phone_number: ""
-    })
+    });
 
-    const editorState = ref(new Map());
+    const personalData = [
+        { label: 'First Name', field: 'first_name', editable: true },
+        { label: 'Last Name', field: 'last_name', editable: true },
+        { label: 'User ID', field: 'user_id', editable: false },
+        { label: 'Email', field: 'email', editable: true },
+        { label: 'Password', field: 'password', editable: true, isPassword: true },
+    ];
 
-    const toggleEditor = (fieldId, isNested = false) => {
-        if (isNested) {
-            const [parent, child] = fieldId.split('.');
-            editorState.value.set(parent, {
-                ...editorState.value.get(parent),
-                [child]: !(editorState.value.get(parent)?.[child] || false),
-            });
-        } else {
-            const isOpen = editorState.value.get(fieldId) || false;
-            if (!isOpen) {
-                editUser.value = { ...userStore.user, address: { ...userStore.user.address } };
-            }
-            editorState.value.set(fieldId, !isOpen);
+    const contactData = [
+        { label: 'Street Address', field: 'address.street', editable: true, nested: true },
+        { label: 'City', field: 'address.city', editable: true, nested: true },
+        { label: 'State or Region', field: 'address.state_or_region', editable: true, nested: true },
+        { label: 'Country', field: 'address.country', editable: true, nested: true },
+        { label: 'Phone Number', field: 'phone_number', editable: true }
+    ];
+
+    const toggleEditMode = () => {
+        if (!editMode.value) {
+            editUser.value = { ...userStore.user, address: { ...userStore.user.address } };
         }
+        editMode.value = !editMode.value;
     };
 
-    const isEditorOpen = (fieldId, isNested = false) => {
-        if (isNested) {
-            const [parent, child] = fieldId.split('.');
-            return editorState.value.get(parent)?.[child] || false;
-        }
-        return editorState.value.get(fieldId) || false;
-    };
-    const saveChanges = async (fieldId, isNested = false) => {
-        if (isNested) {
-            const [parent, child] = fieldId.split('.');
-            if (!editUser.value[parent][child]) {
-                alert('Field cannot be empty');
-                return;
-            }
-        } else if (!editUser.value[fieldId]) {
-            alert('Field cannot be empty');
-            return;
-        }
+    const saveAllChanges = async () => {
         await userStore.updateUser(editUser.value);
-        toggleEditor(fieldId, isNested);
+        editMode.value = false;
+    };
+
+    const getValue = (field, nested) => {
+        if (nested) {
+            const [parent, child] = field.split('.');
+            return userStore.user[parent]?.[child];
+        }
+        if (field === 'password') {
+            return '•'.repeat(userStore.user.password_length);
+        }
+        return userStore.user[field];
+    };
+
+    const getEditValue = (field, nested) => {
+        if (nested) {
+            const [parent, child] = field.split('.');
+            return editUser.value[parent][child];
+        }
+        return editUser.value[field];
+    };
+
+    const updateEditValue = (field, value, nested) => {
+        if (nested) {
+            const [parent, child] = field.split('.');
+            editUser.value[parent][child] = value;
+        } else {
+            editUser.value[field] = value;
+        }
     };
 
     async function deleteAccount(userID){
@@ -76,101 +93,66 @@
             console.log("User clicked Cancel!");
         }
     }
-
 </script>
 
 <template>
     <div class="container">
         <div class="header">
-            <h2>My Account</h2>
-            <p>Delete My Account</p>
+            <h2>Account</h2>
+            <div class="deleteBox" @click="deleteAccount(userStore.user.user_id)">
+                <p>Delete My Account</p>
+            </div>
         </div>
         <div v-if="userStore.user" class="accountInfo">
-            <div class="row">
-                <p>First Name</p>
-                <p v-if="!isEditorOpen('first_name')" class="userDetail">{{userStore.user.first_name}}</p>
-                <input v-else v-model="editUser.first_name" class="userDetail"/>
-                <button @click="toggleEditor('first_name')">{{ isEditorOpen('first_name') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('first_name')" @click="saveChanges('first_name')">Save</button>
+            <div class="profileHeader">
+                <div class="profilePictureContainer">
+                    <img src="/logo.png" alt="Profile Picture" class="profilePicture" />
+                    <span class="editPic">Edit</span>
+                </div>
+                <div class="edit-controls">
+                    <button v-if="!editMode" @click="toggleEditMode">Edit Details</button>
+                    <template v-else>
+                        <button @click="toggleEditMode">Cancel</button>
+                        <button @click="saveAllChanges">Save All</button>
+                    </template>
+                </div>
             </div>
-            <div class="row">
-                <p>Last Name</p>
-                <p v-if="!isEditorOpen('last_name')" class="userDetail">{{userStore.user.last_name}}</p>
-                <input v-else v-model="editUser.last_name" class="userDetail"/>
-                <button @click="toggleEditor('last_name')">{{ isEditorOpen('last_name') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('last_name')" @click="saveChanges('last_name')">Save</button>
+            <div class="columns-container">
+                <div class="column">
+                    <div v-for="item in personalData" :key="item.field" class="row">
+                        <p>{{ item.label }}</p>
+                        <template v-if="!editMode">
+                            <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                        </template>
+                        <template v-else>
+                            <input v-if="item.editable"
+                                :value="getEditValue(item.field, item.nested)"
+                                @input="e => updateEditValue(item.field, e.target.value, item.nested)"
+                                class="userDetail"
+                                :type="item.isPassword ? 'password' : 'text'"
+                            />
+                            <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                        </template>
+                    </div>
+                </div>
+                <div class="column">
+                    <div v-for="item in contactData" :key="item.field" class="row">
+                        <p>{{ item.label }}</p>
+                        <template v-if="!editMode">
+                            <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                        </template>
+                        <template v-else>
+                            <input v-if="item.editable"
+                                :value="getEditValue(item.field, item.nested)"
+                                @input="e => updateEditValue(item.field, e.target.value, item.nested)"
+                                class="userDetail"
+                                :type="item.isPassword ? 'password' : 'text'"
+                            />
+                            <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                        </template>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <p>User ID</p>
-                <p class="userDetail">{{userStore.user.user_id}}</p>
-                <button class="inactive" >Edit</button>
-                <button v-if="isEditorOpen('user_id')">Save</button>
-            </div>
-            <div class="row">
-                <p>Email</p>
-                <p v-if="!isEditorOpen('email')" class="userDetail">{{userStore.user.email}}</p>
-                <input v-else v-model="editUser.email" class="userDetail"/>
-                <button @click="toggleEditor('email')">{{ isEditorOpen('email') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('email')" @click="saveChanges('email')">Save</button>
-            </div>
-            <div class="row">
-                <p>Password</p>
-                <p v-if="!isEditorOpen('password')" class="userDetail">
-                    {{ '•'.repeat(userStore.user.password_length) }}
-                </p>
-                <input v-else v-model="editUser.password" class="userDetail"/>
-                <button @click="toggleEditor('password')">{{ isEditorOpen('password') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('password')" @click="saveChanges('password')">Save</button>
-            </div>
-            <div class="row">
-                <p>Street Address</p>
-                <p v-if="!isEditorOpen('address.street', true)" class="userDetail">{{userStore.user.address?.street}}</p>
-                <input v-else v-model="editUser.address.street" class="userDetail"/>
-                <button @click="toggleEditor('address.street', true)">{{ isEditorOpen('address.street', true) ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.street', true)" @click="saveChanges('address.street', true)">Save</button>
-            </div>
-            <div class="row">
-                <p>City</p>
-                <p v-if="!isEditorOpen('address.city', true)" class="userDetail">{{userStore.user.address?.city}}</p>
-                <input v-else v-model="editUser.address.city" class="userDetail"/>
-                <button @click="toggleEditor('address.city', true)">{{ isEditorOpen('address.city', true) ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.city', true)" @click="saveChanges('address.city', true)">Save</button>
-            </div>
-            <div class="row">
-                <p>State or Region</p>
-                <p v-if="!isEditorOpen('address.state_or_region', true)" class="userDetail">
-                    {{ userStore.user.address?.state_or_region }}
-                </p>
-                <input
-                    v-else
-                    v-model="editUser.address.state_or_region"
-                    class="userDetail"
-                />
-                <button @click="toggleEditor('address.state_or_region', true)">
-                    {{ isEditorOpen('address.state_or_region', true) ? 'Cancel' : 'Edit' }}
-                </button>
-                <button
-                    v-if="isEditorOpen('address.state_or_region', true)"
-                    @click="saveChanges('address.state_or_region', true)"
-                >
-                    Save
-                </button>
-            </div>
-            <div class="row">
-                <p>Country</p>
-                <p v-if="!isEditorOpen('address.country', true)" class="userDetail">{{userStore.user.address?.country}}</p>
-                <input v-else v-model="editUser.address.country" class="userDetail"/>
-                <button @click="toggleEditor('address.country', true)">{{ isEditorOpen('address.country', true) ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('address.country', true)" @click="saveChanges('address.country', true)">Save</button>
-            </div>
-            <div class="row">
-                <p>Phone Number</p>
-                <p v-if="!isEditorOpen('phone_number')" class="userDetail">{{userStore.user.phone_number}}</p>
-                <input v-else v-model="editUser.phone_number" class="userDetail"/>
-                <button @click="toggleEditor('phone_number')">{{ isEditorOpen('phone_number') ? 'Cancel' : 'Edit' }}</button>
-                <button v-if="isEditorOpen('phone_number')" @click="saveChanges('phone_number')">Save</button>
-            </div>
-            <button @click="deleteAccount(userStore.user.user_id)" class="deleteAccount">Delete My Account</button>
         </div>
     </div>
 </template>
@@ -190,18 +172,56 @@
         margin: 0px 50px;
     }
 
-    .row {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        justify-items: center;
+    .profileHeader{
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        padding: 10px 0px;
-        border-bottom: 2px solid #489FB5;
+        padding: 50px 0px;
     }
 
-    .inactive{
-        background-color: grey;
-        cursor: not-allowed;
+    .profilePictureContainer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profilePicture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+    }
+
+    .editPic {
+        align-self: flex-end;
+        color: #FE5E41;
+        cursor: pointer;
+    }
+
+    .edit-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .columns-container {
+        display: flex;
+        gap: 40px;
+        justify-content: space-between;
+    }
+
+    .column {
+        flex: 1;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        justify-items: start;
+        align-items: center;
+        padding: 20px 0px;
+        border-bottom: 2px solid #153131;
     }
 
     input {
@@ -211,19 +231,25 @@
     }
 
     button {
-        background-color: #489FB5;
+        background-color: #F5F1ED;
+        color: #FE5E41;
+        border: #FE5E41 2px solid;
         transition: background-color 0.3s;
+        font-weight: bold;
     }
 
     button:hover {
         background-color: #FE5E41;
+        color: #F5F1ED;
     }
 
-    .deleteAccount{
-        background-color: #E63946;
-        width: 200px;
-        padding: 20px;
-        align-self: center;
-        margin-top: 50px;
+    .deleteBox{
+        color: #E63946;
+        font-weight: bold;
+    }
+
+    .deleteBox:hover{
+        cursor: pointer;
+        color: #FE5E41;
     }
 </style>
