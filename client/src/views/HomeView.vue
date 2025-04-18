@@ -9,6 +9,7 @@
     import AdminAllCourses from '../components/AdminAllCourses.vue';
     import AdminAllStudents from '../components/AdminAllStudents.vue';
     import TopBar from '../components/TopBar.vue';
+    import Schedule from '../components/Schedule.vue';
 
     const userStore = useUsersStore();
 
@@ -26,6 +27,7 @@
     <TopBar></TopBar>
     <div v-if="!userStore.user.is_admin" class="view">
         <RegisteredCourses></RegisteredCourses>
+        <Schedule></Schedule>
         <Account></Account>
     </div>
     <div v-if="userStore.user.is_admin" class="view">
