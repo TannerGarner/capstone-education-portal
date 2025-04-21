@@ -1,5 +1,5 @@
 import { createCoursePG, deleteCoursePG, searchCoursesPG, updateCoursePG } from "../services/postgres/coursesPG.js";
-import { sendErrRes } from "../utils/errHandling.js";
+import { sendErrRes } from "../utils/errHandlingUtils.js";
 
 export async function searchCoursesMW(req, res) {
     try {

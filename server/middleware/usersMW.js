@@ -3,8 +3,9 @@ import { genUserID, isUserIDSyntaxValid } from "../utils/userIDUtils.js";
 import { genToken } from "../services/jwt.js";
 import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersPG.js";
 import { createAddressPG, updateAddressPG } from "../services/postgres/addressesPG.js";
-import { sendErrRes, throwResErr } from "../utils/errHandling.js";
+import { sendErrRes, throwResErr } from "../utils/errHandlingUtils.js";
 import { separateAddressFromGeneralData } from "../utils/otherUtils.js";
+import { sanitizeUserData } from "../utils/dataHandlingUtils.js";
 
 export async function loginMW(req, res) {
     function throwInvalidCredsErr() {
@@ -21,6 +22,8 @@ export async function loginMW(req, res) {
             returnPasswordHash: true
         });
 
+        console.log("user:", user);
+
         if (!user) throwInvalidCredsErr();
         else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
 
@@ -31,6 +34,7 @@ export async function loginMW(req, res) {
             user: user
         });
     } catch (err) {
+        console.log("err:", err);
         sendErrRes(err, res);
     }
 }
@@ -86,54 +90,16 @@ export async function postUserMW(req, res) {
 }
 
 export async function putUserMW(req, res) {
-    function ensureRoleNotChanged(newGeneralData) {
-        if ("is_admin" in newGeneralData) {
-            const { sub, isAdmin } = req.auth;
-
-            if (newGeneralData.is_admin !== isAdmin && (!isAdmin || +(sub) === +(userID))) {
-                throwResErr(403, "User cannot change their role");
-            }
-        }
-    }
-
-    function updatePassword(newGeneralData) {
-        if ("password" in newGeneralData) {
-            newGeneralData.password_hash = bcrypt.hashSync(newGeneralData.password, 10);
-        }
-    }
-
-    const { userID } = req.params;
-
     try {
-        // Get old and new user data (separated into general and address data):
-        const { generalData: newGeneralData, address: newAddress } = separateAddressFromGeneralData(req.body);
-        const querriedUserData = await getUserPG(userID, { returnPasswordHash: true });
-        const { generalData: oldGeneralData, address: oldAddress } = separateAddressFromGeneralData(querriedUserData);
-
-        // Ensure user cannot change their role (changing from student to admin or otherwise):
-        ensureRoleNotChanged(newGeneralData);
-
-        // Update password hash:
-        updatePassword(newGeneralData);
-
-        // Merge general data and address data:
-        const mergedGeneralData = {
-            ...oldGeneralData,
-            ...newGeneralData
-        };
-        const mergedAddress = {
-            ...oldAddress,
-            ...newAddress
-        };
+        // Pull user data out of req and sanitize it:
+        const userData = sanitizeUserData(req);
 
         // Update data in DB:
-        await updateUserPG(userID, mergedGeneralData);
-        await updateAddressPG(userID, mergedAddress);
+        await updateUserPG(userData);
+        await updateAddressPG(userData);
 
-        // Put address inside general data:
-        mergedGeneralData.address = mergedAddress;
-
-        res.json(mergedGeneralData);
+        // Return response:
+        res.json({ errorMessage: null });
     } catch (err) {
         sendErrRes(err, res);
     }

@@ -38,7 +38,7 @@ export async function createAddressPG(userID, addressData) {
     });
 }
 
-export async function updateAddressPG(userID, addressData) {
+export async function updateAddressPG(userData) {
     await pgPool.query({
         text: `
             UPDATE
@@ -52,11 +52,11 @@ export async function updateAddressPG(userID, addressData) {
                 user_id = $5;
         `,
         values: [
-            addressData.street,
-            addressData.city,
-            addressData.state,
-            addressData.country,
-            userID
+            userData.street,
+            userData.city,
+            userData.state_or_region,
+            userData.country,
+            userData.user_id
         ]
     });
 }

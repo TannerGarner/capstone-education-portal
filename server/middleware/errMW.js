@@ -1,4 +1,4 @@
-import { sendErrRes } from "../utils/errHandling.js";
+import { sendErrRes } from "../utils/errHandlingUtils.js";
 
 export async function jwtErrMW(err, _req, res, _next) {
     function doesErrEqualOneOfFollowing(...errorMessages) {

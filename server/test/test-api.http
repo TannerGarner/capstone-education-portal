@@ -1,6 +1,6 @@
 # Expired token
 # @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE5NTQzODIxMywiaWF0IjoxNzQxNzAwMzAxLCJleHAiOjE3NDE3MDM5MDF9.94JqmPDF91gMlaD0EYUbybAFgej3kXGsTX6-RkAvwZ4
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc0MjUyMzM4MSwiZXhwIjoxNzQyNTI2OTgxfQ.MzFupgTTqXelTDDVA_JMTmHVC7Pe6-bIC9NEx3Bnbvw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc0NDk0NDMyNSwiZXhwIjoxNzQ0OTQ3OTI1fQ.jfL1cX3Rs1RxtRMN6zxz9RIvhiKsorHWgVQBthH37Aw
 
 
 ### Get all courses
@@ -137,12 +137,12 @@ Content-Type: application/json
 }
 
 ### Edit user
-PUT http://localhost:3001/api/users/845497544
+PUT http://localhost:3001/api/users/12345
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "phone_number": 404
+    "phone_number": 5056
 }
 
 ### Edit user

@@ -1,4 +1,4 @@
-import { throwResErr } from "../../utils/errHandling.js";
+import { throwResErr } from "../../utils/errHandlingUtils.js";
 import pgPool from "./pgPool.js";
 import { ensureCourseExistsPG } from "./coursesPG.js";
 import { ensureUserExistsPG, ensureUserIsNotAdminPG } from "./usersPG.js";

@@ -1,5 +1,5 @@
 import pgPool from "./pgPool.js";
-import { throwResErr } from "../../utils/errHandling.js";
+import { throwResErr } from "../../utils/errHandlingUtils.js";
 import { organizeAddressUserData } from "../../utils/otherUtils.js";
 
 export async function getUserPG(userID, config) {
@@ -16,7 +16,17 @@ export async function getUserPG(userID, config) {
     const res = await pgPool.query({
         text: `
             SELECT
-                u.user_id, first_name, last_name, password_hash, email, phone_number, is_admin, street, city, state_or_region, country
+                u.user_id,
+                first_name,
+                last_name,
+                password_hash,
+                email,
+                phone_number,
+                is_admin,
+                street,
+                city,
+                state_or_region,
+                country
             FROM
                 users u LEFT JOIN addresses a ON u.user_id = a.user_id
             WHERE
@@ -40,20 +50,11 @@ export async function getUserPG(userID, config) {
     return organizedUserData;
 }
 
-export async function getUsersPG(searchTerm, config) {
-    // Set up configuration variable:
-    const defaultConfig = {
-        returnPasswordHash: false
-    };
-    config = {
-        ...defaultConfig,
-        ...config
-    };
-
+export async function getUsersPG(searchTerm) {
     // Ensure that the searchTerm is not undefined and that it is trimmed:
     searchTerm = (searchTerm ?? "").trim();
 
-    let { rows: users } = await pgPool.query({
+    const { rows: users } = await pgPool.query({
         text: `
             SELECT
                 u.user_id, first_name, last_name, email, phone_number, is_admin, street, city, state_or_region, country
@@ -64,9 +65,6 @@ export async function getUsersPG(searchTerm, config) {
         `,
         values: [`${searchTerm}%`, `%${searchTerm}%`]
     });
-
-    // Put all address data in its own property on each user:
-    users = users.map((user) => organizeAddressUserData(user));
 
     return users;
 }
@@ -91,43 +89,46 @@ export async function createUserPG(userData) {
     });
 }
 
-export async function updateUserPG(userID, newData) {
+export async function updateUserPG(newData) {
+    const updatePasswordHash = !!newData.password_hash;
+
     await pgPool.query({
         text: `
             UPDATE
                 users
             SET
-                first_name = $1,
-                last_name = $2,
-                password_hash = $3,
-                email = $4,
-                phone_number = $5,
-                is_admin = $6
+                email = $1,
+                first_name = $2,
+                is_admin = $3,
+                last_name = $4,
+                ${updatePasswordHash ? "password_hash = $7," : ""}
+                phone_number = $5
             WHERE
-                user_id = $7;
+                user_id = $6;
         `,
         values: [
-            newData.first_name,
-            newData.last_name,
-            newData.password_hash,
+            // Required fields (1-6):
             newData.email,
-            newData.phone_number,
+            newData.first_name,
             newData.is_admin,
-            userID
+            newData.last_name,
+            newData.phone_number,
+            newData.user_id,
+            // Optional password_hash field (7):
+            ...(updatePasswordHash ? [newData.password_hash] : [])
         ]
     });
 }
 
 export async function deleteUserPG(userID) {
     // Verify that user exists to begin with:
-    await ensureUserExistsPG(userID)
+    await ensureUserExistsPG(userID);
 
     await pgPool.query({
         text: "DELETE FROM users WHERE user_id = $1;",
         values: [userID]
     });
 }
-
 
 export async function ensureUserExistsPG(userID) {
     const res = await pgPool.query({
