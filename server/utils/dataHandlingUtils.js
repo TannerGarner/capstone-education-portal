@@ -5,10 +5,7 @@ import { throwResErr } from "./errHandlingUtils.js";
 export function sanitizeUserData(req) {
     // Extract main request data:
     const userData = req.body;
-    userData.user_id = +(req.params.userID);
-
-    // Ensure that the user ID is a number:
-    if (isNaN(userData.user_id)) throwResErr(400, "Non-numeric user ID");
+    userData.user_id = req.params.userID;
 
     // Use password key (if present) to update password_hash:
     if ("password" in userData) {
@@ -49,7 +46,7 @@ export function sanitizeUserData(req) {
     const { error: err, value: sanitizedUserData } = userDataSchema.validate(userData);
 
     // Handle errors validating the data or return the data:
-    if (err) throwResErr(400, `Invalid userData: ${err.details[0].message}`);
+    if (err) throwResErr(400, `User data doesn't follow user schema: ${err.details[0].message}`);
     
     // Ensure the user's role isn't changed:
     if ("is_admin" in sanitizedUserData) {
