@@ -119,7 +119,7 @@
         </div>
         <div class="schedule-container">
             <div class="schedule-header">
-                <div class="time-header">Time</div>
+                <div class="time-header"></div>
                 <div class="day-header">Monday</div>
                 <div class="day-header">Tuesday</div>
                 <div class="day-header">Wednesday</div>
@@ -243,14 +243,14 @@
         padding: 8px 8px 0px 8px;
         font-weight: bold;
         font-size: 1em;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(21, 49, 49, 20%);
         overflow: hidden;
         transition: all 0.2s ease;
     }
 
     .course-block:hover {
         transform: scale(1.02);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(21, 49, 49, 20%);
         z-index: 100;
     }
 </style>

@@ -33,6 +33,7 @@
     <div v-if="userStore.user.is_admin" class="view">
         <AdminAllCourses></AdminAllCourses>
         <AdminAllStudents></AdminAllStudents>
+        <Account></Account>
     </div>
 </template>
 

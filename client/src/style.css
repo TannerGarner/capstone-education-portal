@@ -19,7 +19,7 @@ html body {
 .container {
   display: flex;
   flex-direction: column;
-  width: 80vw;
+  width: 75vw;
   height: 80vh;
   border: #489FB5 2px solid;
   border-radius: 30px;
@@ -27,31 +27,22 @@ html body {
   box-shadow: rgba(21, 49, 49, 20%) 0px 0px 20px 0px;
 }
 
-h1 {
+h1, h2, h3, h4, h5, h6, p, span, a, li, ul, ol, button {
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
+}
+
+h1 {
   font-size: 36px;
 }
 
 h2{
-  margin: 0;
-  padding: 0;
   font-size: 24px;
 }
 
-h3 {
-  margin: 0;
-  padding: 0;
-}
-
-h4 {
-  margin: 0;
-  padding: 0;
-}
-
-p{
-  margin:0;
-  padding: 0;
+.icon{
+  color: #153131;
 }
 
 button {

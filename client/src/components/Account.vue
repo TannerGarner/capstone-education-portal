@@ -252,4 +252,15 @@
         cursor: pointer;
         color: #FE5E41;
     }
+
+    @media screen and (max-width: 768px) {
+        .profilePicture {
+            width: 50px;
+            height: 50px;
+        }
+        .columns-container {
+            flex-direction: column;
+            gap: 0px;
+        }
+    }
 </style>
