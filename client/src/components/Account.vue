@@ -168,15 +168,15 @@
     .accountInfo{
         display: flex;
         flex-direction: column;
-        padding: 50px 0px;
-        margin: 0px 50px;
+        padding: 1rem 3rem;
+        overflow-y: auto;
     }
 
     .profileHeader{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 50px 0px;
+        padding: 1rem 0px;
     }
 
     .profilePictureContainer {

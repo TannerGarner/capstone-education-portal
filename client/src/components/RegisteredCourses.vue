@@ -34,12 +34,30 @@
     };
 
     const isDropdownOpen = (course_id) => dropdownState.value.get(course_id) || false;
+
+    function calculateCredits() {
+        const courses = enrollmentStore.coursesForUser;
+        return Array.isArray(courses) ? courses.reduce((total, course) => total + course.credit_hours, 0) : 0;
+    }
+
+    function calculateTuition() {
+        const courses = enrollmentStore.coursesForUser;
+        return Array.isArray(courses) ? courses.reduce((total, course) => total + Number(course.tuition_cost.replace(/[^0-9.-]+/g, "")), 0) : 0;
+    }
+
+    function newCourse() {
+        console.log("New Course Clicked")
+    }
 </script>
 
 <template>
     <div class="container">
         <div class="header">
             <h2>Registered Courses</h2>
+            <p>Courses: {{ enrollmentStore.coursesForUser.length }}</p>
+            <p>Credits: {{ calculateCredits() }}</p>
+            <p>Tuition: ${{ calculateTuition() }}</p>
+            <h2 class="addCourse" @click="newCourse()">+ Add a Course</h2>
         </div>
         <div class="courseList">
             <div class="courseDisplay" v-for="course in enrollmentStore.coursesForUser" :key="course.course_id">
@@ -78,6 +96,7 @@
         flex-direction: column;
         gap: 20px;
         padding: 20px;
+        overflow-y: auto;
     }
 
     .courseDisplay{
@@ -92,6 +111,11 @@
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
+    }
+
+    .addCourse{
+        color: #FE5E41;
+        cursor: pointer;
     }
 
     .dropCourse{
