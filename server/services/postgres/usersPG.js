@@ -1,6 +1,5 @@
 import pgPool from "./pgPool.js";
 import { throwResErr } from "../../utils/errHandlingUtils.js";
-import { organizeAddressUserData } from "../../utils/otherUtils.js";
 
 export async function getUserPG(userID, config) {
     // Set up configuration variable:
@@ -13,13 +12,14 @@ export async function getUserPG(userID, config) {
         ...config
     };
 
+    // Query DB for user data:
     const res = await pgPool.query({
         text: `
             SELECT
                 u.user_id,
                 first_name,
                 last_name,
-                password_hash,
+                ${config.returnPasswordHash ? "password_hash," : ""}
                 email,
                 phone_number,
                 is_admin,
@@ -34,20 +34,16 @@ export async function getUserPG(userID, config) {
         `,
         values: [userID]
     });
-    const rawUserData = res.rows[0];
+    const userData = res.rows[0];
 
     // Verify the user exists:
-    if (!rawUserData) {
+    if (!userData) {
         if (config.throwErrWhenUserNotFound) throwResErr(404, `User (with user_id "${userID}") does not exist`);
         else return null;
     }
 
-    // Organize the user's data (put address data into an address property):
-    const organizedUserData = organizeAddressUserData(rawUserData);
-
-    if (!config.returnPasswordHash) delete organizedUserData.password_hash;
-
-    return organizedUserData;
+    // Return user data:
+    return userData;
 }
 
 export async function getUsersPG(searchTerm) {
