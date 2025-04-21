@@ -118,24 +118,14 @@ export const useUsersStore = defineStore('users',{
             try {
                 console.log("updateValues:", updateValues);
 
-                // Get the old user data:
-                const oldUser = this.user.user_id === updateValues.user_id
-                    ? this.user
-                    : this.users.find(user => user.user_id === updateValues.user_id);
-
-                // Merge old and new data:
-                    // Note: Currently updateValues is always equal to mergedUser. Either this code or other code should be simplified.
-                const mergedUser = { ...oldUser, ...updateValues };
-                console.log("mergedUser:", mergedUser);
-
                 // Make request to update user in database:
-                const response = await fetch(`/api/users/${mergedUser.user_id}`, {
+                const response = await fetch(`/api/users/${updateValues.user_id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
-                    body: JSON.stringify(mergedUser),
+                    body: JSON.stringify(updateValues),
                 });
 
                 // Check if response is okay:
