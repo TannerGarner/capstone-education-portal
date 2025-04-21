@@ -2,11 +2,6 @@ import Joi from "joi";
 import bcrypt from "bcrypt";
 import { throwResErr } from "./errHandlingUtils.js";
 
-// Delete This:
-// export function sanitizeAndOrganizeUserData(userData) {
-//     return organizeUserData(sanitizeUserData(userData));
-// }
-
 export function sanitizeUserData(req) {
     // Extract main request data:
     const userData = req.body;
@@ -20,10 +15,6 @@ export function sanitizeUserData(req) {
         userData.password_hash = bcrypt.hashSync(userData.password, 10);
         delete userData.password;
     }
-
-    // // Ensure user_id and password are removed from userData:
-    // delete userData.user_id;
-    // delete userData.password;
 
     // Validate the userData:
     const userDataSchema = Joi.object({
@@ -61,43 +52,14 @@ export function sanitizeUserData(req) {
     if (err) throwResErr(400, `Invalid userData: ${err.details[0].message}`);
     
     // Ensure the user's role isn't changed:
-    if ("is_admin" in userData) {
+    if ("is_admin" in sanitizedUserData) {
         const { sub, isAdmin } = req.auth;
 
-        if (userData.is_admin !== isAdmin && (!isAdmin || +(sub) === userData.user_id)) throwResErr(403, "User cannot change their role");
+        if (sanitizedUserData.is_admin !== isAdmin && (!isAdmin || +(sub) === sanitizedUserData.user_id)) {
+            throwResErr(403, "User cannot change their role");
+        }
     }
     
-    return userData;
-    // return {
-    //     userID: userID,
-    //     userData: sanitizedUserData
-    // };
+    // Return sanitized user data:
+    return sanitizedUserData;
 }
-
-// Delete This:
-// function organizeUserData(userData) {
-//     // Initialize separated user data objects:
-//     const generalData = {
-//         first_name: null,
-//         last_name: null,
-//         password_hash: null,
-//         email: null,
-//         phone_number: null,
-//         is_admin: null
-//     };
-//     const addressData = {
-//         street: null,
-//         city: null,
-//         state_or_region: null,
-//         country: null
-//     };
-
-//     // Separate the values from userData into generalData and addressData:
-//     Object.entries(userData).forEach(([key, value]) => {
-//         if (key in generalData) generalData[key] = value;
-//         else if (key in addressData) addressData[key] = value;
-//     });
-
-//     // Return the organized data:
-//     return { generalData, addressData };
-// }
