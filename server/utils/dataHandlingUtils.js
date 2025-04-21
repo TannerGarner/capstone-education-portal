@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { throwResErr } from "./errHandlingUtils.js";
 
 export function sanitizeUserData(req) {
-    // Extract main request data:
+    // Extract user data request data:
     const userData = req.body;
     userData.user_id = req.params.userID;
 
