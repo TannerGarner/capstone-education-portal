@@ -27,6 +27,19 @@ html body {
   box-shadow: rgba(21, 49, 49, 20%) 0px 0px 20px 0px;
 }
 
+.cover{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
 h1, h2, h3, h4, h5, h6, p, span, a, li, ul, ol, button {
   font-family: 'Inter', sans-serif;
   margin: 0;

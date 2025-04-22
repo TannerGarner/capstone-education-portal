@@ -3,10 +3,15 @@
     import { useEnrollmentStore } from '../stores/enrollment';
     import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
+import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
     
     const enrollmentStore = useEnrollmentStore();
     const courseStore = useCoursesStore();
     const userStore = useUsersStore();
+
+    const enrollModalOpen = ref(false);
+    const selectedCourse = ref(null);
+    const addCourseModalOpen = ref(false);
 
     let userid;
     onMounted(async ()=>{ 
@@ -32,8 +37,13 @@
         alert("Add Course Modal Clicked")
     }
 
-    function detailsModal(course_id) {
-        alert("Details Modal Clicked for Course ID: " + course_id)
+    function detailsModal(course) {
+        if (enrollModalOpen.value === false) {
+            selectedCourse.value = { ...course };
+            enrollModalOpen.value = true;
+        } else {
+            enrollModalOpen.value = false;
+        }    
     }
 
 </script>
@@ -61,11 +71,17 @@
                     </span> 
                     {{course.classroom_number}}
                 </p>
-                <button @click="detailsModal(course.course_id)">
+                <button @click="detailsModal(course)">
                     Details
                 </button>
             </div>
         </div>
+        <CourseEnrollmentModal
+            :course="selectedCourse"
+            :isEnrolled="true" 
+            :isOpen="enrollModalOpen" 
+            @close="detailsModal(course)"
+        />
     </div>
 </template>
 
@@ -84,11 +100,14 @@
         height: 100%;
         display: flex;
         flex-wrap: wrap;
-        gap: 30px;
+        gap: 5%;
         padding: 50px;
         overflow-y: auto;
     }
 
+    .courseList > :last-child{
+        align-self: flex-start;
+    }
 
     .courseCard{
         background-color: #F5F1ED;

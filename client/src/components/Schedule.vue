@@ -105,9 +105,8 @@
         return enrolledByDay;
     }
         
-    function openModal(course_id) {
-        console.log("Open Modal for course_id:", course_id);
-        alert("Open Modal for course_id: " + course_id);
+    function openModal(course) {
+        alert("Open Modal for course_id: " + (JSON.stringify(course)));
         // Implement modal opening logic here
     }
 </script>
@@ -136,7 +135,7 @@
                     <div v-for="(courses, day) in enrolledByDay" :key="day" class="day-column">
                         <div v-for="course in courses" :key="course.title" class="course-block"
                             :style="{ top: course.top + 'px', height: course.height + 'px' }"
-                            @click="openModal(course.course_id)"
+                            @click="openModal(course)"
                             >
                             {{ course.title }}
                         </div>
