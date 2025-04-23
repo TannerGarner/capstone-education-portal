@@ -4,7 +4,6 @@ import { genToken } from "../services/jwt.js";
 import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersPG.js";
 import { createAddressPG, updateAddressPG } from "../services/postgres/addressesPG.js";
 import { sendErrRes, throwResErr } from "../utils/errHandlingUtils.js";
-import { separateAddressFromGeneralData } from "../utils/otherUtils.js";
 import { sanitizeUserData } from "../utils/dataHandlingUtils.js";
 
 export async function loginMW(req, res) {
@@ -22,8 +21,6 @@ export async function loginMW(req, res) {
             returnPasswordHash: true
         });
 
-        console.log("user:", user);
-
         if (!user) throwInvalidCredsErr();
         else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
 
@@ -34,7 +31,6 @@ export async function loginMW(req, res) {
             user: user
         });
     } catch (err) {
-        console.log("err:", err);
         sendErrRes(err, res);
     }
 }
@@ -65,21 +61,20 @@ export async function getUsersMW(req, res) {
 
 export async function postUserMW(req, res) {
     try {
-        const userData = {
-            ...req.body,
-            password_hash: bcrypt.hashSync(req.body.password, 10),
-            user_id: genUserID()
-        };
+        // Generate user ID and attach it to request body:
+        req.body.user_id = genUserID();
 
-        const { generalData, address } = separateAddressFromGeneralData(userData);
+        // Sanitize user data:
+        const userData = sanitizeUserData(req);
 
         // Update DB:
-        await createUserPG(generalData);
-        await createAddressPG(generalData.user_id, address);
+        await createUserPG(userData);
+        await createAddressPG(userData);
 
         // Delete password_hash from userData:
         delete userData.password_hash;
 
+        // Return the user's user ID and a JWT in response:
         res.json({
             token: genToken(userData.user_id, userData.is_admin),
             user_id: userData.user_id
@@ -91,6 +86,9 @@ export async function postUserMW(req, res) {
 
 export async function putUserMW(req, res) {
     try {
+        // Attach the user ID to the request body:
+        req.body.user_id = req.params.userID;
+
         // Pull user data out of req and sanitize it:
         const userData = sanitizeUserData(req);
 

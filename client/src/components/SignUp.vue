@@ -5,37 +5,24 @@
     const userStore = useUsersStore();
     const router = useRouter();
 
-    const newUser = ref({
+    const defualtUserValues = {
         first_name: "",
         last_name: "",
         email: "",
         password: "",
-        address: {
-            street: "",
-            city: "",
-            state: "",
-            country: "",
-        },
+        street: "",
+        city: "",
+        state_or_region: "",
+        country: "",
         phone_number: "", 
         is_admin: false
-    })
+    };
+
+    const newUser = ref({ ...defualtUserValues });
 
     async function onSubmit(){
         await userStore.createUser(newUser.value);
-        newUser.value = {
-            first_name: "",
-            last_name: "",
-            email: "",
-            password: "",
-            address: {
-                street: "",
-                city: "",
-                state: "",
-                country: "",
-            },
-            phone_number: "",
-            is_admin: false
-        };
+        newUser.value = { ...defualtUserValues };
         
         router.push("/");
     }
@@ -56,10 +43,10 @@
                     <input v-model="newUser.phone_number" required type="tel" name="phone" placeholder="Phone Number">
                 </div>
                 <div class="column c2">
-                    <input v-model="newUser.address.street" required type="text" name="street" placeholder="Street Address">
-                    <input v-model="newUser.address.city" required type="text" name="city" placeholder="City">
-                    <input v-model="newUser.address.state" required type="text" name="stateRegion" placeholder="State, Region">
-                    <input v-model="newUser.address.country" required type="text" name="country" placeholder="Country">
+                    <input v-model="newUser.street" required type="text" name="street" placeholder="Street Address">
+                    <input v-model="newUser.city" required type="text" name="city" placeholder="City">
+                    <input v-model="newUser.state_or_region" required type="text" name="stateRegion" placeholder="State, Region">
+                    <input v-model="newUser.country" required type="text" name="country" placeholder="Country">
                 </div>
             </div>
             <button type="submit">Sign Up</button>
@@ -129,5 +116,4 @@
     button {
         background-color: #FE5E41;
     }
-
 </style>

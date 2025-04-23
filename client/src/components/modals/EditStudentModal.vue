@@ -28,7 +28,7 @@
     function fixString(string){
         let fixed = string.replaceAll("_", " ");
         fixed = fixed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-        fixed = fixed.replaceAll("Or", "or");
+        fixed = fixed.replaceAll(/Or\b/g, "or");
         return fixed;
     }
 

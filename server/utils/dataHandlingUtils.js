@@ -5,7 +5,6 @@ import { throwResErr } from "./errHandlingUtils.js";
 export function sanitizeUserData(req) {
     // Extract user data request data:
     const userData = req.body;
-    userData.user_id = req.params.userID;
 
     // Use password key (if present) to update password_hash:
     if ("password" in userData) {
@@ -48,14 +47,14 @@ export function sanitizeUserData(req) {
     // Handle errors validating the data or return the data:
     if (err) throwResErr(400, `User data doesn't follow user schema: ${err.details[0].message}`);
     
-    // Ensure the user's role isn't changed:
-    if ("is_admin" in sanitizedUserData) {
+    // Ensure the user's role isn't changed, and ensure new users can only be admins if created by admins:
+    if (req.auth) {
         const { sub, isAdmin } = req.auth;
 
         if (sanitizedUserData.is_admin !== isAdmin && (!isAdmin || +(sub) === sanitizedUserData.user_id)) {
-            throwResErr(403, "User cannot change their role");
+            throwResErr(403, "User cannot change their own role");
         }
-    }
+    } else if (sanitizedUserData.is_admin) throwResErr(403, "Lacks authority to be an admin (no JWT)");
     
     // Return sanitized user data:
     return sanitizedUserData;

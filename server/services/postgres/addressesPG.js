@@ -20,7 +20,7 @@ export async function getAddressPG(addressID) {
     return user;
 }
 
-export async function createAddressPG(userID, addressData) {
+export async function createAddressPG(userData) {
     await pgPool.query({
         text: `
             INSERT INTO
@@ -29,11 +29,11 @@ export async function createAddressPG(userID, addressData) {
                 ($1, $2, $3, $4, $5);
         `,
         values: [
-            userID,
-            addressData.street,
-            addressData.city,
-            addressData.state,
-            addressData.country
+            userData.user_id,
+            userData.street,
+            userData.city,
+            userData.state_or_region,
+            userData.country
         ]
     });
 }

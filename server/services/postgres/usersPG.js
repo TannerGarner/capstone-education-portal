@@ -80,7 +80,7 @@ export async function createUserPG(userData) {
             userData.password_hash,
             userData.email,
             userData.phone_number,
-            userData.is_admin,
+            userData.is_admin
         ]
     });
 }
