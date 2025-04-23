@@ -64,42 +64,38 @@
 <template>
     <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
-            <h1>All Courses</h1>
+            <h2>Manage Courses</h2>
+            <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+            <p @click="createCourse" class="createCourse">+ Create a Course</p>
         </div>
         <div class="allCourses">
-            <div class="courseInputs">
-                <input class="searchBar" type="search" placeholder="Search All Courses"></input>
-                <div class="newCourse">
-                    <p>Create a New Course</p>
-                    <button @click="createCourse" class="createCourse">+</button>
-                </div>
-            </div>
             <div class="courseList">
                 <div class="courseHeader">
                     <p>Course Title</p>
-                    <p>Schedule</p>
-                    <p>Classroom</p>
-                    <p>Credit Hours</p>
+                    <p>Course ID</p>
                     <p>Enrolled</p>
-                    <p>Spots Available</p>
-                    <p>Max Capacity</p>
-                    <p>Tuition Cost</p>
+                    <p>Schedule</p>
+                    <p>Credits</p>
+                    <p>Tuition</p>
                 </div>
-                <div class="course" v-for="course in courseStore.courses" :key="course.course_id">
-                    <p>{{course.title}}</p>
+                <div
+                class="course" 
+                v-for="(course, index) in courseStore.courses" 
+                :key="course.course_id" 
+                :class="{ firstCourse: index === 0 }"
+                >
+                    <h4>{{course.title}}</h4>
+                    <p>{{ course.course_id }}</p>
+                    <p>{{ course.spots_taken }}/{{course.maximum_capacity}}</p>
                     <p>{{course.schedule}}</p>
-                    <p>{{course.classroom_number}}</p>
                     <p>{{course.credit_hours}}</p>
-                    <p>{{ course.spots_taken }}</p>
-                    <p>{{ course.maximum_capacity-course.spots_taken }}</p>
-                    <p>{{course.maximum_capacity}}</p>
                     <p>{{course.tuition_cost}}</p>
                     <button class="details" @click="openEditModal(course)">
                         Edit
                     </button>
-                    <button class="delete" @click="deleteCourse(course.course_id)">
+                    <!-- <button class="delete" @click="deleteCourse(course.course_id)">
                         Delete
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
@@ -115,48 +111,24 @@
 
 <style scoped>
 
-    .container {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100vh;
-    }
-
-    .header {
-        background-color: #FE5E41;
-    }
-
     .allCourses {
+        width: 80vw;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 20px 1px 0px 1px;
         flex-grow: 1;
         overflow: hidden;
     }
 
-    .courseInputs{
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        width: 100%;
-    }
-
-    .newCourse{
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
     .createCourse{
+        font-size: 24px;
         font-weight: bold;
-        font-size: 36px;
-        width: 60px;
-        border-radius: 100px;
+        cursor: pointer;
+        color: #FE5E41;
     }
 
     .createCourse:hover{
-        background-color: #FE5E41;
+        color: #153131;
     }
 
     .courseList{
@@ -170,36 +142,16 @@
         position: relative;
     }
 
-    .searchBar {
-        padding: 20px 40px;
-        border-radius: 50px;
-        border: 2px solid #489FB5;
-        background-color: rgba(72, 159, 181, 0.25);
-        font-size: 24px;
-        color: #489FB5;
-        display: flex;
-        width: 50%;
-        margin-bottom: 20px;
-    }
-
-    .searchBar::placeholder {
-        color: #489FB5;
-    }
-
     .courseHeader{
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
-        background-color: rgb(72, 159, 181);
-        color: #F5F1ED;
+        background-color: #F5F1ED;
+        color: #153131;
         padding: 20px 5px;
-        border-radius: 1px;
+        border-bottom: #489FB5 2px solid;
         position: sticky;
         top: 0;
-    }
-
-    .courseHeader > * {
-        margin-left: 20px;
     }
 
     .courseHeader > * {
@@ -209,16 +161,20 @@
         margin-left: 20px;
     }
 
+
     .course{
-        background-color: rgba(72, 159, 181, 0.25);
-        border: solid 2px #489FB5;
-        padding: 5px;
-        margin-top: 1px;
+        border-top: solid 2px #489FB5;
+        padding: 15px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
     }
+
+    .course.firstCourse {
+        border: none;
+    }
+
 
     .course > * {
         overflow: hidden;       

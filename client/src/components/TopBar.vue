@@ -6,14 +6,7 @@
     const router = useRouter();
     const props = defineProps(['changeDisplay', 'components']);
 
-    const activeComponent = ref(props.components.Account);
-
     const isAdmin = userStore.user.is_admin;
-
-    function changeActiveComponent(component) {
-        activeComponent.value = component;
-        props.changeDisplay(component);
-    }
 
     function logout() {
         userStore.logout();
@@ -29,7 +22,11 @@
 </script>
 
 <template>
-    <div class="sideNav">
+    <div class="topBar">
+        <div class="logo-container">
+            <img src="/logo.png" alt="logo" class="logo">
+            <h2>Vision<br>Academy</h2>
+        </div>
         <div class="user">
             <img
                 src="../assets/vue.svg"
@@ -40,61 +37,37 @@
             <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
             <button class="logout" @click="logout">Logout</button>
         </div>
-        <nav class="links">
-            <button 
-                @click="changeActiveComponent(components.Account)" 
-                :class="{ active: activeComponent === components.Account }">
-                Account
-            </button>
-            <button 
-                v-if="!isAdmin"
-                @click="changeActiveComponent(components.RegisteredCourses)" 
-                :class="{ active: activeComponent === components.RegisteredCourses }">
-                Registered Courses
-            </button>
-            <button
-                v-if="!isAdmin" 
-                @click="changeActiveComponent(components.Register)" 
-                :class="{ active: activeComponent === components.Register }">
-                Register
-            </button>
-            <button 
-                v-if="isAdmin"
-                @click="changeActiveComponent(components.AdminAllCourses)" 
-                :class="{ active: activeComponent === components.AdminAllCourses }">
-                All Courses
-            </button>
-            <button 
-                v-if="isAdmin"
-                @click="changeActiveComponent(components.AdminAllStudents)" 
-                :class="{ active: activeComponent === components.AdminAllStudents }">
-                All Students
-            </button>
-        </nav>
     </div>
 </template>
 
 <style scoped>
-    .sideNav {
-        background-color: #153131;
-        color: #F5F1ED;
-        padding: 30px;
+    .topBar {
+        color: #153131;
         min-width: 10%;
         display: flex;
-        flex-direction: column;
+        padding: 10px 100px;
+        justify-content: space-between;
         align-items: center;
         gap: 20px;
+        border-bottom: #489FB5 2px solid;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .user {
         display: flex;
-        flex-direction: column;
         align-items: center;
         gap: 20px;
     }
 
     .logout{
-        background-color: #F5F1ED;
+        width: fit-content;
+        background-color: #489FB5;
+        color: #F5F1ED;
     }
 
     .logout:hover{
