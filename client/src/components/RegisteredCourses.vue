@@ -3,7 +3,7 @@
     import { useEnrollmentStore } from '../stores/enrollment';
     import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
-import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
+    import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
     
     const enrollmentStore = useEnrollmentStore();
     const courseStore = useCoursesStore();
@@ -90,6 +90,10 @@ import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
         background-color: #F5F1ED;
         display: flex;
         flex-direction: column;
+    }
+
+    .header > *{
+        color: #489FB5;
     }
 
     .header > p{
