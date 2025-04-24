@@ -16,12 +16,16 @@ html body {
   align-items: center;
 }
 
+.header > * {
+  color: #489FB5;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   width: 75vw;
   height: 80vh;
-  border: #489FB5 2px solid;
+  border: rgb(72, 159, 181) 2px solid;
   border-radius: 30px;
   overflow: hidden;
   box-shadow: rgba(21, 49, 49, 20%) 0px 0px 20px 0px;

@@ -19,12 +19,10 @@
         last_name: "",
         email: "",
         password: "",
-        address: {
-            street: "",
-            city: "",
-            state_or_region: "",
-            country: "",
-        },
+        street: "",
+        city: "",
+        state_or_region: "",
+        country: "",
         phone_number: ""
     });
 
@@ -37,16 +35,16 @@
     ];
 
     const contactData = [
-        { label: 'Street Address', field: 'address.street', editable: true, nested: true },
-        { label: 'City', field: 'address.city', editable: true, nested: true },
-        { label: 'State or Region', field: 'address.state_or_region', editable: true, nested: true },
-        { label: 'Country', field: 'address.country', editable: true, nested: true },
+        { label: 'Street Address', field: 'street', editable: true, nested: true },
+        { label: 'City', field: 'city', editable: true, nested: true },
+        { label: 'State or Region', field: 'state_or_region', editable: true, nested: true },
+        { label: 'Country', field: 'country', editable: true, nested: true },
         { label: 'Phone Number', field: 'phone_number', editable: true }
     ];
 
     const toggleEditMode = () => {
         if (!editMode.value) {
-            editUser.value = { ...userStore.user, address: { ...userStore.user.address } };
+            editUser.value = { ...userStore.user };
         }
         editMode.value = !editMode.value;
     };
@@ -56,11 +54,7 @@
         editMode.value = false;
     };
 
-    const getValue = (field, nested) => {
-        if (nested) {
-            const [parent, child] = field.split('.');
-            return userStore.user[parent]?.[child];
-        }
+    const getValue = (field) => {
         if (field === 'password') {
             return '•'.repeat(userStore.user.password_length);
         }
@@ -68,20 +62,13 @@
     };
 
     const getEditValue = (field, nested) => {
-        if (nested) {
-            const [parent, child] = field.split('.');
-            return editUser.value[parent][child];
-        }
         return editUser.value[field];
     };
 
-    const updateEditValue = (field, value, nested) => {
-        if (nested) {
-            const [parent, child] = field.split('.');
-            editUser.value[parent][child] = value;
-        } else {
-            editUser.value[field] = value;
-        }
+    const updateEditValue = (field, value) => {
+        
+        editUser.value[field] = value;
+        
     };
 
     async function deleteAccount(userID){
@@ -100,7 +87,10 @@
         <div class="header">
             <h2>Account</h2>
             <div class="deleteBox" @click="deleteAccount(userStore.user.user_id)">
-                <p>Delete My Account</p>
+                <p class="deleteText">Delete My Account</p>
+                <span class="material-symbols-outlined deleteText">
+                    delete
+                </span>
             </div>
         </div>
         <div v-if="userStore.user" class="accountInfo">
@@ -122,16 +112,16 @@
                     <div v-for="item in personalData" :key="item.field" class="row">
                         <p>{{ item.label }}</p>
                         <template v-if="!editMode">
-                            <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                            <p class="userDetail">{{ getValue(item.field) }}</p>
                         </template>
                         <template v-else>
                             <input v-if="item.editable"
-                                :value="getEditValue(item.field, item.nested)"
-                                @input="e => updateEditValue(item.field, e.target.value, item.nested)"
+                                :value="getEditValue(item.field)"
+                                @input="e => updateEditValue(item.field, e.target.value)"
                                 class="userDetail"
                                 :type="item.isPassword ? 'password' : 'text'"
                             />
-                            <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                            <p v-else class="userDetail">{{ getValue(item.field) }}</p>
                         </template>
                     </div>
                 </div>
@@ -139,16 +129,16 @@
                     <div v-for="item in contactData" :key="item.field" class="row">
                         <p>{{ item.label }}</p>
                         <template v-if="!editMode">
-                            <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                            <p class="userDetail">{{ getValue(item.field) }}</p>
                         </template>
                         <template v-else>
                             <input v-if="item.editable"
-                                :value="getEditValue(item.field, item.nested)"
-                                @input="e => updateEditValue(item.field, e.target.value, item.nested)"
+                                :value="getEditValue(item.field)"
+                                @input="e => updateEditValue(item.field, e.target.value)"
                                 class="userDetail"
                                 :type="item.isPassword ? 'password' : 'text'"
                             />
-                            <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                            <p v-else class="userDetail">{{ getValue(item.field) }}</p>
                         </template>
                     </div>
                 </div>
@@ -158,12 +148,6 @@
 </template>
 
 <style scoped>
-    .container {
-        display: flex;
-        flex-direction: column;
-        border: #489FB5 2px solid;
-        border-radius: 30px;
-    }
 
     .accountInfo{
         display: flex;
@@ -243,14 +227,32 @@
         color: #F5F1ED;
     }
 
-    .deleteBox{
-        color: #E63946;
-        font-weight: bold;
+    .deleteBox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background-color: #F5F1ED;
+        border-radius: 5px;
+        border: 2px solid #E63946;
+        transition: background-color 0.3s, color 0.3s;
     }
 
-    .deleteBox:hover{
+    .deleteBox:hover {
+        background-color: #E63946;
+        color: #F5F1ED;
         cursor: pointer;
-        color: #FE5E41;
+        border: 2px solid #E63946;
+    }
+
+    .deleteText{
+        color: #E63946;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .deleteBox:hover .deleteText {
+        color: #F5F1ED;
     }
 
     @media screen and (max-width: 768px) {

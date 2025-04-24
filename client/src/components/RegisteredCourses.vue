@@ -4,6 +4,7 @@
     import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
     import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
+    import AddCourseModal from './modals/AddCourseModal.vue';
     
     const enrollmentStore = useEnrollmentStore();
     const courseStore = useCoursesStore();
@@ -34,7 +35,11 @@
     }
 
     function addCourseModal() {
-        alert("Add Course Modal Clicked")
+        if (addCourseModalOpen.value === false) {
+            addCourseModalOpen.value = true;
+        } else {
+            addCourseModalOpen.value = false;
+        }    
     }
 
     function detailsModal(course) {
@@ -80,7 +85,11 @@
             :course="selectedCourse"
             :isEnrolled="true" 
             :isOpen="enrollModalOpen" 
-            @close="detailsModal(course)"
+            @close="detailsModal(null)"
+        />
+        <AddCourseModal
+            :isOpen="addCourseModalOpen" 
+            @close="addCourseModal"
         />
     </div>
 </template>

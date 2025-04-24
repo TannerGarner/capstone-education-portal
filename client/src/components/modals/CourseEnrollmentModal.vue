@@ -11,15 +11,14 @@
     });
     const userStore = useUsersStore();
 
-    let userid;
-    onMounted(async ()=>{ 
-        if(userStore.user.is_admin){
-            userid = userStore.editableUser.user_id
-        } else {
-            userid = userStore.user.user_id
-        }
-        enrollmentStore.getCoursesForUser(userid)
-    })
+    const userid = ref(null);
+
+    onMounted(async () => { 
+        userid.value = userStore.user.is_admin 
+            ? userStore.editableUser.user_id 
+            : userStore.user.user_id;
+        await enrollmentStore.getCoursesForUser(userid.value);
+    });
 
     const emit = defineEmits(['close']);
 
@@ -29,7 +28,7 @@
 
     function dropCourse() {
         if (confirm(`Are you sure you want to drop course with courseId: ${props.course.course_id}`)) {
-            const dropped = enrollmentStore.dropCourseFromUser(props.course.course_id)
+            const dropped = enrollmentStore.dropCourseFromUser(userid.value, props.course.course_id)
             alert(`${dropped ? "Dropped Successfully" : "Failed to Drop"}`)
             emit('close');
         } else {

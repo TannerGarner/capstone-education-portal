@@ -38,19 +38,20 @@
                     <img src="/logo.png" alt="logo" class="logo">
                     <h2>Vision<br>Academy</h2>
                 </div>
-                <div class="inputs">
-                <input type="text" placeholder="Profile Pic">
-                <input v-model="newUser.street" required type="text" name="street" placeholder="Street Address">
-                <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
-                <input v-model="newUser.city" required type="text" name="city" placeholder="City">
-                <input v-model="newUser.last_name" required type="text" name="lastName" placeholder="Last Name">
-                <input v-model="newUser.state" required type="text" name="stateRegion" placeholder="State, Region">
-                <input v-model="newUser.email" required type="email" name="email" placeholder="Email">
-                <input v-model="newUser.country" required type="text" name="country" placeholder="Country">
-                <input v-model="newUser.password" required type="password" name="password" placeholder="Password">
-                <input v-model="newUser.phone_number" required type="tel" name="phone" placeholder="Phone Number">
+                <h1>Student Registration</h1>
             </div>
-            </div>
+            <div class="inputs">
+                    <input type="text" placeholder="Profile Pic">
+                    <input v-model="newUser.street" required type="text" name="street" placeholder="Street Address">
+                    <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
+                    <input v-model="newUser.city" required type="text" name="city" placeholder="City">
+                    <input v-model="newUser.last_name" required type="text" name="lastName" placeholder="Last Name">
+                    <input v-model="newUser.state" required type="text" name="stateRegion" placeholder="State, Region">
+                    <input v-model="newUser.email" required type="email" name="email" placeholder="Email">
+                    <input v-model="newUser.country" required type="text" name="country" placeholder="Country">
+                    <input v-model="newUser.password" required type="password" name="password" placeholder="Password">
+                    <input v-model="newUser.phone_number" required type="tel" name="phone" placeholder="Phone Number">
+                </div>
             <button type="submit" class="submit">Sign Up</button>
             <p>Already have an Account? <span @click="emit('toggle')">Login</span></p>
         </form>
@@ -58,15 +59,6 @@
 </template>
 
 <style scoped>
-    .view {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        width: 100%;
-        color: #153131;
-        background-color: #F5F1ED;
-    }
 
     .signUp{
         border-radius: 15px;
@@ -80,9 +72,7 @@
     }
 
     .title{
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        grid-template-rows: 1fr;
+        display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 20px;
