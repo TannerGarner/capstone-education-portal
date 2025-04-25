@@ -16,12 +16,13 @@
     }
 
     function saveChanges() {
-        for (const [key, value] of Object.entries(editUser.value)) {
-            if (value === "") {
-                alert(`The field "${fixString(key)}" cannot be empty.`);
-                return;
-            }
-        }
+        // for (const [key, value] of Object.entries(editUser.value)) {
+        //     console.log("[key, value]:", [key, value]);
+        //     if (value === "") {
+        //         alert(`The field "${fixString(key)}" cannot be empty.`);
+        //         return;
+        //     }
+        // }
         emit('save', editUser.value);
     }
 

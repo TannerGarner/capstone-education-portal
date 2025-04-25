@@ -12,14 +12,25 @@ export function sanitizeUserData(req) {
         delete userData.password;
     }
 
+    console.log("userData:", userData);
+
+    const nullifyEmptyOrWhitespaceStrs = (value) => {
+        if (typeof value === "string" && value.trim() === "") return null;
+        return value;
+    };
+
     // Validate the userData:
     const userDataSchema = Joi.object({
         city: Joi.string()
             .allow(null)
-            .required(),
+            .custom(nullifyEmptyOrWhitespaceStrs),
+            // .default(null),
+            // .required(),
         country: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .default(null),
+            // .required(),
         email: Joi.string()
             .email()
             .required(),
@@ -35,14 +46,20 @@ export function sanitizeUserData(req) {
             .required(),
         state_or_region: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .default(null),
+            // .required(),
         street: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .default(null),
+            // .required(),
         user_id: Joi.number()
             .integer()
     });
     const { error: err, value: sanitizedUserData } = userDataSchema.validate(userData);
+
+    console.log("sanitizedUserData:", sanitizedUserData);
 
     // Handle errors validating the data or return the data:
     if (err) throwResErr(400, `User data doesn't follow user schema: ${err.details[0].message}`);

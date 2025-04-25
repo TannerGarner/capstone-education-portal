@@ -19,12 +19,10 @@
         last_name: "",
         email: "",
         password: "",
-        address: {
-            street: "",
-            city: "",
-            state_or_region: "",
-            country: "",
-        },
+        street: "",
+        city: "",
+        state_or_region: "",
+        country: "",
         phone_number: ""
     });
 
@@ -37,10 +35,10 @@
     ];
 
     const contactData = [
-        { label: 'Street Address', field: 'address.street', editable: true, nested: true },
-        { label: 'City', field: 'address.city', editable: true, nested: true },
-        { label: 'State or Region', field: 'address.state_or_region', editable: true, nested: true },
-        { label: 'Country', field: 'address.country', editable: true, nested: true },
+        { label: 'Street Address', field: 'street', editable: true },
+        { label: 'City', field: 'city', editable: true },
+        { label: 'State or Region', field: 'state_or_region', editable: true },
+        { label: 'Country', field: 'country', editable: true },
         { label: 'Phone Number', field: 'phone_number', editable: true }
     ];
 
@@ -57,10 +55,11 @@
     };
 
     const getValue = (field, nested) => {
-        if (nested) {
-            const [parent, child] = field.split('.');
-            return userStore.user[parent]?.[child];
-        }
+        console.log("field:", field);
+        // if (nested) {
+        //     const [parent, child] = field.split('.');
+        //     return userStore.user[parent]?.[child];
+        // }
         if (field === 'password') {
             return '•'.repeat(userStore.user.password_length);
         }
@@ -68,20 +67,21 @@
     };
 
     const getEditValue = (field, nested) => {
-        if (nested) {
-            const [parent, child] = field.split('.');
-            return editUser.value[parent][child];
-        }
+        // if (nested) {
+        //     const [parent, child] = field.split('.');
+        //     return editUser.value[parent][child];
+        // }
         return editUser.value[field];
     };
 
     const updateEditValue = (field, value, nested) => {
-        if (nested) {
-            const [parent, child] = field.split('.');
-            editUser.value[parent][child] = value;
-        } else {
-            editUser.value[field] = value;
-        }
+        // if (nested) {
+        //     const [parent, child] = field.split('.');
+        //     editUser.value[parent][child] = value;
+        // } else {
+        //     editUser.value[field] = value;
+        // }
+        editUser.value[field] = value;
     };
 
     async function deleteAccount(userID){
@@ -122,21 +122,18 @@
                     <div v-for="item in personalData" :key="item.field" class="row">
                         <p>{{ item.label }}</p>
                         <template v-if="!editMode">
-                            <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                            <p class="userDetail">{{ getValue(item.field) }}</p>
                         </template>
                         <template v-else>
                             <input v-if="item.editable"
-                                :value="getEditValue(item.field, item.nested)"
+                                :value="getEditValue(item.field)"
                                 @input="e => updateEditValue(item.field, e.target.value, item.nested)"
                                 class="userDetail"
                                 :type="item.isPassword ? 'password' : 'text'"
                             />
-                            <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                            <p v-else class="userDetail">{{ getValue(item.field) }}</p>
                         </template>
-                    </div>
-                </div>
-                <div class="column">
-                    <div v-for="item in contactData" :key="item.field" class="row">
+                        <!--
                         <p>{{ item.label }}</p>
                         <template v-if="!editMode">
                             <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
@@ -150,6 +147,39 @@
                             />
                             <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
                         </template>
+                        -->
+                    </div>
+                </div>
+                <div class="column">
+                    <div v-for="item in contactData" :key="item.field" class="row">
+                        <p>{{ item.label }}</p>
+                        <template v-if="!editMode">
+                            <p class="userDetail">{{ getValue(item.field) }}</p>
+                        </template>
+                        <template v-else>
+                            <input v-if="item.editable"
+                                :value="getEditValue(item.field, item.nested)"
+                                @input="e => updateEditValue(item.field, e.target.value, item.nested)"
+                                class="userDetail"
+                                :type="item.isPassword ? 'password' : 'text'"
+                            />
+                            <p v-else class="userDetail">{{ getValue(item.field) }}</p>
+                        </template>
+                        <!--
+                        <p>{{ item.label }}</p>
+                        <template v-if="!editMode">
+                            <p class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                        </template>
+                        <template v-else>
+                            <input v-if="item.editable"
+                                :value="getEditValue(item.field, item.nested)"
+                                @input="e => updateEditValue(item.field, e.target.value, item.nested)"
+                                class="userDetail"
+                                :type="item.isPassword ? 'password' : 'text'"
+                            />
+                            <p v-else class="userDetail">{{ getValue(item.field, item.nested) }}</p>
+                        </template>
+                        -->
                     </div>
                 </div>
             </div>
