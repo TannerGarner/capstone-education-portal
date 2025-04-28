@@ -55,7 +55,6 @@
     };
 
     const getValue = (field, nested) => {
-        console.log("field:", field);
         // if (nested) {
         //     const [parent, child] = field.split('.');
         //     return userStore.user[parent]?.[child];

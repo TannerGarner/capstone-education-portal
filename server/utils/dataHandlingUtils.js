@@ -14,23 +14,33 @@ export function sanitizeUserData(req) {
 
     console.log("userData:", userData);
 
-    const nullifyEmptyOrWhitespaceStrs = (value) => {
-        if (typeof value === "string" && value.trim() === "") return null;
+    function nullifyEmptyOrWhitespaceStrs(value) {
+        console.log(`value: |${value}|`);
+        console.log("typeof value:", typeof value);
+        if (typeof value === "string") {
+            value = value.trim();
+            if (!value) return null;
+        }
+
         return value;
+
+
+        // if (typeof value === "string" && value.trim() === "") return null;
+        // return value;
     };
 
     // Validate the userData:
     const userDataSchema = Joi.object({
         city: Joi.string()
             .allow(null)
-            .custom(nullifyEmptyOrWhitespaceStrs),
-            // .default(null),
-            // .required(),
+            .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
+            .default(null),
         country: Joi.string()
             .allow(null)
             .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
             .default(null),
-            // .required(),
         email: Joi.string()
             .email()
             .required(),
@@ -47,16 +57,17 @@ export function sanitizeUserData(req) {
         state_or_region: Joi.string()
             .allow(null)
             .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
             .default(null),
-            // .required(),
         street: Joi.string()
             .allow(null)
             .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
             .default(null),
-            // .required(),
         user_id: Joi.number()
             .integer()
-    });
+            .required()
+    }).options({ stripUnknown: true });
     const { error: err, value: sanitizedUserData } = userDataSchema.validate(userData);
 
     console.log("sanitizedUserData:", sanitizedUserData);

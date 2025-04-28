@@ -118,6 +118,11 @@ export const useUsersStore = defineStore('users',{
             try {
                 console.log("updateValues:", updateValues);
 
+                // Come back here, ensure the number of dots for a users password is valid:
+                // if ("password" in editUser.value) {
+                //     userStore.password_length = editUser.value.length;
+                // }
+
                 // Make request to update user in database:
                 const response = await fetch(`/api/users/${updateValues.user_id}`, {
                     method: "PUT",
