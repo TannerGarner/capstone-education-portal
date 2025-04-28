@@ -63,7 +63,7 @@
             <h2 class="addCourseModal" @click="addCourseModal()">+ Add a Course</h2>
         </div>
         <div class="courseList">
-            <div class="courseCard" v-for="course in enrollmentStore.coursesForUser" :key="course.course_id">
+            <div class="courseCard" v-for="course in enrollmentStore.coursesForUser" :key="course.course_id" @click="detailsModal(course)">
                 <h3>{{course.title}}</h3>
                 <p class="data">
                     <span class="material-symbols-outlined icon">
@@ -76,7 +76,7 @@
                     </span> 
                     {{course.classroom_number}}
                 </p>
-                <button @click="detailsModal(course)">
+                <button>
                     Details
                 </button>
             </div>
@@ -140,6 +140,7 @@
     .courseCard:hover{
         transform: scale(1.02);
         box-shadow: 0 4px 8px rgba(21, 49, 49, 20%);
+        cursor: pointer;
     }
 
     .data{
