@@ -44,7 +44,8 @@
 
     const toggleEditMode = () => {
         if (!editMode.value) {
-            editUser.value = { ...userStore.user };
+            const { user_id, first_name, last_name, email, password, street, city, state_or_region, country, phone_number, is_admin } = userStore.user;
+            editUser.value = { user_id, first_name, last_name, email, password, street, city, state_or_region, country, phone_number, is_admin };
         }
         editMode.value = !editMode.value;
     };
@@ -61,7 +62,7 @@
         return userStore.user[field];
     };
 
-    const getEditValue = (field, nested) => {
+    const getEditValue = (field) => {
         return editUser.value[field];
     };
 

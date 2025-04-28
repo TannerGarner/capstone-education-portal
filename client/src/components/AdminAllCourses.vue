@@ -112,7 +112,6 @@
 <style scoped>
 
     .allCourses {
-        width: 80vw;
         display: flex;
         flex-direction: column;
         align-items: center;

@@ -133,7 +133,6 @@
     .studentList{
         display: flex;
         flex-direction: column;
-        width: 80vw;
         padding: 0px 2px 0px 2px;
         flex-grow: 1;
         overflow-y: auto;
