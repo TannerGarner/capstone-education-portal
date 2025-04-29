@@ -16,6 +16,8 @@
         login.value.user_id = parseInt(login.value.user_id);
         if (await userStore.login(login.value)){
             router.push("/");
+        } else {
+            alert("Invalid User ID or Password")
         };
     }
 </script>

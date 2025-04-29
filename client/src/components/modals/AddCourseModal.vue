@@ -70,31 +70,31 @@
             </span>
             <div class="courseList">
                 <div class="tableHeader">
-                    <h3>
+                    <h3 @click="courseStore.sortCourses('title')">
                         Course Title
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3>
+                    <h3 @click="courseStore.sortCourses('enrolled')">
                         Enrolled
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3>
+                    <h3 @click="courseStore.sortCourses('schedule')">
                         Schedule
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3>
+                    <h3 @click="courseStore.sortCourses('credits')">
                         Credits
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3>
+                    <h3 @click="courseStore.sortCourses('tuition')">
                         Tuition
                         <span class="material-symbols-outlined">
                             swap_vert

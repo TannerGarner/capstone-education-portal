@@ -114,5 +114,20 @@ export const useCoursesStore = defineStore("courses",{
                 this.courses.splice(index, 0, oldCourse);
             }
         },
+        sortCourses(sortBy) {
+            if (sortBy === "title") {
+                this.courses.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (sortBy === "course_id") {
+                this.courses.sort((a, b) => a.course_id.localeCompare(b.course_id));
+            } else if (sortBy === "enrolled") {
+                this.courses.sort((a, b) => a.spots_taken - b.spots_taken);
+            } else if (sortBy === "schedule") {
+                this.courses.sort((a, b) => a.schedule.localeCompare(b.schedule));
+            } else if (sortBy === "credits") {
+                this.courses.sort((a, b) => a.credit_hours - b.credit_hours);
+            } else if (sortBy === "tuition") {
+                this.courses.sort((a, b) => a.tuition_cost.localeCompare(b.tuition_cost));
+            }
+        }
     },
 });
