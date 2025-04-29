@@ -2,6 +2,7 @@
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import EditStudentModal from './modals/EditStudentModal.vue';
+    import router from '../router/index.js';
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
@@ -51,15 +52,16 @@
             },          
             is_admin: ""
         }
-        selectedUser.value = { ...userPattern }
-        openEditModal(userPattern)
+        selectedUser.value = { ...userPattern };
+        openEditModal(userPattern);
     }
 
     async function deleteUser(user_id){
         if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
-            const deleted = await userStore.deleteUser(user_id)
-            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`)
-            router.push("/auth")
+            await userStore.deleteUser(user_id);
+            // const deleted = await userStore.deleteUser(user_id);
+            // alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
+            // if (deleted) router.push("/auth");
         }
     }
 </script>

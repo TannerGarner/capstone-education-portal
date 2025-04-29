@@ -1,5 +1,9 @@
 <script setup>
     import { ref, watch } from 'vue';
+    import EnrollmentList from './EnrollmentList.vue';
+    import { useEnrollmentStore } from '../../stores/enrollment';
+    const enrollmentStore = useEnrollmentStore();
+
     const props = defineProps({
         user: Object,
         isNew: Boolean,  
@@ -16,12 +20,6 @@
     }
 
     function saveChanges() {
-        for (const [key, value] of Object.entries(editUser.value)) {
-            if (value === "") {
-                alert(`The field "${fixString(key)}" cannot be empty.`);
-                return;
-            }
-        }
         emit('save', editUser.value);
     }
 
@@ -33,10 +31,11 @@
     }
 
     const editUser = ref({});
-
     const editorState = ref({});
 
     watch(() => props.isOpen, (newVal) => {
+        if (props.isOpen) enrollmentStore.getCoursesForUser(props.user.user_id);
+
         if (newVal) {
             editUser.value = { ...props.user };
             if (props.isNew) {
@@ -69,6 +68,16 @@
                         <input v-model="editUser[key]" type="text">
                     </div>
                 </div>
+            </div>
+            <div>
+                <EnrollmentList
+                    heading="Enrolled Courses"
+                    listType="coursesForUser"
+                />
+                <EnrollmentList
+                    heading="Available Courses"
+                    listType="coursesNotForUser"
+                />
             </div>
             <div class="modalButtons">
                 <button class="cancel" @click="closeModal(user.user_id)">

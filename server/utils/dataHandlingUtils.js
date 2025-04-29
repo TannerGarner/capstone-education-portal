@@ -12,14 +12,35 @@ export function sanitizeUserData(req) {
         delete userData.password;
     }
 
+    console.log("userData:", userData);
+
+    function nullifyEmptyOrWhitespaceStrs(value) {
+        console.log(`value: |${value}|`);
+        console.log("typeof value:", typeof value);
+        if (typeof value === "string") {
+            value = value.trim();
+            if (!value) return null;
+        }
+
+        return value;
+
+
+        // if (typeof value === "string" && value.trim() === "") return null;
+        // return value;
+    };
+
     // Validate the userData:
     const userDataSchema = Joi.object({
         city: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
+            .default(null),
         country: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
+            .default(null),
         email: Joi.string()
             .email()
             .required(),
@@ -35,14 +56,21 @@ export function sanitizeUserData(req) {
             .required(),
         state_or_region: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
+            .default(null),
         street: Joi.string()
             .allow(null)
-            .required(),
+            .empty("")
+            .custom(nullifyEmptyOrWhitespaceStrs, "nullify empty strings")
+            .default(null),
         user_id: Joi.number()
             .integer()
-    });
+            .required()
+    }).options({ stripUnknown: true });
     const { error: err, value: sanitizedUserData } = userDataSchema.validate(userData);
+
+    console.log("sanitizedUserData:", sanitizedUserData);
 
     // Handle errors validating the data or return the data:
     if (err) throwResErr(400, `User data doesn't follow user schema: ${err.details[0].message}`);

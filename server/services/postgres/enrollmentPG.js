@@ -21,6 +21,24 @@ export async function getCoursesForUserPG(userID) {
     return courses;
 }
 
+export async function getCoursesNotForUserPG(userID) {
+    await ensureUserExistsPG(userID);
+
+    const { rows: courses } = await pgPool.query({ 
+        text: `
+            SELECT
+                c.course_id, c.title, c.description, c.schedule, c.classroom_number, c.maximum_capacity, c.credit_hours, c.tuition_cost
+            FROM
+                courses c LEFT JOIN enrollment e ON c.course_id = e.course_id AND e.user_id = $1
+            WHERE
+                e.user_id IS NULL;
+        `,
+        values: [userID]
+    });
+
+    return courses;
+}
+
 export async function getUsersForCoursePG(courseID) {
     await ensureCourseExistsPG(courseID);
 

@@ -3,7 +3,7 @@ export function genUserID() {
         return Math.floor(Math.random() * (max - min) + min);
     }
 
-    return genRandomInt(0, 999999999);
+    return genRandomInt(1, 999999999);
 }
 
 export function isUserIDSyntaxValid(userID) {

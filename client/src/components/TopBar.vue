@@ -2,8 +2,11 @@
     import { useRouter } from 'vue-router';
     import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
+    import { useEnrollmentStore } from '../stores/enrollment.js';
     const userStore = useUsersStore();
     const router = useRouter();
+    const enrollmentStore = useEnrollmentStore();
+
     const props = defineProps(['changeDisplay', 'components']);
 
     const isAdmin = userStore.user.is_admin;
@@ -16,7 +19,11 @@
     function showUserStateForDebugging() {
         console.log("=".repeat(25));
         console.log("userStore.user:", userStore.user);
-        console.log("userStore.users:", userStore.users);
+        console.log("enrollmentStore.enrolledInList:", enrollmentStore.enrolledInList);
+        console.log("enrollmentStore.notEnrolledInList:", enrollmentStore.notEnrolledInList);
+        console.log("-".repeat(25));
+        console.log("enrollmentStore.coursesForUser:", enrollmentStore.coursesForUser);
+        console.log("enrollmentStore.coursesNotForUser:", enrollmentStore.coursesNotForUser);
         console.log("=".repeat(25));
     }
 </script>
