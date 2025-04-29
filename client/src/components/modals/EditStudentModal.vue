@@ -81,13 +81,11 @@
                     heading="Enrolled Courses"
                     :isAdd="false"
                     :items="enrollmentStore.notEnrolledInList"
-                    @updateEdited="console.log('updateEdited emitted 1!')"
                 />
                 <EnrollmentList
                     heading="Add Courses"
                     :isAdd="true"
                     :items="enrollmentStore.enrolledInList"
-                    @updateEdited="console.log('updateEdited emitted 2!')"
                 />
             </div>
             <div class="modalButtons">

@@ -1,8 +1,6 @@
 <script setup>
     import { defineProps, defineEmits } from 'vue';
     import { ref } from 'vue';
-    import { useEnrollmentStore } from '../../stores/enrollment';
-    const enrollmentStore = useEnrollmentStore();
 
     // Props definition:
     const props = defineProps({
@@ -21,7 +19,7 @@
     });
 
     //
-    const itemsState = ref(props.items.map((item) => ({ name: item, isSelected: false })));
+    const itemsState = ref(props.items.map((item) => ({ name: item.title ?? item.user_id, isSelected: false })));
 
     // Define emit() function for updating event:
     // const emit = defineEmits(['updateEdited']);

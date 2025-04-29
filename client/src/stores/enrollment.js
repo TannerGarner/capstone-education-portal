@@ -100,7 +100,7 @@ export const useEnrollmentStore = defineStore("enrollment",{
                 const enrollmentData = await response.json();
                 // this.coursesForUser = enrollmentData;
                 this.enrolledInList = enrollmentData.coursesForUser;
-                this.enrolledInList = enrollmentData.coursesNotForUser;
+                this.notEnrolledInList = enrollmentData.coursesNotForUser;
                 return enrollmentData;
             } catch (error) {
                 console.error(error.message);
