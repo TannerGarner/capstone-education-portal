@@ -80,12 +80,12 @@
                 <EnrollmentList
                     heading="Enrolled Courses"
                     :isAdd="false"
-                    :items="enrollmentStore.notEnrolledInList"
+                    :items="enrollmentStore.enrolledInList"
                 />
                 <EnrollmentList
                     heading="Add Courses"
                     :isAdd="true"
-                    :items="enrollmentStore.enrolledInList"
+                    :items="enrollmentStore.notEnrolledInList"
                 />
             </div>
             <div class="modalButtons">
