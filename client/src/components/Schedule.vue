@@ -3,9 +3,11 @@
     import { useEnrollmentStore } from '../stores/enrollment';
     import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
+    import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
 
     const enrollmentStore = useEnrollmentStore();
     const userStore = useUsersStore();
+    const coursesStore = useCoursesStore();
 
     const enrolledByDay = ref({
         Monday: [],
@@ -16,13 +18,15 @@
     });
 
 
+    const enrollModalOpen = ref(false);
+    const selectedCourse = ref(null);
+    const userid = ref(null);
 
-    let userid;
     onMounted(async () => {
         if (userStore.user.is_admin) {
-            userid = userStore.editableUser.user_id
+            userid.value = userStore.editableUser.user_id
         } else {
-            userid = userStore.user.user_id
+            userid.value = userStore.user.user_id
         }
         await enrollmentStore.getCoursesForUser(userid)
         console.log(enrollmentStore.coursesForUser)
@@ -93,8 +97,7 @@
                 const day = dayMap[code];
                 if (day) {
                     enrolledByDay[day].push({
-                        course_id: course.course_id,
-                        title: course.title,
+                        ...course,
                         top,
                         height
                     });
@@ -105,9 +108,13 @@
         return enrolledByDay;
     }
         
-    function openModal(course) {
-        alert("Open Modal for course_id: " + (JSON.stringify(course)));
-        // Implement modal opening logic here
+    async function openCloseModal(course) {
+        if (enrollModalOpen.value === false) {
+            selectedCourse.value = course;
+            enrollModalOpen.value = true;
+        } else {
+            enrollModalOpen.value = false;
+        }    
     }
 </script>
 
@@ -135,7 +142,7 @@
                     <div v-for="(courses, day) in enrolledByDay" :key="day" class="day-column">
                         <div v-for="course in courses" :key="course.title" class="course-block"
                             :style="{ top: course.top + 'px', height: course.height + 'px' }"
-                            @click="openModal(course)"
+                            @click="openCloseModal(course)"
                             >
                             {{ course.title }}
                         </div>
@@ -144,6 +151,12 @@
             </div>
         </div>
     </div>
+    <CourseEnrollmentModal
+        v-if="enrollModalOpen"
+        :course="selectedCourse"
+        :isEnrolled="true" 
+        @close="openCloseModal(null)"
+    />
 </template>
 
 <style scoped>

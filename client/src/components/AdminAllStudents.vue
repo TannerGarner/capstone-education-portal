@@ -89,12 +89,12 @@
                     <p>{{user.last_name}}</p>
                     <p>{{user.user_id}}</p>
                     <p>{{user.email}}</p>
-                    <button class="details" @click="openEditModal(user)">
-                        Edit
-                    </button>
-                    <button class="delete" @click="deleteUser(user.user_id)">
-                        Delete
-                    </button>
+                    <span class="material-symbols-outlined details" @click="openEditModal(user)">
+                        edit_square
+                    </span>
+                    <span class="material-symbols-outlined delete" @click="deleteUser(user.user_id)">
+                        delete
+                    </span>
                 </div>
             </div>
         </div>
@@ -131,6 +131,7 @@
     }
 
     .studentList{
+        width: 100%;
         display: flex;
         flex-direction: column;
         padding: 0px 2px 0px 2px;
@@ -142,7 +143,7 @@
 
     .studentHeader{
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.5fr;
         align-items: center;
         background-color: #F5F1ED;
         color: #153131;
@@ -164,7 +165,7 @@
         padding: 15px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr  0.5fr 0.5fr;
         align-items: center;
     }
 
@@ -178,17 +179,15 @@
     .firstStudent {
         border-top: none;
     }
-
-    .details:hover {
-        background-color: #FE5E41;
+    
+    .details {
+        color: #FE5E41;
+        cursor: pointer;
     }
 
     .delete {
-        background-color: #E63946;
-    }
-
-    .delete:hover {
-        box-shadow: 0px 0px 5px #153131;
+        color: #E63946;
+        cursor: pointer;    
     }
 
     @media screen and (max-width: 1200px) {

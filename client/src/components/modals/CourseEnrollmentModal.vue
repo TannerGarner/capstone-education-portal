@@ -7,7 +7,6 @@
     const props = defineProps({
         course: Object,
         isEnrolled: Boolean,
-        isOpen: Boolean  
     });
     const userStore = useUsersStore();
 
@@ -26,10 +25,20 @@
         emit('close');
     }
 
-    function dropCourse() {
+    async function dropCourse() {
         if (confirm(`Are you sure you want to drop course with courseId: ${props.course.course_id}`)) {
-            const dropped = enrollmentStore.dropCourseFromUser(userid.value, props.course.course_id)
+            const dropped = await enrollmentStore.dropCourseFromUser(userid.value, props.course.course_id)
             alert(`${dropped ? "Dropped Successfully" : "Failed to Drop"}`)
+            emit('close');
+        } else {
+            console.log("User clicked Cancel!");
+        }
+    }
+
+    async function addCourse() {
+        if (confirm(`Are you sure you want to enroll in course with courseId: ${props.course.course_id}`)) {
+            const enrolled = await enrollmentStore.enrollUserInCourse(userid.value, props.course.course_id)
+            alert(`${enrolled ? "Enrolled Successfully" : "Failed to Enroll"}`)
             emit('close');
         } else {
             console.log("User clicked Cancel!");
@@ -38,7 +47,7 @@
 </script>
 
 <template>
-    <div v-if="isOpen" class="cover">
+    <div class="cover">
         <div class="courseEnrollmentModal">
             <h1> {{ course.title }} </h1>
             <div class="courseInfo row">
@@ -88,13 +97,23 @@
         
             </div>
             <div class="buttons row">                
-                <button @click="closeModal">Cancel</button>
-                <button v-if="props.isEnrolled" @click="dropCourse">Drop Course</button>
-                <button v-else @click="enrollCourse">Enroll in Course</button>
+                <button class="cancel" @click="closeModal">Cancel</button>
+                <button class="dropCourse" v-if="props.isEnrolled" @click="dropCourse">
+                    <span class="material-symbols-outlined">
+                        delete
+                    </span>
+                    Drop Course
+                </button>
+                <button class="addCourse" v-else @click="addCourse">
+                    <span class="material-symbols-outlined">
+                        add
+                    </span>
+                    Enroll in Course
+                </button>
             </div>
         </div>
     </div>
-
+    
 </template>
 
 <style scoped>
@@ -149,6 +168,67 @@
 
     .buttons{
         justify-content: flex-end;
+    }
+
+    .dropCourse{
+        background-color: #F5F1ED;
+        width: auto;
+        color: #E63946;
+        border: #E63946 2px solid;
+        transition: background-color 0.3s;
+        font-weight: bold;
+        padding: 10px 20px;
+    }
+
+    .dropCourse:hover{
+        background-color: #E63946;
+        color: #F5F1ED;
+    }
+
+    .dropCourse:hover > span{
+        color: #F5F1ED;
+    }
+
+    .dropCourse > span{
+        color: #E63946;
+    }
+
+    .addCourse {
+        background-color: #F5F1ED;
+        width: auto;
+        color: #FE5E41;
+        border: #FE5E41 2px solid;
+        transition: background-color 0.3s;
+        font-weight: bold;
+        padding: 10px 20px;
+    }
+
+    .addCourse:hover{
+        background-color: #FE5E41;
+        color: #F5F1ED;
+    }
+
+    .addCourse > span{
+        color: #FE5E41;
+    }
+
+    .addCourse:hover > span{
+        color: #F5F1ED;
+    }
+
+    .cancel {
+        background-color: #F5F1ED;
+        width: auto;
+        color: #489FB5;
+        border: #489FB5 2px solid;
+        transition: background-color 0.3s;
+        font-weight: bold;
+        padding: 10px 20px;
+    }
+
+    .cancel:hover{
+        background-color: #489FB5;
+        color: #F5F1ED;
     }
 
 </style>

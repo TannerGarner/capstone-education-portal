@@ -21,6 +21,8 @@
             router.push("/auth");
         }
     });
+
+    
 </script>
 
 <template>

@@ -82,13 +82,13 @@
             </div>
         </div>
         <CourseEnrollmentModal
+            v-if="enrollModalOpen"
             :course="selectedCourse"
             :isEnrolled="true" 
-            :isOpen="enrollModalOpen" 
             @close="detailsModal(null)"
         />
         <AddCourseModal
-            :isOpen="addCourseModalOpen" 
+            v-if="addCourseModalOpen"
             @close="addCourseModal"
         />
     </div>

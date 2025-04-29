@@ -90,9 +90,9 @@
                     <p>{{course.schedule}}</p>
                     <p>{{course.credit_hours}}</p>
                     <p>{{course.tuition_cost}}</p>
-                    <button class="details" @click="openEditModal(course)">
-                        Edit
-                    </button>
+                    <span class="material-symbols-outlined details" @click="openEditModal(course)">
+                        edit_square
+                    </span>
                     <!-- <button class="delete" @click="deleteCourse(course.course_id)">
                         Delete
                     </button> -->
@@ -143,7 +143,7 @@
 
     .courseHeader{
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
         align-items: center;
         background-color: #F5F1ED;
         color: #153131;
@@ -166,7 +166,7 @@
         padding: 15px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
         align-items: center;
     }
 
@@ -182,8 +182,9 @@
         margin-left: 20px;
     }
 
-    .details:hover {
-        background-color: #FE5E41;
+    .details {
+        color: #FE5E41;
+        cursor: pointer;
     }
 
     .delete {

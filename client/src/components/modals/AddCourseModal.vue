@@ -5,10 +5,6 @@
     import { useCoursesStore } from '../../stores/courses.js';
     import CourseEnrollmentModal from './CourseEnrollmentModal.vue';
 
-    const props = defineProps({
-        isOpen: Boolean  
-    });
-
     const emit = defineEmits(['close']);
 
     const enrollmentStore = useEnrollmentStore();
@@ -17,6 +13,7 @@
 
     const enrollModalOpen = ref(false);
     const selectedCourse = ref(null);
+    const isEnrolled = ref(false);
     const userid = ref(null);
 
     onMounted(async () => { 
@@ -54,15 +51,18 @@
     function detailsModal(course) {
         if (enrollModalOpen.value === false) {
             selectedCourse.value = { ...course };
+            isEnrolled.value = courseIncluded(course);
             enrollModalOpen.value = true;
         } else {
+            selectedCourse.value = null;
+            isEnrolled.value = false;
             enrollModalOpen.value = false;
         }    
     }
 </script>
 
 <template>
-    <div v-if="isOpen" class="cover">
+    <div class="cover">
         <div class="addCourseModal">
             <h1> Add Courses </h1>
             <span class="material-symbols-outlined close" @click="closeModal()">
@@ -122,9 +122,9 @@
         </div>
     </div>
     <CourseEnrollmentModal
+        v-if="enrollModalOpen"
         :course="selectedCourse"
-        :isEnrolled="null" 
-        :isOpen="enrollModalOpen" 
+        :isEnrolled="isEnrolled" 
         @close="detailsModal(null)"
     />
 </template>

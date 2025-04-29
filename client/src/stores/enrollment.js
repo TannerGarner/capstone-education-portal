@@ -4,8 +4,8 @@ import { useCoursesStore } from './courses.js';
 
 export const useEnrollmentStore = defineStore("enrollment",{
     state: () => ({
-        usersInCourse: {},
-        coursesForUser: {}
+        usersInCourse: [],
+        coursesForUser: []
     }),
     actions: {
         async enrollUserInCourse(user_id, course_id) {
