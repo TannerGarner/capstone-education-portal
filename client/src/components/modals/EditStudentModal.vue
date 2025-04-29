@@ -1,5 +1,9 @@
 <script setup>
     import { ref, watch } from 'vue';
+    import EnrollmentList from './EnrollmentList.vue';
+    import { useEnrollmentStore } from '../../stores/enrollment';
+    const enrollmentStore = useEnrollmentStore();
+
     const props = defineProps({
         user: Object,
         isNew: Boolean,  
@@ -34,10 +38,11 @@
     }
 
     const editUser = ref({});
-
     const editorState = ref({});
 
     watch(() => props.isOpen, (newVal) => {
+        if (props.isOpen) enrollmentStore.getCoursesForUser(props.user.user_id);
+
         if (newVal) {
             editUser.value = { ...props.user };
             if (props.isNew) {
@@ -70,6 +75,20 @@
                         <input v-model="editUser[key]" type="text">
                     </div>
                 </div>
+            </div>
+            <div v-if="enrollmentStore.notEnrolledInList.length || enrollmentStore.enrolledInList.length">
+                <EnrollmentList
+                    heading="Enrolled Courses"
+                    :isAdd="false"
+                    :items="enrollmentStore.notEnrolledInList"
+                    @updateEdited="console.log('updateEdited emitted 1!')"
+                />
+                <EnrollmentList
+                    heading="Add Courses"
+                    :isAdd="true"
+                    :items="enrollmentStore.enrolledInList"
+                    @updateEdited="console.log('updateEdited emitted 2!')"
+                />
             </div>
             <div class="modalButtons">
                 <button class="cancel" @click="closeModal(user.user_id)">
