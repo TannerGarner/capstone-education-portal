@@ -61,6 +61,17 @@
 <style scoped>
     .enrollment-list {
         padding: 1rem;
+        max-width: 100%;
+    }
+
+    .enrollment-list ul {
+        max-height: 6.25rem;
+        overflow-y: auto;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 0;
+        list-style: none;
     }
 
     .list-item {
@@ -84,5 +95,23 @@
 
     .icon {
         font-size: 1.2rem;
+    }
+
+    .enrollment-list ul::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .enrollment-list ul::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .enrollment-list ul::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 4px;
+    }
+
+    .enrollment-list ul::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
     }
 </style>
