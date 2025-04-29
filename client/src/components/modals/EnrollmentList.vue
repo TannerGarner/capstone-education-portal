@@ -14,25 +14,31 @@
             type: Boolean,
             required: true
         },
-        listType: {
-            type: String,
+        items: {
+            type: Array,
             required: true
         }
     });
 
-    // Define emit() function for updating event:
-    const emit = defineEmits(['updateEdited']);
+    //
+    const itemsState = ref(props.items.map((item) => ({ name: item, isSelected: false })));
 
-    // Define edited items list:
-    const editedItems = ref([]);
+    // Define emit() function for updating event:
+    // const emit = defineEmits(['updateEdited']);
+
+    // // Define edited items list:
+    // const editedItems = ref([]);
 
     // Handle item click:
     const handleItemClick = (item) => {
-        editedItems.value.push(item);
-        // emit('updateEdited', editedItems.value);
+        item.isSelected = !item.isSelected;
+        // emit('updateSelected', itemsState.value.filter(item => item.isSelected));
     };
 
-    const testClick = () => console.log("<EnrollmentList> props:", props);
+    const testClick = () => {
+        console.log("<EnrollmentList> props:", props);
+        console.log("<EnrollmentList> itemsState:", itemsState.value);
+    };
 </script>
 
 <template>
@@ -40,16 +46,15 @@
         <h2 @dblclick="testClick">{{ heading }}</h2>
         <ul>
             <li 
-                v-for="item in items" 
-                :key="item.id" 
+                v-for="item in itemsState"
+                :key="item.name"
                 @click="handleItemClick(item)"
-                class="list-item"
+                :class="['list-item', { 'selected': item.isSelected }]"
             >
                 <span class="icon">
                     {{ isAdd ? "➕" : "❌" }}
                 </span>
-                <!-- Assuming items have a name property - adjust based on your data structure -->
-                <span>{{ item }}</span>
+                <span>{{ item.name }}</span>
             </li>
         </ul>
     </div>
@@ -67,10 +72,16 @@
         padding: 0.5rem;
         cursor: pointer;
         transition: background-color 0.2s;
+        border-radius: 4px;
     }
 
     .list-item:hover {
-        background-color: #f0f0f0;
+        background-color: #ffcfcf;
+    }
+
+    .list-item.selected {
+        background-color: #ffe6e6;
+        border: 1px solid #ffcfcf;
     }
 
     .icon {
