@@ -5,11 +5,9 @@ import { useCoursesStore } from './courses.js';
 export const useEnrollmentStore = defineStore("enrollment",{
     state: () => ({
         usersInCourse: [],
+        usersNotInCourse: [],
         coursesForUser: [],
-        // usersInCourse: {},
-        // coursesForUser: {}
-        enrolledInList: [],
-        notEnrolledInList: []
+        coursesNotForUser: []
     }),
     actions: {
         async enrollUserInCourse(user_id, course_id) {
@@ -98,9 +96,10 @@ export const useEnrollmentStore = defineStore("enrollment",{
                 if (!response.ok) throw new Error(response.body.message);
                 
                 const enrollmentData = await response.json();
-                // this.coursesForUser = enrollmentData;
-                this.enrolledInList = enrollmentData.coursesForUser;
-                this.notEnrolledInList = enrollmentData.coursesNotForUser;
+
+                this.coursesForUser = enrollmentData.coursesForUser;
+                this.coursesNotForUser = enrollmentData.coursesNotForUser;
+
                 return enrollmentData;
             } catch (error) {
                 console.error(error.message);
