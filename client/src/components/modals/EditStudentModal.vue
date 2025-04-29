@@ -20,13 +20,6 @@
     }
 
     function saveChanges() {
-        // for (const [key, value] of Object.entries(editUser.value)) {
-        //     console.log("[key, value]:", [key, value]);
-        //     if (value === "") {
-        //         alert(`The field "${fixString(key)}" cannot be empty.`);
-        //         return;
-        //     }
-        // }
         emit('save', editUser.value);
     }
 
@@ -76,16 +69,14 @@
                     </div>
                 </div>
             </div>
-            <div v-if="enrollmentStore.notEnrolledInList.length || enrollmentStore.enrolledInList.length">
+            <div>
                 <EnrollmentList
                     heading="Enrolled Courses"
-                    :isAdd="false"
-                    :items="enrollmentStore.enrolledInList"
+                    listType="coursesForUser"
                 />
                 <EnrollmentList
-                    heading="Add Courses"
-                    :isAdd="true"
-                    :items="enrollmentStore.notEnrolledInList"
+                    heading="Available Courses"
+                    listType="coursesNotForUser"
                 />
             </div>
             <div class="modalButtons">

@@ -21,6 +21,9 @@
         console.log("userStore.user:", userStore.user);
         console.log("enrollmentStore.enrolledInList:", enrollmentStore.enrolledInList);
         console.log("enrollmentStore.notEnrolledInList:", enrollmentStore.notEnrolledInList);
+        console.log("-".repeat(25));
+        console.log("enrollmentStore.coursesForUser:", enrollmentStore.coursesForUser);
+        console.log("enrollmentStore.coursesNotForUser:", enrollmentStore.coursesNotForUser);
         console.log("=".repeat(25));
     }
 </script>

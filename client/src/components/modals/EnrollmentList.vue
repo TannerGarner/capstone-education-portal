@@ -1,6 +1,8 @@
 <script setup>
-    import { defineProps, defineEmits } from 'vue';
+    import { defineProps, defineEmits, watch } from 'vue';
     import { ref } from 'vue';
+    import { useEnrollmentStore } from '../../stores/enrollment';
+    const enrollmentStore = useEnrollmentStore();
 
     // Props definition:
     const props = defineProps({
@@ -8,31 +10,47 @@
             type: String,
             required: true
         },
-        isAdd: {
-            type: Boolean,
-            required: true
-        },
-        items: {
-            type: Array,
-            required: true
+        listType: {
+            type: String,
+            required: true,
+            validator: (value) => [
+                'usersInCourse',
+                'usersNotInCourse',
+                'coursesForUser',
+                'coursesNotForUser'
+            ].includes(value)
         }
     });
 
-    //
-    const itemsState = ref(props.items.map((item) => ({ name: item.title ?? item.user_id, isSelected: false })));
+    // Declare state from data in the enrollment list:
+    const itemsState = ref([]);
+    watch(
+        () => enrollmentStore[props.listType],
+        (newItems) => {
+            itemsState.value = newItems.map((item) => ({
+                name: item.title ?? item.user_id,
+                isSelected: false
+            }));
+        },
+        // Have this run immediately when the component mounts:
+        { immediate: true }
+    );
 
     // Define emit() function for updating event:
     // const emit = defineEmits(['updateEdited']);
 
-    // // Define edited items list:
-    // const editedItems = ref([]);
-
     // Handle item click:
     const handleItemClick = (item) => {
         item.isSelected = !item.isSelected;
-        // emit('updateSelected', itemsState.value.filter(item => item.isSelected));
+        // emit('updateSelected', itemsState.value.filter((item) => item.isSelected));
     };
 
+    // This gets the proper icon for the list being used:
+    const getIcon = (listType) => {
+        return ['usersInCourse', 'coursesForUser'].includes(listType) ? '❌' : '➕';
+    };
+
+    // DELETE this later:
     const testClick = () => {
         console.log("<EnrollmentList> props:", props);
         console.log("<EnrollmentList> itemsState:", itemsState.value);
@@ -49,9 +67,7 @@
                 @click="handleItemClick(item)"
                 :class="['list-item', { 'selected': item.isSelected }]"
             >
-                <span class="icon">
-                    {{ isAdd ? "➕" : "❌" }}
-                </span>
+                <span class="icon">{{ getIcon(listType) }}</span>
                 <span>{{ item.name }}</span>
             </li>
         </ul>
