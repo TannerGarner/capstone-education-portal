@@ -19,8 +19,23 @@
         emit('close');
     }
 
-    function saveChanges() {
-        emit('save', editUser.value);
+    const enrolledListRef = ref(null);
+    const notEnrolledListRef = ref(null);
+
+    async function saveChanges() {
+        if (confirm("Are you sure you want to save your changes?")) {
+            // Update enrollments:
+            await enrolledListRef.value?.updateEnrollment(props.user.user_id);
+            console.log("Get Here ...?");
+            await notEnrolledListRef.value?.updateEnrollment(props.user.user_id);
+            console.log("Get Here 000?");
+
+            // Update user info:
+            emit("save", editUser.value);
+            
+            // Close modal:
+            closeModal();
+        }
     }
 
     function fixString(string){
@@ -71,19 +86,21 @@
             </div>
             <div>
                 <EnrollmentList
+                    ref="enrolledListRef"
                     heading="Enrolled Courses"
                     listType="coursesForUser"
                 />
                 <EnrollmentList
+                    ref="notEnrolledListRef"
                     heading="Available Courses"
                     listType="coursesNotForUser"
                 />
             </div>
             <div class="modalButtons">
-                <button class="cancel" @click="closeModal(user.user_id)">
+                <button class="cancel" @click="closeModal()">
                     Cancel
                 </button>
-                <button @click="saveChanges(user.user_id)">
+                <button @click="saveChanges()">
                     Save
                 </button>
             </div>
@@ -92,6 +109,56 @@
 </template>
 
 <style scoped>
+    .cover {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Prevent background scrolling when modal is open */
+        overflow: hidden;
+    }
+
+    .editStudentModal {
+        position: relative;
+        width: 70vw;
+        max-height: 90vh; /* Changed from fixed height */
+        background-color: #F5F1ED;
+        border-radius: 10px;
+        padding: 50px;
+        box-shadow: 0px 0px 500px #153131;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        /* Add scrolling to modal content */
+        overflow-y: auto;
+        /* Smooth scrolling */
+        scroll-behavior: smooth;
+    }
+
+    /* Add styling for scrollbar */
+    .editStudentModal::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .editStudentModal::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .editStudentModal::-webkit-scrollbar-thumb {
+        background: #489FB5;
+        border-radius: 4px;
+    }
+
+    .editStudentModal::-webkit-scrollbar-thumb:hover {
+        background: #367c8f;
+    }
+
     .cover{
         position: fixed;
         top: 0;
@@ -180,6 +247,5 @@
 
     .description {
         text-wrap: wrap;
-        
     }
 </style>

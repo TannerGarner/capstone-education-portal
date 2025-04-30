@@ -51,7 +51,7 @@ export const useEnrollmentStore = defineStore("enrollment",{
 
                 if(!response.ok) throw new Error("Failed to drop course from user");
 
-                await this.getCoursesForUser(user_id)
+                // await this.getCoursesForUser(user_id);
 
                 return true;
             } catch (error) {

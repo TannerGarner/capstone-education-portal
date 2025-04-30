@@ -1,7 +1,7 @@
 <script setup>
-    import { defineProps, defineEmits, watch } from 'vue';
-    import { ref } from 'vue';
-    import { useEnrollmentStore } from '../../stores/enrollment';
+    import { defineProps, watch } from "vue";
+    import { ref } from "vue";
+    import { useEnrollmentStore } from "../../stores/enrollment";
     const enrollmentStore = useEnrollmentStore();
 
     // Props definition:
@@ -14,10 +14,10 @@
             type: String,
             required: true,
             validator: (value) => [
-                'usersInCourse',
-                'usersNotInCourse',
-                'coursesForUser',
-                'coursesNotForUser'
+                "usersInCourse",
+                "usersNotInCourse",
+                "coursesForUser",
+                "coursesNotForUser"
             ].includes(value)
         }
     });
@@ -28,7 +28,7 @@
         () => enrollmentStore[props.listType],
         (newItems) => {
             itemsState.value = newItems.map((item) => ({
-                name: item.title ?? item.user_id,
+                name: item.course_id ?? item.user_id,
                 isSelected: false
             }));
         },
@@ -36,22 +36,38 @@
         { immediate: true }
     );
 
-    // Define emit() function for updating event:
-    // const emit = defineEmits(['updateEdited']);
-
     // Handle item click:
-    const handleItemClick = (item) => {
+    function handleItemClick(item) {
         item.isSelected = !item.isSelected;
-        // emit('updateSelected', itemsState.value.filter((item) => item.isSelected));
     };
 
     // This gets the proper icon for the list being used:
-    const getIcon = (listType) => {
-        return ['usersInCourse', 'coursesForUser'].includes(listType) ? '❌' : '➕';
+    function getIcon(listType) {
+        return ["usersInCourse", "coursesForUser"].includes(listType) ? "❌" : "➕";
     };
 
+    // Update DB as modal parent closes:
+    async function updateEnrollment(userID) {
+        console.log("U");
+        const selectedItems = itemsState.value.filter((item) => console.log("item:", item) || item.isSelected);
+        console.log("props.listType:", props.listType, "\nselectedItems:", selectedItems);
+
+        switch (props.listType) {
+            case "coursesForUser": {
+                for (const item of selectedItems) await enrollmentStore.dropCourseFromUser(userID, item.name);
+                break;
+            }
+            case "coursesNotForUser": {
+                for (const item of selectedItems) await enrollmentStore.enrollUserInCourse(userID, item.name);
+                break;
+            }
+            default: {}
+        }
+    }
+    defineExpose({ updateEnrollment });
+
     // DELETE this later:
-    const testClick = () => {
+    function testClick() {
         console.log("<EnrollmentList> props:", props);
         console.log("<EnrollmentList> itemsState:", itemsState.value);
     };
@@ -65,7 +81,7 @@
                 v-for="item in itemsState"
                 :key="item.name"
                 @click="handleItemClick(item)"
-                :class="['list-item', { 'selected': item.isSelected }]"
+                :class="['list-item', { selected: item.isSelected }]"
             >
                 <span class="icon">{{ getIcon(listType) }}</span>
                 <span>{{ item.name }}</span>
