@@ -36,9 +36,10 @@
         }
     }
 
-    function dropCourse(course) {
+    async function dropCourse(course) {
         if (confirm(`Are you sure you want to drop course with courseId: ${course.course_id}`)) {
             const dropped = enrollmentStore.dropCourseFromUser(userid.value, course.course_id);
+            await enrollmentStore.getCoursesForUser(userid.value);
             alert(`${dropped ? "Dropped Successfully" : "Failed to Drop"}`);
             emit('close');
         }

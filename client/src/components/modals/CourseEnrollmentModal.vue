@@ -27,7 +27,8 @@
 
     async function dropCourse() {
         if (confirm(`Are you sure you want to drop course with courseId: ${props.course.course_id}`)) {
-            const dropped = await enrollmentStore.dropCourseFromUser(userid.value, props.course.course_id)
+            const dropped = await enrollmentStore.dropCourseFromUser(userid.value, props.course.course_id);
+            await enrollmentStore.getCoursesForUser(userid.value);
             alert(`${dropped ? "Dropped Successfully" : "Failed to Drop"}`)
             emit('close');
         } else {
