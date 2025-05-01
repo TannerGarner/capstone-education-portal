@@ -28,7 +28,7 @@
         () => enrollmentStore[props.listType],
         (newItems) => {
             itemsState.value = newItems.map((item) => ({
-                name: item.course_id ?? item.user_id,
+                name: item.course_id ?? item.user_id, // NOTE: cannot change item.course_id without making other notable changes as well.
                 isSelected: false
             }));
         },
@@ -48,9 +48,7 @@
 
     // Update DB as modal parent closes:
     async function updateEnrollment(userID) {
-        console.log("U");
         const selectedItems = itemsState.value.filter((item) => console.log("item:", item) || item.isSelected);
-        console.log("props.listType:", props.listType, "\nselectedItems:", selectedItems);
 
         switch (props.listType) {
             case "coursesForUser": {

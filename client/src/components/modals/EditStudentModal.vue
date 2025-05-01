@@ -26,9 +26,7 @@
         if (confirm("Are you sure you want to save your changes?")) {
             // Update enrollments:
             await enrolledListRef.value?.updateEnrollment(props.user.user_id);
-            console.log("Get Here ...?");
             await notEnrolledListRef.value?.updateEnrollment(props.user.user_id);
-            console.log("Get Here 000?");
 
             // Update user info:
             emit("save", editUser.value);
