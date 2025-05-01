@@ -16,17 +16,17 @@
     }
 
     function saveChanges() {
-        for (const [key, value] of Object.entries(editCourse.value)) {
-            if (!value) {
-                alert(`The field "${fixString(key)}" cannot be empty.`);
-                return;
-            }
-        }
+        // for (const [key, value] of Object.entries(editCourse.value)) {
+        //     if (!value) {
+        //         alert(`The field "${fixString(key)}" cannot be empty.`);
+        //         return;
+        //     }
+        // }
         emit('save', editCourse.value);
     }
 
     function fixString(string){
-        let fixed = string.replace("_", " ")
+        let fixed = string.replaceAll("_", " ")
         fixed = fixed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
         return fixed;
     }
@@ -34,12 +34,6 @@
     const editCourse = ref({});
 
     const editorState = ref({});
-
-    const toggleEditor = (fieldId) => {
-        editorState.value[fieldId] = !editorState.value[fieldId];
-    };
-
-    const isEditorOpen = (fieldId) => editorState.value[fieldId] || false;
 
     watch(() => props.isOpen, (newVal) => {
         if (newVal) {
@@ -58,30 +52,23 @@
         <div class="editCourseModal">
             <div class="courseInfo">
                 <div class="smallFields column">
-                    <div 
-                    v-for="([key, value]) in Object.entries(course).filter(([k]) => k !== 'description')"
-                    :key="key" 
-                    class="row">
+                    <div
+                        v-for="key in Object.keys(course).filter((k) => k !== 'description')"
+                        :key="key"
+                        class="row"
+                    >
                         <p>{{ fixString(key) }}</p>
-                        <p v-if="!isEditorOpen(key)">{{ value }}</p>
-                        <input v-else v-model="editCourse[key]" type="text">
-                        <button @click="toggleEditor(key)">
-                            {{ isEditorOpen(key) ? 'Cancel' : 'Edit' }}
-                        </button>
+                        <input v-model="editCourse[key]" type="text">
                     </div>
                 </div>
                 <div class="descriptionBox column">
                     <h3>Description</h3>
-                    <p v-if="!isEditorOpen('description')" class="description">{{ course.description }}</p>
-                    <textarea v-else v-model="editCourse.description" class="descriptionInput">{{ course.description }}</textarea>
-                    <button @click="toggleEditor('description')">
-                        {{ isEditorOpen("description") ? 'Cancel' : 'Edit' }}
-                    </button>
+                    <textarea v-model="editCourse.description" class="descriptionInput">{{ course.description }}</textarea>
                 </div>
             </div>
             <div class="modalButtons">
                 <button class="cancel" @click="closeModal(course.course_id)">
-                Cancel
+                    Cancel
                 </button>
                 <button @click="saveChanges(course.course_id)">
                     Save
