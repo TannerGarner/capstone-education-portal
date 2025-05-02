@@ -25,13 +25,14 @@
     // Define whether or not the list adds or removes students from a course:
     const isListARemovingList = computed(() => ["usersInCourse", "coursesForUser"].includes(props.listType));
 
-    // Declare state from data in the enrollment list:
-    const itemsState = ref([]);
+    // Create state for data in the enrollment list:
+    const list = ref([]);
     watch(
         () => enrollmentStore[props.listType],
-        (newItems) => {
-            itemsState.value = newItems.map((item) => ({
-                name: item.course_id ?? item.user_id, // NOTE: cannot change item.course_id without making other notable changes as well.
+        (newList) => {
+            list.value = newList.map((item) => ({
+                id: item.course_id ?? item.user_id,
+                name: item.title ?? `${item.first_name} ${item.last_name}`,
                 isSelected: false
             }));
         },
@@ -46,27 +47,39 @@
 
     // Update DB as modal parent closes:
     async function updateEnrollment(id) {
-        const selectedItems = itemsState.value.filter((item) => item.isSelected);
+        const selectedItems = list.value.filter((item) => item.isSelected);
 
         switch (props.listType) {
             case "usersInCourse": {
                 const courseID = id;
-                for (const item of selectedItems) await enrollmentStore.dropCourseFromUser(item.name, courseID);
+                for (const item of selectedItems) {
+                    const userID = item.id;
+                    await enrollmentStore.dropCourseFromUser(userID, courseID);
+                }
                 break;
             }
             case "usersNotInCourse": {
                 const courseID = id;
-                for (const item of selectedItems) await enrollmentStore.enrollUserInCourse(item.name, courseID);
+                for (const item of selectedItems) {
+                    const userID = item.id;
+                    await enrollmentStore.enrollUserInCourse(userID, courseID);
+                }
                 break;
             }
             case "coursesForUser": {
                 const userID = id;
-                for (const item of selectedItems) await enrollmentStore.dropCourseFromUser(userID, item.name);
+                for (const item of selectedItems) {
+                    const courseID = item.id;
+                    await enrollmentStore.dropCourseFromUser(userID, courseID);
+                }
                 break;
             }
             case "coursesNotForUser": {
                 const userID = id;
-                for (const item of selectedItems) await enrollmentStore.enrollUserInCourse(userID, item.name);
+                for (const item of selectedItems) {
+                    const courseID = item.id;
+                    await enrollmentStore.enrollUserInCourse(userID, courseID);
+                }
                 break;
             }
             default: {}
@@ -80,13 +93,13 @@
         <h2>{{ heading }}</h2>
         <ul>
             <li 
-                v-for="item in itemsState"
+                v-for="item in list"
                 :key="item.name"
                 @click="handleItemClick(item)"
                 :class="['list-item', { selected: item.isSelected }]"
             >
                 <span class="icon">{{ isListARemovingList ? "❌" : "➕" }}</span>
-                <span>{{ item.name }}</span>
+                <span>{{ item.id }} | {{ item.name }}</span>
             </li>
         </ul>
     </div>
