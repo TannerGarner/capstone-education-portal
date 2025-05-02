@@ -1,5 +1,9 @@
 <script setup>
     import { ref, watch } from 'vue';
+    import EnrollmentList from './EnrollmentList.vue';
+    import { useEnrollmentStore } from '../../stores/enrollment';
+    const enrollmentStore = useEnrollmentStore();
+
     const props = defineProps({
         course: Object,
         isNew: Boolean,  
@@ -15,14 +19,21 @@
         emit('close');
     }
 
-    function saveChanges() {
-        // for (const [key, value] of Object.entries(editCourse.value)) {
-        //     if (!value) {
-        //         alert(`The field "${fixString(key)}" cannot be empty.`);
-        //         return;
-        //     }
-        // }
-        emit('save', editCourse.value);
+    const enrolledListRef = ref(null);
+    const notEnrolledListRef = ref(null);
+
+    async function saveChanges() {
+        if (confirm("Are you sure you want to save these changes?")) {
+            // Update enrollments:
+            await enrolledListRef.value?.updateEnrollment(props.course.course_id);
+            await notEnrolledListRef.value?.updateEnrollment(props.course.course_id);
+
+            // Update user info:
+            emit("save", editCourse.value);
+            
+            // Close modal:
+            closeModal();
+        }
     }
 
     function fixString(string){
@@ -36,6 +47,8 @@
     const editorState = ref({});
 
     watch(() => props.isOpen, (newVal) => {
+        if (props.isOpen) enrollmentStore.getUsersInCourse(props.course.course_id);
+
         if (newVal) {
             editCourse.value = { ...props.course };
             if (props.isNew) {
@@ -65,6 +78,18 @@
                     <h3>Description</h3>
                     <textarea v-model="editCourse.description" class="descriptionInput">{{ course.description }}</textarea>
                 </div>
+            </div>
+            <div>
+                <EnrollmentList
+                    ref="enrolledListRef"
+                    heading="Enrolled Students"
+                    listType="usersInCourse"
+                />
+                <EnrollmentList
+                    ref="notEnrolledListRef"
+                    heading="Add Students"
+                    listType="usersNotInCourse"
+                />
             </div>
             <div class="modalButtons">
                 <button class="cancel" @click="closeModal(course.course_id)">
