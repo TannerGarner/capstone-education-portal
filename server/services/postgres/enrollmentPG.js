@@ -67,7 +67,7 @@ export async function getUsersNotForCoursePG(courseID) {
             FROM 
                 users u LEFT JOIN enrollment e ON u.user_id = e.user_id AND e.course_id = $1
             WHERE
-                e.course_id IS NULL;
+                e.course_id IS NULL AND u.is_admin = FALSE;
         `,
         values: [courseID]
     });
