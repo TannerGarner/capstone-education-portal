@@ -57,6 +57,24 @@ export async function getUsersForCoursePG(courseID) {
     return users;
 }
 
+export async function getUsersNotForCoursePG(courseID) {
+    await ensureCourseExistsPG(courseID);
+
+    const { rows: users } = await pgPool.query({ 
+        text: `
+            SELECT
+                u.user_id, u.first_name, u.last_name, u.email
+            FROM 
+                users u LEFT JOIN enrollment e ON u.user_id = e.user_id AND e.course_id = $1
+            WHERE
+                e.course_id IS NULL;
+        `,
+        values: [courseID]
+    });
+
+    return users;
+}
+
 export async function getCourseMaxCapacityPG(courseID) {
     const res = await pgPool.query({
         text: "SELECT maximum_capacity FROM courses WHERE course_id = $1;",

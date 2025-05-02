@@ -1,4 +1,4 @@
-import { dropPG, enrollPG, getCoursesForUserPG, getCoursesNotForUserPG, getUsersForCoursePG } from "../services/postgres/enrollmentPG.js";
+import { dropPG, enrollPG, getCoursesForUserPG, getCoursesNotForUserPG, getUsersForCoursePG, getUsersNotForCoursePG } from "../services/postgres/enrollmentPG.js";
 import { sendErrRes } from "../utils/errHandlingUtils.js";
 
 export async function getCoursesForUserMW(req, res) {
@@ -18,9 +18,10 @@ export async function getUsersForCourseMW(req, res) {
     try {
         const { courseID } = req.params;
 
-        const users = await getUsersForCoursePG(courseID);
+        const usersForCourse = await getUsersForCoursePG(courseID);
+        const usersNotForCourse = await getUsersNotForCoursePG(courseID);
 
-        res.json(users);
+        res.json({ usersForCourse, usersNotForCourse });
     } catch (err) {
         sendErrRes(err, res);
     }
