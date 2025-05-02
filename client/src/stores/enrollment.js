@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { useUsersStore } from "./users";
-import { useCoursesStore } from './courses.js';
 
-export const useEnrollmentStore = defineStore("enrollment",{
+export const useEnrollmentStore = defineStore("enrollment", {
     state: () => ({
         usersInCourse: [],
         usersNotInCourse: [],
@@ -38,7 +37,6 @@ export const useEnrollmentStore = defineStore("enrollment",{
         async dropCourseFromUser(user_id, course_id) {
             try {
                 const userStore = useUsersStore();
-                const courseStore = useCoursesStore();
 
                 const response = await fetch(`/api/enrollment/drop`, {
                     method: "DELETE",
@@ -51,8 +49,6 @@ export const useEnrollmentStore = defineStore("enrollment",{
 
                 if(!response.ok) throw new Error("Failed to drop course from user");
 
-                // await this.getCoursesForUser(user_id);
-
                 return true;
             } catch (error) {
                 console.error("Error dropping course from user:", error);
@@ -61,7 +57,6 @@ export const useEnrollmentStore = defineStore("enrollment",{
         async getUsersInCourse(course_id) {
             try {
                 const userStore = useUsersStore();
-                const courseStore = useCoursesStore();
 
                 const response = await fetch(`/api/enrollment/course/${course_id}`, {
                     method: "GET",
@@ -69,13 +64,16 @@ export const useEnrollmentStore = defineStore("enrollment",{
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${userStore.user.token}`
                     },      
-                })
+                });
 
                 if (!response.ok) throw new Error(response.body.message);
 
-                const enrollData = await response.json();
-                this.usersInCourse = enrollData;
-                return enrollData;
+                const enrollmentData = await response.json();
+
+                this.usersInCourse = enrollmentData.usersForCourse;
+                this.usersNotInCourse = enrollmentData.usersNotForCourse;
+
+                return enrollmentData;
             } catch (error) {
                 console.error(error.message);
                 return [];
