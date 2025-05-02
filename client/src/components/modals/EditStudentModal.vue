@@ -23,7 +23,7 @@
     const notEnrolledListRef = ref(null);
 
     async function saveChanges() {
-        if (confirm("Are you sure you want to save your changes?")) {
+        if (confirm("Are you sure you want to save these changes?")) {
             // Update enrollments:
             await enrolledListRef.value?.updateEnrollment(props.user.user_id);
             await notEnrolledListRef.value?.updateEnrollment(props.user.user_id);
