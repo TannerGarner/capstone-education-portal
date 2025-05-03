@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useUsersStore } from "./users";
+import { useCoursesStore } from "./courses";
 
 export const useEnrollmentStore = defineStore("enrollment", {
     state: () => ({
@@ -81,29 +82,43 @@ export const useEnrollmentStore = defineStore("enrollment", {
         },
         async getCoursesForUser(user_id) {
             try {
-                const userStore = useUsersStore();
+                if (user_id) {
+                    const userStore = useUsersStore();
+                    
+                    const response = await fetch(`/api/enrollment/user/${user_id}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${userStore.user.token}`
+                        }
+                    })
+    
+                    if (!response.ok) throw new Error(response.body.message);
+                    
+                    const enrollmentData = await response.json();
+    
+                    this.coursesForUser = enrollmentData.coursesForUser;
+                    this.coursesNotForUser = enrollmentData.coursesNotForUser;
+    
+                    return enrollmentData;
+                } else {
+                    const courseStore = useCoursesStore();
 
-                const response = await fetch(`/api/enrollment/user/${user_id}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${userStore.user.token}`
-                    },        
-                })
+                    // Assign coursesNotForUser to equal courseStore.courses, and let coursesForUser remain an empty array:
+                    this.coursesNotForUser = courseStore.courses;
 
-                if (!response.ok) throw new Error(response.body.message);
-                
-                const enrollmentData = await response.json();
-
-                this.coursesForUser = enrollmentData.coursesForUser;
-                this.coursesNotForUser = enrollmentData.coursesNotForUser;
-
-                return enrollmentData;
+                    return this.coursesNotForUser;
+                }
             } catch (error) {
                 console.error(error.message);
                 return [];
             } 
         },
-
-    },
+        clearState() {
+            this.usersInCourse = [];
+            this.usersNotInCourse = [];
+            this.coursesForUser = [];
+            this.coursesNotForUser = [];
+        }
+    }
 });

@@ -2,7 +2,6 @@
     import { ref, onMounted } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import EditStudentModal from './modals/EditStudentModal.vue';
-    import router from '../router/index.js';
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
@@ -14,7 +13,7 @@
 
 
     async function openEditModal(user) {
-        console.log(user)
+        console.log(user);
         selectedUser.value = { ...user };
         isEditStudentModalOpen.value = true;
     }
@@ -26,9 +25,9 @@
     }
 
     async function saveStudent(userInfo) {
-        if(isNew.value === true){
-            await userStore.createUser(userInfo)
-            alert(`Successfully created user`)
+        if (isNew.value === true) {
+            await userStore.createUser(userInfo);
+            alert(`Successfully created user`);
         } else {
             console.log(userInfo);
             await userStore.updateUser(userInfo);
@@ -36,23 +35,22 @@
         closeEditModal();
     }
 
-    function createUser(){
+    function createUser() {
         isNew.value = true;
         const userPattern = {
-            first_name:"",
+            user_id: null,
+            first_name: "",
             last_name: "",
-            email:"",
+            email: "",
             password: "",
-            phone_number:"",
-            address:{
-                street: " ",
-                city: "",
-                state: "",
-                country: "",
-            },          
+            phone_number: "",
+            street: "",
+            city: "",
+            state: "",
+            country: "",
             is_admin: ""
         }
-        selectedUser.value = { ...userPattern };
+        // selectedUser.value = { ...userPattern };
         openEditModal(userPattern);
     }
 

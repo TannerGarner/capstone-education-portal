@@ -2,39 +2,46 @@
     import { ref, watch } from 'vue';
     import EnrollmentList from './EnrollmentList.vue';
     import { useEnrollmentStore } from '../../stores/enrollment';
+    import { useUsersStore } from '../../stores/users';
     const enrollmentStore = useEnrollmentStore();
-
+    const userStore = useUsersStore();
+    
     const props = defineProps({
         user: Object,
         isNew: Boolean,  
         isOpen: Boolean  
     });
-
+    
     const emit = defineEmits(['close', 'save']);
-
+    
     function closeModal() {
         Object.entries(editorState.value).forEach(([key]) => {
             editorState.value[key] = false;
         });
-
+        
         enrollmentStore.clearState();
-
+        
         emit('close');
     }
-
+    
     const enrolledListRef = ref(null);
     const notEnrolledListRef = ref(null);
-
+    
     async function saveChanges() {
         if (confirm("Are you sure you want to save these changes?")) {
-            // Update enrollments:
-            await enrolledListRef.value?.updateEnrollment(props.user.user_id);
-            await notEnrolledListRef.value?.updateEnrollment(props.user.user_id);
+            // Create/update main user info:
+            let userID;
+            if (props.isNew) {
+                userID = await userStore.createUser(editUser.value);
+            } else {
+                await userStore.updateUser(editUser.value);
+                userID = props.user.user_id;
+            }
 
-            // Update user info:
-            emit("save", editUser.value);
-            
-            // Close modal:
+            // Update enrollment info:
+            await enrolledListRef.value?.updateEnrollment(userID);
+            await notEnrolledListRef.value?.updateEnrollment(userID);
+
             closeModal();
         }
     }

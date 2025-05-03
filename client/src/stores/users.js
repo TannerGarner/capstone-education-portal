@@ -89,7 +89,6 @@ export const useUsersStore = defineStore('users',{
                     throw new Error("Failed to create user");
                 }
                 const tokenAndUser = await response.json();
-                const token = tokenAndUser.token;
 
                 const { password, ...userWithoutPassword } = newUser;
                 if (!this.user.is_admin){
@@ -97,7 +96,7 @@ export const useUsersStore = defineStore('users',{
                         ...userWithoutPassword, 
                         user_id: tokenAndUser.user_id,
                         password_length: password.length,
-                        token: token,
+                        token: tokenAndUser.token,
                     };
 
                     localStorage.setItem("user", JSON.stringify(this.user));
@@ -106,10 +105,11 @@ export const useUsersStore = defineStore('users',{
                 } else {
                     this.users.push({
                         ...userWithoutPassword, 
-                        user_id: tokenAndUser.user_id,
-                        password_length: password.length,
-                    })
+                        user_id: tokenAndUser.user_id
+                    });
                 }
+
+                return tokenAndUser.user_id;
             } catch (error) {
                 console.error("Failed to create user:", error.message);
             }
