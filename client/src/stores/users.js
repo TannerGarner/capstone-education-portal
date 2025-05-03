@@ -86,7 +86,8 @@ export const useUsersStore = defineStore('users',{
                 });
 
                 if (!response.ok) {
-                    throw new Error("Failed to create user");
+                    const { errorMessage } = await response.json();
+                    throw new Error(errorMessage);
                 }
                 const tokenAndUser = await response.json();
 
@@ -109,19 +110,21 @@ export const useUsersStore = defineStore('users',{
                     });
                 }
 
-                return tokenAndUser.user_id;
+                return {
+                    user_id: tokenAndUser.user_id,
+                    errorMessage: null
+                }
             } catch (error) {
                 console.error("Failed to create user:", error.message);
+                return {
+                    user_id: null,
+                    errorMessage: error.message
+                }
             }
         },
         async updateUser(updateValues) {
             try {
                 console.log("updateValues:", updateValues);
-
-                // Come back here, ensure the number of dots for a users password is valid:
-                // if ("password" in editUser.value) {
-                //     userStore.password_length = editUser.value.length;
-                // }
 
                 // Make request to update user in database:
                 const response = await fetch(`/api/users/${updateValues.user_id}`, {
@@ -134,12 +137,19 @@ export const useUsersStore = defineStore('users',{
                 });
 
                 // Check if response is okay:
-                if (!response.ok) throw new Error("Failed to update user");
+                if (!response.ok) {
+                    const { errorMessage } = await response.json();
+                    throw new Error(errorMessage);
+                }
 
                 // Update state:
                 this.updateAllUserState();
+
+                // Return an error message of null
+                return null;
             } catch (error) {
                 console.error("Update failed:", error.message);
+                return error.message;
             }
         },
         async deleteUser(userID) {

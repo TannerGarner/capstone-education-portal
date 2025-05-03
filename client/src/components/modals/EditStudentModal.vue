@@ -30,13 +30,19 @@
     async function saveChanges() {
         if (confirm("Are you sure you want to save these changes?")) {
             // Create/update main user info:
-            let userID;
+            let userID, errorMessage;
             if (props.isNew) {
-                userID = await userStore.createUser(editUser.value);
+                const requestResult = await userStore.createUser(editUser.value);
+
+                errorMessage = requestResult.errorMessage;
+                userID = requestResult.user_id;
             } else {
-                await userStore.updateUser(editUser.value);
+                errorMessage = await userStore.updateUser(editUser.value);
                 userID = props.user.user_id;
             }
+
+            // If there is an error updating the main user info, show alert and don't update enrollment info:
+            if (errorMessage) return alert("Failed to update user.");
 
             // Update enrollment info:
             await enrolledListRef.value?.updateEnrollment(userID);
