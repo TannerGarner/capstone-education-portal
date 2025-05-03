@@ -16,6 +16,9 @@
         Object.entries(editorState.value).forEach(([key]) => {
             editorState.value[key] = false;
         });
+
+        enrollmentStore.clearState();
+
         emit('close');
     }
 
@@ -113,82 +116,37 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: #00000080;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
-        /* Prevent background scrolling when modal is open */
-        overflow: hidden;
-    }
-
-    .editStudentModal {
-        position: relative;
-        width: 70vw;
-        max-height: 90vh; /* Changed from fixed height */
-        background-color: #F5F1ED;
-        border-radius: 10px;
-        padding: 50px;
-        box-shadow: 0px 0px 500px #153131;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        /* Add scrolling to modal content */
         overflow-y: auto;
-        /* Smooth scrolling */
-        scroll-behavior: smooth;
-    }
-
-    /* Add styling for scrollbar */
-    .editStudentModal::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .editStudentModal::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    .editStudentModal::-webkit-scrollbar-thumb {
-        background: #489FB5;
-        border-radius: 4px;
-    }
-
-    .editStudentModal::-webkit-scrollbar-thumb:hover {
-        background: #367c8f;
-    }
-
-    .cover{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 2rem 0;
     }
 
     .editStudentModal {
         position: relative;
         width: 70vw;
-        height: 60vh;
+        min-height: 60vh;
         background-color: #F5F1ED;
         border-radius: 10px;
         padding: 50px;
         box-shadow: 0px 0px 500px #153131;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         gap: 20px;
+        margin: auto;
+        margin-bottom: 4rem;
     }
 
     .studentInfo {
         display: flex;
         gap: 40px;
+        width: 100%;
+        padding-bottom: 20px; /* Add some space between sections */
     }
 
-    .column{
+    .column {
         flex-grow: 1;
     }
 

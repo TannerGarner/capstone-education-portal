@@ -16,6 +16,9 @@
         Object.entries(editorState.value).forEach(([key]) => {
             editorState.value[key] = false;
         });
+
+        enrollmentStore.clearState();
+
         emit('close');
     }
 
@@ -104,24 +107,40 @@
 </template>
 
 <style scoped>
+    .cover {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #00000080;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        overflow-y: auto;
+        padding: 2rem 0;
+    }
 
     .editCourseModal {
         position: relative;
         width: 70vw;
-        height: 60vh;
+        min-height: 60vh;
         background-color: #F5F1ED;
         border-radius: 10px;
         padding: 50px;
         box-shadow: 0px 0px 500px #153131;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         gap: 20px;
+        margin: auto;
+        margin-bottom: 4rem;
     }
 
     .courseInfo {
         display: flex;
         gap: 40px;
+        width: 100%;
+        padding-bottom: 20px;
     }
 
     .column{
@@ -181,6 +200,5 @@
 
     .description {
         text-wrap: wrap;
-        
     }
 </style>
