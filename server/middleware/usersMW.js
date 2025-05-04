@@ -4,7 +4,7 @@ import { genToken } from "../services/jwt.js";
 import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from "../services/postgres/usersPG.js";
 import { createAddressPG, updateAddressPG } from "../services/postgres/addressesPG.js";
 import { sendErrRes, throwResErr } from "../utils/errHandlingUtils.js";
-import { sanitizeUserData } from "../utils/dataHandlingUtils.js";
+import { sanitizeUserData } from "../services/joi.js";
 
 export async function loginMW(req, res) {
     function throwInvalidCredsErr() {

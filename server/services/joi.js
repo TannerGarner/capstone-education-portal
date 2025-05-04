@@ -1,6 +1,6 @@
 import Joi from "joi";
 import bcrypt from "bcrypt";
-import { throwResErr } from "./errHandlingUtils.js";
+import { throwResErr } from "../utils/errHandlingUtils.js";
 
 export function sanitizeUserData(req) {
     // Extract user data request data:
@@ -12,22 +12,14 @@ export function sanitizeUserData(req) {
         delete userData.password;
     }
 
-    console.log("userData:", userData);
-
     function nullifyEmptyOrWhitespaceStrs(value) {
-        console.log(`value: |${value}|`);
-        console.log("typeof value:", typeof value);
         if (typeof value === "string") {
             value = value.trim();
             if (!value) return null;
         }
 
         return value;
-
-
-        // if (typeof value === "string" && value.trim() === "") return null;
-        // return value;
-    };
+    }
 
     // Validate the userData:
     const userDataSchema = Joi.object({
