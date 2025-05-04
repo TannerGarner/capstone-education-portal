@@ -1,5 +1,6 @@
 import { createCoursePG, deleteCoursePG, searchCoursesPG, updateCoursePG } from "../services/postgres/coursesPG.js";
 import { sendErrRes } from "../utils/errHandlingUtils.js";
+import { sanitizeCourseData } from "../services/joi.js";
 
 export async function searchCoursesMW(req, res) {
     try {
@@ -15,7 +16,7 @@ export async function searchCoursesMW(req, res) {
 
 export async function postCourseMW(req, res) {
     try {
-        const courseData = { ...req.body };
+        const courseData = sanitizeCourseData(req);
 
         await createCoursePG(courseData);
 
@@ -28,7 +29,7 @@ export async function postCourseMW(req, res) {
 export async function putCourseMW(req, res) {
     try {
         const { courseID } = req.params;
-        const newCourseData = { ...req.body };
+        const newCourseData = sanitizeCourseData(req);
 
         await updateCoursePG(courseID, newCourseData);
 
