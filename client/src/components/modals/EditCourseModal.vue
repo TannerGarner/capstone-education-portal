@@ -2,7 +2,9 @@
     import { ref, watch } from 'vue';
     import EnrollmentList from './EnrollmentList.vue';
     import { useEnrollmentStore } from '../../stores/enrollment';
+    import { useCoursesStore } from '../../stores/courses';
     const enrollmentStore = useEnrollmentStore();
+    const coursesStore = useCoursesStore();
 
     const props = defineProps({
         course: Object,
@@ -10,7 +12,7 @@
         isOpen: Boolean  
     });
 
-    const emit = defineEmits(['close', 'save']);
+    const emit = defineEmits(['close']);
 
     function closeModal() {
         Object.entries(editorState.value).forEach(([key]) => {
@@ -27,13 +29,14 @@
 
     async function saveChanges() {
         if (confirm("Are you sure you want to save these changes?")) {
-            // Update enrollments:
+            // Create or update main course info:
+            if (props.isNew) coursesStore.createCourse(editCourse.value);
+            else coursesStore.updateCourse(editCourse.value);
+
+            // Update enrollments info:
             await enrolledListRef.value?.updateEnrollment(props.course.course_id);
             await notEnrolledListRef.value?.updateEnrollment(props.course.course_id);
 
-            // Update user info:
-            emit("save", editCourse.value);
-            
             // Close modal:
             closeModal();
         }
@@ -46,7 +49,6 @@
     }
 
     const editCourse = ref({});
-
     const editorState = ref({});
 
     watch(() => props.isOpen, (newVal) => {

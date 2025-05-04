@@ -13,27 +13,26 @@
 
 
     async function openEditModal(user) {
-        console.log(user);
         selectedUser.value = { ...user };
         isEditStudentModalOpen.value = true;
     }
 
     function closeEditModal() {
+        isNew.value = false;
         isEditStudentModalOpen.value = false;
         selectedUser.value = null;
-        isNew.value = false;
     }
 
-    async function saveStudent(userInfo) {
-        if (isNew.value === true) {
-            await userStore.createUser(userInfo);
-            alert(`Successfully created user`);
-        } else {
-            console.log(userInfo);
-            await userStore.updateUser(userInfo);
-        }
-        closeEditModal();
-    }
+    // async function saveStudent(userInfo) {
+    //     if (isNew.value === true) {
+    //         await userStore.createUser(userInfo);
+    //         alert(`Successfully created user`);
+    //     } else {
+    //         console.log(userInfo);
+    //         await userStore.updateUser(userInfo);
+    //     }
+    //     closeEditModal();
+    // }
 
     function createUser() {
         isNew.value = true;
@@ -80,15 +79,15 @@
                     <p>Email</p>
                 </div>
                 <div 
-                class="student" 
-                v-for="(user, index) in userStore.users" 
-                :key="user.user_id"
-                :class="{ firstStudent: index === 0 }"
+                    class="student"
+                    v-for="(user, index) in userStore.users"
+                    :key="user.user_id"
+                    :class="{ firstStudent: index === 0 }"
                 >
-                    <p>{{user.first_name}}</p>
-                    <p>{{user.last_name}}</p>
-                    <p>{{user.user_id}}</p>
-                    <p>{{user.email}}</p>
+                    <p>{{ user.first_name }}</p>
+                    <p>{{ user.last_name }}</p>
+                    <p>{{ user.user_id }}</p>
+                    <p>{{ user.email }}</p>
                     <span class="material-symbols-outlined details" @click="openEditModal(user)">
                         edit_square
                     </span>
@@ -103,13 +102,12 @@
             :isNew="isNew"
             :isOpen="isEditStudentModalOpen"
             @close="closeEditModal"
-            @save="saveStudent"
         />
+            <!-- @save="saveStudent" -->
     </div>
 </template>
 
 <style scoped>
-
     .allStudents {
         display: flex;
         flex-direction: column;
@@ -202,6 +200,5 @@
         .course > * {
             margin-left: 0;
         }
-        
     }
 </style>

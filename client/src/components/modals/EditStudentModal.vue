@@ -12,7 +12,7 @@
         isOpen: Boolean  
     });
     
-    const emit = defineEmits(['close', 'save']);
+    const emit = defineEmits(['close']);
     
     function closeModal() {
         Object.entries(editorState.value).forEach(([key]) => {
@@ -29,7 +29,7 @@
     
     async function saveChanges() {
         if (confirm("Are you sure you want to save these changes?")) {
-            // Create/update main user info:
+            // Create or update main user info:
             let userID, errorMessage;
             if (props.isNew) {
                 const requestResult = await userStore.createUser(editUser.value);
@@ -48,6 +48,7 @@
             await enrolledListRef.value?.updateEnrollment(userID);
             await notEnrolledListRef.value?.updateEnrollment(userID);
 
+            // Close modal:
             closeModal();
         }
     }

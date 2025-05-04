@@ -9,7 +9,6 @@
     const isEditModalOpen = ref(false);
     const isNew = ref(false);
 
-
     onMounted(async () => {
         courseStore.fetchCourses();
     });
@@ -25,40 +24,29 @@
         selectedCourse.value = null;
     }
 
-    function saveCourse(courseInfo) {
-        if(isNew.value === true){
-            courseStore.createCourse(courseInfo)
-        } else {
-            courseStore.updateCourse(courseInfo);
-        }
-        console.log('Saving course:', courseInfo);
-        closeEditModal();
-    }
-
     function createCourse(){
         isNew.value = true;
         const coursePattern = {
             course_id: "",
-            title:"",
+            title: "",
             schedule: "",
-            classroom_number:"",
-            maximum_capacity:"",
-            credit_hours:"",
-            description: "",            
+            classroom_number: "",
+            maximum_capacity: "",
+            credit_hours: "",
+            description: "",
             tuition_cost: ""
         }
-        selectedCourse.value = { ...coursePattern }
-        openEditModal(coursePattern)
+        // selectedCourse.value = { ...coursePattern };
+        openEditModal(coursePattern);
     }
 
     async function deleteCourse(course_id) {
         if (confirm(`Are you sure you want to delete course with courseid: ${course_id}`)) {
-            const deleted = await courseStore.deleteCourse(course_id)
-            alert(`${deleted ? "Failed to Delete" :  "Deleted Successfully"}`)
-            router.push("/auth")
+            const deleted = await courseStore.deleteCourse(course_id);
+            // alert(`${deleted ? "Failed to Delete" :  "Deleted Successfully"}`);
+            // router.push("/auth");
         }
     }
-
 </script>
 
 <template>
@@ -79,17 +67,17 @@
                     <p>Tuition</p>
                 </div>
                 <div
-                class="course" 
-                v-for="(course, index) in courseStore.courses" 
-                :key="course.course_id" 
-                :class="{ firstCourse: index === 0 }"
+                    class="course"
+                    v-for="(course, index) in courseStore.courses"
+                    :key="course.course_id"
+                    :class="{ firstCourse: index === 0 }"
                 >
-                    <h4>{{course.title}}</h4>
+                    <h4>{{ course.title }}</h4>
                     <p>{{ course.course_id }}</p>
                     <p>{{ course.spots_taken }}/{{course.maximum_capacity}}</p>
-                    <p>{{course.schedule}}</p>
-                    <p>{{course.credit_hours}}</p>
-                    <p>{{course.tuition_cost}}</p>
+                    <p>{{ course.schedule }}</p>
+                    <p>{{ course.credit_hours }}</p>
+                    <p>{{ course.tuition_cost }}</p>
                     <span class="material-symbols-outlined details" @click="openEditModal(course)">
                         edit_square
                     </span>
@@ -104,13 +92,12 @@
             :isNew="isNew"
             :isOpen="isEditModalOpen"
             @close="closeEditModal"
-            @save="saveCourse"
         />
+            <!-- @save="saveCourse" -->
     </div>
 </template>
 
 <style scoped>
-
     .allCourses {
         display: flex;
         flex-direction: column;
@@ -207,6 +194,5 @@
         .course > * {
             margin-left: 0;
         }
-        
     }
 </style>
