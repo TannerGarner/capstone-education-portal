@@ -1,12 +1,12 @@
-import { dropPG, enrollPG, getCoursesForUserPG, getCoursesNotForUserPG, getUsersForCoursePG, getUsersNotForCoursePG } from "../services/postgres/enrollmentPG.js";
+import { dropStudentFromCoursePG, enrollStudentInCoursePG, getCoursesWithStudentPG, getCoursesWithoutStudentPG, getStudentsInCoursePG, getStudentsNotInCoursePG } from "../services/postgres/enrollmentPG.js";
 import { sendErrRes } from "../utils/errHandlingUtils.js";
 
-export async function getCoursesForUserMW(req, res) {
+export async function getEnrollmentOfStudentMW(req, res) {
     try {
         const { userID } = req.params;
 
-        const coursesForUser = await getCoursesForUserPG(userID);
-        const coursesNotForUser = await getCoursesNotForUserPG(userID);
+        const coursesForUser = await getCoursesWithStudentPG(userID);
+        const coursesNotForUser = await getCoursesWithoutStudentPG(userID);
 
         res.json({ coursesForUser, coursesNotForUser });
     } catch (err) {
@@ -14,12 +14,12 @@ export async function getCoursesForUserMW(req, res) {
     }
 }
 
-export async function getUsersForCourseMW(req, res) {
+export async function getEnrollmentOfCourseMW(req, res) {
     try {
         const { courseID } = req.params;
 
-        const usersForCourse = await getUsersForCoursePG(courseID);
-        const usersNotForCourse = await getUsersNotForCoursePG(courseID);
+        const usersForCourse = await getStudentsInCoursePG(courseID);
+        const usersNotForCourse = await getStudentsNotInCoursePG(courseID);
 
         res.json({ usersForCourse, usersNotForCourse });
     } catch (err) {
@@ -28,11 +28,11 @@ export async function getUsersForCourseMW(req, res) {
 }
 
 
-export async function enrollMW(req, res) {
+export async function enrollStudentInCourseMW(req, res) {
     try {
         const { user_id, course_id } = req.body;
 
-        await enrollPG(user_id, course_id);
+        await enrollStudentInCoursePG(user_id, course_id);
 
         res.json({ errorMessage: null });
     } catch (err) {
@@ -40,11 +40,11 @@ export async function enrollMW(req, res) {
     }
 }
 
-export async function dropMW(req, res) {
+export async function dropStudentFromCourseMW(req, res) {
     try {
         const { user_id, course_id } = req.body;
 
-        await dropPG(user_id, course_id);
+        await dropStudentFromCoursePG(user_id, course_id);
 
         res.json({ errorMessage: null });
     } catch (err) {

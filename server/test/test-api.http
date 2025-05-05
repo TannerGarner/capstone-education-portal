@@ -253,9 +253,9 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "user_id": 98,
+    "user_id": 123456789,
     "course_id": "CSCI-2013"
 }
 
-### Test endpoint
+# ### Test endpoint
 # GET http://localhost:3001/test

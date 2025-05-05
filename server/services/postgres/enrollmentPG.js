@@ -3,7 +3,7 @@ import pgPool from "./pgPool.js";
 import { ensureCourseExistsPG } from "./coursesPG.js";
 import { ensureUserExistsPG, ensureUserIsNotAdminPG } from "./usersPG.js";
 
-export async function getCoursesForUserPG(userID) {
+export async function getCoursesWithStudentPG(userID) {
     await ensureUserExistsPG(userID);
 
     const { rows: courses } = await pgPool.query({ 
@@ -21,7 +21,7 @@ export async function getCoursesForUserPG(userID) {
     return courses;
 }
 
-export async function getCoursesNotForUserPG(userID) {
+export async function getCoursesWithoutStudentPG(userID) {
     await ensureUserExistsPG(userID);
 
     const { rows: courses } = await pgPool.query({ 
@@ -39,7 +39,7 @@ export async function getCoursesNotForUserPG(userID) {
     return courses;
 }
 
-export async function getUsersForCoursePG(courseID) {
+export async function getStudentsInCoursePG(courseID) {
     await ensureCourseExistsPG(courseID);
 
     const { rows: users } = await pgPool.query({ 
@@ -57,7 +57,7 @@ export async function getUsersForCoursePG(courseID) {
     return users;
 }
 
-export async function getUsersNotForCoursePG(courseID) {
+export async function getStudentsNotInCoursePG(courseID) {
     await ensureCourseExistsPG(courseID);
 
     const { rows: users } = await pgPool.query({ 
@@ -93,7 +93,7 @@ export async function getCourseUserCountPG(courseID) {
     return res.rows[0]?.count ?? null;
 }
 
-export async function enrollPG(userID, courseID) {
+export async function enrollStudentInCoursePG(userID, courseID) {
     // Ensure that user and course exist:
     await ensureUserExistsPG(userID);
     await ensureCourseExistsPG(courseID);
@@ -125,11 +125,11 @@ export async function enrollPG(userID, courseID) {
     }
 }
 
-export async function dropPG(userID, courseID) {
+export async function dropStudentFromCoursePG(userID, courseID) {
     // Handle errors before query:
     await ensureUserExistsPG(userID);
     await ensureCourseExistsPG(courseID);
-    if (!(await isUserEnrolledInCoursePG(userID, courseID))) throwResErr(404, `User was not enrolled to begin with`);
+    if (!(await isStudentEnrolledInCoursePG(userID, courseID))) throwResErr(404, "User was not enrolled to begin with");
 
     await pgPool.query({
         text: "DELETE FROM enrollment WHERE user_id = $1 AND course_id = $2;",
@@ -138,11 +138,20 @@ export async function dropPG(userID, courseID) {
 }
 
 
-async function isUserEnrolledInCoursePG(userID, courseID) {
+async function isStudentEnrolledInCoursePG(userID, courseID) {
     const res = await pgPool.query({
         text: "SELECT COUNT(*) FROM enrollment WHERE user_id = $1 AND course_id = $2;",
         values: [userID, courseID]
     });
 
     return res.rows[0].count === "1";
+}
+
+export async function dropEveryCourseWithStudentPG(userID) {
+    await ensureUserExistsPG(userID);
+
+    await pgPool.query({
+        text: "DELETE FROM enrollment WHERE user_id = $1;",
+        values: [userID]
+    });
 }

@@ -1,5 +1,5 @@
 import pgPool from "./pgPool.js";
-import { getUsersForCoursePG } from "./enrollmentPG.js";
+import { getStudentsInCoursePG } from "./enrollmentPG.js";
 import { throwResErr } from "../../utils/errHandlingUtils.js";
 
 export async function getCoursePG(courseID) {
@@ -112,7 +112,7 @@ export async function updateCoursePG(courseID, newCourseData) {
 }
 
 export async function deleteCoursePG(courseID) {
-    const usersInCourse = await getUsersForCoursePG(courseID);
+    const usersInCourse = await getStudentsInCoursePG(courseID);
 
     if (usersInCourse.length > 0) throwResErr(400, "Cannot delete course; users are enrolled in course");
 
