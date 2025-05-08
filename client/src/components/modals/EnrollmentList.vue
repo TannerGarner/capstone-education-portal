@@ -1,5 +1,5 @@
 <script setup>
-    import { computed, defineProps, watch } from "vue";
+    import { computed, watch } from "vue";
     import { ref } from "vue";
     import { useEnrollmentStore } from "../../stores/enrollment";
     const enrollmentStore = useEnrollmentStore();

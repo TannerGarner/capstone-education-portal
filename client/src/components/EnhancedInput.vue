@@ -12,7 +12,7 @@
             validator: (value) => ["text", "number", "boolean", "schedule", "email"].includes(value)
         },
         modelValue: {
-            type: null,  // type of any
+            type: null, // type of any
             required: true
         }
     });
@@ -75,3 +75,11 @@
         background-color: white;
     }
 </style>
+
+<!--
+<EnhancedInput
+    label="This is an input:"
+    type="text"
+    v-model="temp"
+/>
+-->

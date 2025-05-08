@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch } from 'vue';
+    import { onMounted, ref } from 'vue';
     import EnrollmentList from './EnrollmentList.vue';
     import { useEnrollmentStore } from '../../stores/enrollment';
     import { useUsersStore } from '../../stores/users';
@@ -63,24 +63,9 @@
     const editUser = ref({});
     const editorState = ref({});
 
-    watch(() => props.isOpen, (newVal) => {
-        if (props.isOpen) enrollmentStore.getCoursesForUser(props.user.user_id);
-
-        if (newVal) {
-            editUser.value = { ...props.user };
-            if (props.isNew) {
-                Object.keys(props.user).forEach(key => {
-                    if (key === 'address') {
-                        editorState.value.address = {};
-                        Object.keys(props.user.address).forEach(addressKey => {
-                            editorState.value.address[addressKey] = true;
-                        });
-                    } else {
-                        editorState.value[key] = true;
-                    }
-                });
-            }
-        }
+    onMounted(() => {
+        editUser.value = { ...props.user };
+        enrollmentStore.getCoursesForUser(props.user.user_id);
     });
 </script>
 
@@ -157,7 +142,7 @@
         display: flex;
         gap: 40px;
         width: 100%;
-        padding-bottom: 20px; /* Add some space between sections */
+        padding-bottom: 20px;
     }
 
     .column {

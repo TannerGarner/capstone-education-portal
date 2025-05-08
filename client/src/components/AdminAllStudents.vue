@@ -97,7 +97,8 @@
                 </div>
             </div>
         </div>
-        <EditStudentModal 
+        <EditStudentModal
+            v-if="isEditStudentModalOpen"
             :user="selectedUser"
             :isNew="isNew"
             :isOpen="isEditStudentModalOpen"
