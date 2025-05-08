@@ -105,7 +105,7 @@
                     <p>First Name</p>
                     <p>Last Name</p>
                     <p>User ID</p>
-                    <p>Email</p>
+                    <p>Role</p>
                 </div>
                 <div 
                     class="student"
@@ -116,7 +116,7 @@
                     <p>{{ user.first_name }}</p>
                     <p>{{ user.last_name }}</p>
                     <p>{{ user.user_id }}</p>
-                    <p>{{ user.email }}</p>
+                    <p>{{ user.is_admin ? "Admin" : "Student" }}</p>
                     <span class="material-symbols-outlined details" @click="openEditModal(user)">
                         edit_square
                     </span>
