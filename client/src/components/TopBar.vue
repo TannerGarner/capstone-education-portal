@@ -1,11 +1,10 @@
 <script setup>
     import { useRouter } from 'vue-router';
-    import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
-    import { useEnrollmentStore } from '../stores/enrollment.js';
+    import { useCoursesStore } from '../stores/courses.js';
     const userStore = useUsersStore();
+    const courseStore = useCoursesStore();
     const router = useRouter();
-    const enrollmentStore = useEnrollmentStore();
 
     const props = defineProps(['changeDisplay', 'components']);
 
@@ -20,11 +19,7 @@
         console.log("=".repeat(25));
         console.log("userStore.user:", userStore.user);
         console.log("userStore.users:", userStore.users);
-        console.log("enrollmentStore.enrolledInList:", enrollmentStore.enrolledInList);
-        console.log("enrollmentStore.notEnrolledInList:", enrollmentStore.notEnrolledInList);
-        console.log("-".repeat(25));
-        console.log("enrollmentStore.coursesForUser:", enrollmentStore.coursesForUser);
-        console.log("enrollmentStore.coursesNotForUser:", enrollmentStore.coursesNotForUser);
+        console.log("courseStore.courses:", courseStore.courses);
         console.log("=".repeat(25));
     }
 </script>

@@ -1,17 +1,21 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
-    import { useCoursesStore } from '../stores/courses.js';
+    import { ref, onMounted, watch } from 'vue';
     import EditCourseModal from './modals/EditCourseModal.vue';
+    import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
     const courseStore = useCoursesStore();
     const userStore = useUsersStore();
     const selectedCourse = ref(null);
     const isEditModalOpen = ref(false);
     const isNew = ref(false);
+    const renderedCourses = ref([]);
+    const searchQuery = ref("");
 
     onMounted(async () => {
-        courseStore.fetchCourses();
+        await courseStore.fetchCourses();
+        filterRenderedCourses();
     });
+    watch(searchQuery, filterRenderedCourses);
 
     function openEditModal(course) {
         selectedCourse.value = { ...course };
@@ -47,13 +51,37 @@
             // router.push("/auth");
         }
     }
+
+    function filterRenderedCourses() {
+        if (searchQuery.value === "") {
+            renderedCourses.value = [...courseStore.courses];
+        } else {
+            const searchQueryLower = searchQuery.value.toLowerCase();
+
+            renderedCourses.value = courseStore.courses.filter((course) => (
+                course.title.toLowerCase().includes(searchQueryLower) || course.course_id.toLowerCase().includes(searchQueryLower)
+            ));
+        }
+    }
+
+    function tempDebugTesting() {
+        console.log("=".repeat(25));
+        console.log("searchQuery.value:", searchQuery.value);
+        console.log("renderedCourses.value:", renderedCourses.value);
+        console.log("=".repeat(25));
+    }
 </script>
 
 <template>
     <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
-            <h2>Manage Courses</h2>
-            <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+            <h2 @dblclick="tempDebugTesting()">Manage Courses</h2>
+            <input
+                class="searchBar"
+                type="search"
+                v-model="searchQuery"
+                placeholder="Search All Courses"
+            />
             <p @click="createCourse" class="createCourse">+ Create a Course</p>
         </div>
         <div class="allCourses">
@@ -68,7 +96,7 @@
                 </div>
                 <div
                     class="course"
-                    v-for="(course, index) in courseStore.courses"
+                    v-for="(course, index) in renderedCourses"
                     :key="course.course_id"
                     :class="{ firstCourse: index === 0 }"
                 >

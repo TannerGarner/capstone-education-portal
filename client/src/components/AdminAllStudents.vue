@@ -70,20 +70,22 @@
         if (searchQuery.value === "") {
             renderedUsers.value = [...userStore.users];
         } else {
+            const searchQueryLower = searchQuery.value.toLowerCase();
+
             renderedUsers.value = userStore.users.filter((user) => (
-                user.first_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-                || user.last_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-                || user.user_id.toString().toLowerCase().startsWith(searchQuery.value.toLowerCase())
-                || user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
+                user.first_name.toLowerCase().includes(searchQueryLower)
+                || user.last_name.toLowerCase().includes(searchQueryLower)
+                || user.user_id.toString().toLowerCase().startsWith(searchQueryLower)
+                || user.email.toLowerCase().includes(searchQueryLower)
             ));
         }
-    }    
+    }
 
     function tempDebugTesting() {
-        console.log("=".repeat(50));
+        console.log("=".repeat(25));
         console.log("searchQuery.value:", searchQuery.value);
         console.log("renderedUsers.value:", renderedUsers.value);
-        console.log("=".repeat(50));
+        console.log("=".repeat(25));
     }
 </script>
 
