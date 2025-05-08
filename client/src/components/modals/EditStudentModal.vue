@@ -8,8 +8,7 @@
     
     const props = defineProps({
         user: Object,
-        isNew: Boolean,  
-        isOpen: Boolean  
+        isNew: Boolean
     });
     
     const emit = defineEmits(['close']);
@@ -70,7 +69,7 @@
 </script>
 
 <template>
-    <div v-if="isOpen" class="cover">
+    <div class="cover">
         <div class="editStudentModal">
             <div class="studentInfo">
                 <div class="smallFields column">

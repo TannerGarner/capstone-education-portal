@@ -1,18 +1,22 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, watch } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import EditStudentModal from './modals/EditStudentModal.vue';
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
     const isNew = ref(false)
+    const renderedUsers = ref([]);
+    const searchQuery = ref("");
 
     onMounted(async () => {
-        userStore.fetchUsers();
+        await userStore.fetchUsers();
+        filterRenderedUsers();
     });
+    watch(searchQuery, filterRenderedUsers);
 
 
-    async function openEditModal(user) {
+    function openEditModal(user) {
         selectedUser.value = { ...user };
         isEditStudentModalOpen.value = true;
     }
@@ -61,13 +65,38 @@
             // if (deleted) router.push("/auth");
         }
     }
+
+    function filterRenderedUsers() {
+        if (searchQuery.value === "") {
+            renderedUsers.value = [...userStore.users];
+        } else {
+            renderedUsers.value = userStore.users.filter((user) => (
+                user.first_name.toLowerCase().includes(searchQuery.value.toLowerCase())
+                || user.last_name.toLowerCase().includes(searchQuery.value.toLowerCase())
+                || user.user_id.toString().toLowerCase().startsWith(searchQuery.value.toLowerCase())
+                || user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
+            ));
+        }
+    }    
+
+    function tempDebugTesting() {
+        console.log("=".repeat(50));
+        console.log("searchQuery.value:", searchQuery.value);
+        console.log("renderedUsers.value:", renderedUsers.value);
+        console.log("=".repeat(50));
+    }
 </script>
 
 <template>
     <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
-            <h2>Manage Users</h2>
-            <input class="searchBar" type="search" placeholder="Search All Users"></input>
+            <h2 @dblclick="tempDebugTesting()">Manage Users</h2>
+            <input
+                class="searchBar"
+                type="search"
+                v-model="searchQuery"
+                placeholder="Search All Users"
+            />
             <p @click="createUser" class="createUser">+ Create a New User</p>
         </div>
         <div class="allStudents">
@@ -80,7 +109,7 @@
                 </div>
                 <div 
                     class="student"
-                    v-for="(user, index) in userStore.users"
+                    v-for="(user, index) in renderedUsers"
                     :key="user.user_id"
                     :class="{ firstStudent: index === 0 }"
                 >
@@ -101,7 +130,6 @@
             v-if="isEditStudentModalOpen"
             :user="selectedUser"
             :isNew="isNew"
-            :isOpen="isEditStudentModalOpen"
             @close="closeEditModal"
         />
             <!-- @save="saveStudent" -->

@@ -19,6 +19,7 @@
     function showUserStateForDebugging() {
         console.log("=".repeat(25));
         console.log("userStore.user:", userStore.user);
+        console.log("userStore.users:", userStore.users);
         console.log("enrollmentStore.enrolledInList:", enrollmentStore.enrolledInList);
         console.log("enrollmentStore.notEnrolledInList:", enrollmentStore.notEnrolledInList);
         console.log("-".repeat(25));
