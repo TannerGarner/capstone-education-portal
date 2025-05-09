@@ -1,5 +1,5 @@
 <script setup>
-    import { onMounted, ref, watch } from 'vue';
+    import { onMounted, ref } from 'vue';
     import EnrollmentList from './EnrollmentList.vue';
     import { useEnrollmentStore } from '../../stores/enrollment';
     import { useCoursesStore } from '../../stores/courses';

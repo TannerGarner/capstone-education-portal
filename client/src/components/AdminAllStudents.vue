@@ -59,14 +59,14 @@
         openEditModal(userPattern);
     }
 
-    async function deleteUser(user_id){
-        if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
-            await usersStore.deleteUser(user_id);
-            // const deleted = await usersStore.deleteUser(user_id);
-            // alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
-            // if (deleted) router.push("/auth");
-        }
-    }
+    // async function deleteUser(user_id){
+    //     if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
+    //         await usersStore.deleteUser(user_id);
+    //         // const deleted = await usersStore.deleteUser(user_id);
+    //         // alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
+    //         // if (deleted) router.push("/auth");
+    //     }
+    // }
 
     function filterRenderedUsers() {
         if (searchQuery.value === "") {

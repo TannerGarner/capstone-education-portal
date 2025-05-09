@@ -52,6 +52,18 @@
         }
     }
 
+    async function deleteUser(){
+        if (confirm(`Are you sure you want to delete account with userid: ${props.user.user_id}`)) {
+            const deleted = await usersStore.deleteUser(props.user.user_id);
+            if (deleted) {
+                alert("User deleted successfully.");
+                closeModal();
+            } else {
+                alert("Failed to delete user.");
+            }
+        }
+    }
+
     function fixString(string){
         let fixed = string.replaceAll("_", " ");
         fixed = fixed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
@@ -96,12 +108,18 @@
                 />
             </div>
             <div class="modalButtons">
-                <button class="cancel" @click="closeModal()">
-                    Cancel
+                <button class="delete" @click="deleteUser()">
+                    <span class="material-symbols-outlined deleteText">delete</span>
+                    Delete User
                 </button>
-                <button @click="saveChanges()">
-                    Save
-                </button>
+                <div class="rightButtons">
+                    <button class="cancel" @click="closeModal()">
+                        Cancel
+                    </button>
+                    <button class="save" @click="saveChanges()">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -177,18 +195,44 @@
         outline: none; 
     }
 
-    .modalButtons{
+    .modalButtons {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+    }
+    .rightButtons {
+        display: flex;
         gap: 10px;
     }
 
-    button:hover{
+    .save:hover {
         background-color: #489FB5;
     }
 
-    .cancel:hover{
+    .cancel {
+        color: #489FB5;
+        background-color: #F5F1ED;
+        border: 2px #489FB5 solid;
+    }
+    .cancel:hover {
+        color: #F5F1ED;
+        background-color: #489FB5;
+    }
+
+    .delete {
+        color: #E63946;
+        background-color: #F5F1ED;
+        border: 2px #E63946 solid;
+        width: 9rem;
+    }
+    .delete:hover {
+        color: #F5F1ED;
         background-color: #E63946;
+    }
+
+    .material-symbols-outlined.deleteText {
+        font-size: 24px;
+        color: inherit;
+        margin-right: 0.5rem;
     }
 
     .descriptionBox {

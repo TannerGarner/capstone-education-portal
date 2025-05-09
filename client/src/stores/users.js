@@ -156,7 +156,7 @@ export const useUsersStore = defineStore('users',{
             const index = this.users.findIndex(user => user.user_id === userID);
             console.log(index)
             console.log(this.user)
-            if (index === -1) return;
+            if (index === -1) return false;
 
             const oldUser = { ...this.users[index] };
 
@@ -172,9 +172,13 @@ export const useUsersStore = defineStore('users',{
                 });
 
                 if (!response.ok) throw new Error("Failed to delete user");
+
+                return true;
             } catch (error) {
                 console.error("Delete failed, rolling back:", error.message);
                 this.users.splice(index, 0, oldUser);
+
+                return false;
             }
         },
         async login(credentials) {
