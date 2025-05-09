@@ -2,7 +2,7 @@
     import { ref, onMounted, watch } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import EditStudentModal from './modals/EditStudentModal.vue';
-    const userStore = useUsersStore();
+    const usersStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
     const isNew = ref(false)
@@ -10,10 +10,12 @@
     const searchQuery = ref("");
 
     onMounted(async () => {
-        await userStore.fetchUsers();
+        await usersStore.fetchUsers();
         filterRenderedUsers();
     });
+    
     watch(searchQuery, filterRenderedUsers);
+    watch(() => usersStore.users, filterRenderedUsers);
 
 
     function openEditModal(user) {
@@ -29,11 +31,11 @@
 
     // async function saveStudent(userInfo) {
     //     if (isNew.value === true) {
-    //         await userStore.createUser(userInfo);
+    //         await usersStore.createUser(userInfo);
     //         alert(`Successfully created user`);
     //     } else {
     //         console.log(userInfo);
-    //         await userStore.updateUser(userInfo);
+    //         await usersStore.updateUser(userInfo);
     //     }
     //     closeEditModal();
     // }
@@ -59,8 +61,8 @@
 
     async function deleteUser(user_id){
         if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
-            await userStore.deleteUser(user_id);
-            // const deleted = await userStore.deleteUser(user_id);
+            await usersStore.deleteUser(user_id);
+            // const deleted = await usersStore.deleteUser(user_id);
             // alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
             // if (deleted) router.push("/auth");
         }
@@ -68,11 +70,11 @@
 
     function filterRenderedUsers() {
         if (searchQuery.value === "") {
-            renderedUsers.value = [...userStore.users];
+            renderedUsers.value = [...usersStore.users];
         } else {
             const searchQueryLower = searchQuery.value.toLowerCase();
 
-            renderedUsers.value = userStore.users.filter((user) => (
+            renderedUsers.value = usersStore.users.filter((user) => (
                 user.first_name.toLowerCase().includes(searchQueryLower)
                 || user.last_name.toLowerCase().includes(searchQueryLower)
                 || user.user_id.toString().toLowerCase().startsWith(searchQueryLower)
@@ -90,7 +92,7 @@
 </script>
 
 <template>
-    <div v-if="userStore.user.is_admin" class="container">
+    <div v-if="usersStore.user.is_admin" class="container">
         <div class="header">
             <h2 @dblclick="tempDebugTesting()">Manage Users</h2>
             <input

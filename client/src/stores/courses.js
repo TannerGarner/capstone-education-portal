@@ -81,6 +81,8 @@ export const useCoursesStore = defineStore("courses",{
                 if (!response.ok) {
                     throw new Error("Failed to update course");
                 }
+
+                await this.fetchCourses();
             } catch (error) {
                 console.error("Update failed, rolling back:", error);
                 this.courses[index] = oldCourse; 

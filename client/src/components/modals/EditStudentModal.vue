@@ -4,7 +4,7 @@
     import { useEnrollmentStore } from '../../stores/enrollment';
     import { useUsersStore } from '../../stores/users';
     const enrollmentStore = useEnrollmentStore();
-    const userStore = useUsersStore();
+    const usersStore = useUsersStore();
     
     const props = defineProps({
         user: Object,
@@ -31,12 +31,12 @@
             // Create or update main user info:
             let userID, errorMessage;
             if (props.isNew) {
-                const requestResult = await userStore.createUser(editUser.value);
+                const requestResult = await usersStore.createUser(editUser.value);
 
                 errorMessage = requestResult.errorMessage;
                 userID = requestResult.user_id;
             } else {
-                errorMessage = await userStore.updateUser(editUser.value);
+                errorMessage = await usersStore.updateUser(editUser.value);
                 userID = props.user.user_id;
             }
 

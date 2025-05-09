@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import EnrollmentList from './EnrollmentList.vue';
     import { useEnrollmentStore } from '../../stores/enrollment';
     import { useCoursesStore } from '../../stores/courses';
@@ -8,8 +8,8 @@
 
     const props = defineProps({
         course: Object,
-        isNew: Boolean,  
-        isOpen: Boolean  
+        isNew: Boolean
+        // isOpen: Boolean
     });
 
     const emit = defineEmits(['close']);
@@ -30,8 +30,10 @@
     async function saveChanges() {
         if (confirm("Are you sure you want to save these changes?")) {
             // Create or update main course info:
-            if (props.isNew) coursesStore.createCourse(editCourse.value);
-            else coursesStore.updateCourse(editCourse.value);
+            if (props.isNew) await coursesStore.createCourse(editCourse.value);
+            else await coursesStore.updateCourse(editCourse.value);
+
+            console.log("coursesStore.courses:", coursesStore.courses);
 
             // Update enrollments info:
             await enrolledListRef.value?.updateEnrollment(props.course.course_id);
@@ -51,22 +53,27 @@
     const editCourse = ref({});
     const editorState = ref({});
 
-    watch(() => props.isOpen, (newVal) => {
-        if (props.isOpen) enrollmentStore.getUsersInCourse(props.course.course_id);
-
-        if (newVal) {
-            editCourse.value = { ...props.course };
-            if (props.isNew) {
-                Object.keys(props.course).forEach(key => {
-                    editorState.value[key] = true;
-                });
-            }
-        }
+    onMounted(() => {
+        editCourse.value = { ...props.course };
+        enrollmentStore.getUsersInCourse(props.course.course_id);
     });
+
+    // watch(() => props.isOpen, (newVal) => {
+    //     if (props.isOpen) enrollmentStore.getUsersInCourse(props.course.course_id);
+
+    //     if (newVal) {
+    //         editCourse.value = { ...props.course };
+    //         if (props.isNew) {
+    //             Object.keys(props.course).forEach(key => {
+    //                 editorState.value[key] = true;
+    //             });
+    //         }
+    //     }
+    // });
 </script>
 
 <template>
-    <div v-if="isOpen" class="cover">
+    <div class="cover">
         <div class="editCourseModal">
             <div class="courseInfo">
                 <div class="smallFields column">

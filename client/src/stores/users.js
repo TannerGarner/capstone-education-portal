@@ -145,7 +145,7 @@ export const useUsersStore = defineStore('users',{
                 // Update state:
                 this.updateAllUserState();
 
-                // Return an error message of null
+                // Return an error message of null:
                 return null;
             } catch (error) {
                 console.error("Update failed:", error.message);

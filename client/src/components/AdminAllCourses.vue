@@ -3,8 +3,8 @@
     import EditCourseModal from './modals/EditCourseModal.vue';
     import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
-    const courseStore = useCoursesStore();
-    const userStore = useUsersStore();
+    const coursesStore = useCoursesStore();
+    const usersStore = useUsersStore();
     const selectedCourse = ref(null);
     const isEditModalOpen = ref(false);
     const isNew = ref(false);
@@ -12,10 +12,12 @@
     const searchQuery = ref("");
 
     onMounted(async () => {
-        await courseStore.fetchCourses();
+        await coursesStore.fetchCourses();
         filterRenderedCourses();
     });
+
     watch(searchQuery, filterRenderedCourses);
+    watch(() => coursesStore.courses, filterRenderedCourses);
 
     function openEditModal(course) {
         selectedCourse.value = { ...course };
@@ -46,7 +48,7 @@
 
     async function deleteCourse(course_id) {
         if (confirm(`Are you sure you want to delete course with courseid: ${course_id}`)) {
-            const deleted = await courseStore.deleteCourse(course_id);
+            const deleted = await coursesStore.deleteCourse(course_id);
             // alert(`${deleted ? "Failed to Delete" :  "Deleted Successfully"}`);
             // router.push("/auth");
         }
@@ -54,11 +56,11 @@
 
     function filterRenderedCourses() {
         if (searchQuery.value === "") {
-            renderedCourses.value = [...courseStore.courses];
+            renderedCourses.value = [...coursesStore.courses];
         } else {
             const searchQueryLower = searchQuery.value.toLowerCase();
 
-            renderedCourses.value = courseStore.courses.filter((course) => (
+            renderedCourses.value = coursesStore.courses.filter((course) => (
                 course.title.toLowerCase().includes(searchQueryLower) || course.course_id.toLowerCase().includes(searchQueryLower)
             ));
         }
@@ -73,7 +75,7 @@
 </script>
 
 <template>
-    <div v-if="userStore.user.is_admin" class="container">
+    <div v-if="usersStore.user.is_admin" class="container">
         <div class="header">
             <h2 @dblclick="tempDebugTesting()">Manage Courses</h2>
             <input
@@ -115,12 +117,13 @@
                 </div>
             </div>
         </div>
-        <EditCourseModal 
+        <EditCourseModal
+            v-if="isEditModalOpen"
             :course="selectedCourse"
             :isNew="isNew"
-            :isOpen="isEditModalOpen"
             @close="closeEditModal"
         />
+            <!-- :isOpen="isEditModalOpen" -->
             <!-- @save="saveCourse" -->
     </div>
 </template>
