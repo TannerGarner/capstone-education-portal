@@ -124,9 +124,11 @@
                     <span class="material-symbols-outlined details" @click="openEditModal(user)">
                         edit_square
                     </span>
+                    <!--
                     <span class="material-symbols-outlined delete" @click="deleteUser(user.user_id)">
                         delete
                     </span>
+                    -->
                 </div>
             </div>
         </div>
@@ -174,7 +176,7 @@
 
     .studentHeader{
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.5fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr;
         align-items: center;
         background-color: #F5F1ED;
         color: #153131;
@@ -196,7 +198,7 @@
         padding: 15px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr  0.5fr 0.5fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr;
         align-items: center;
     }
 
