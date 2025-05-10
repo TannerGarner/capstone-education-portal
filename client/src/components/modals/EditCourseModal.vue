@@ -9,7 +9,6 @@
     const props = defineProps({
         course: Object,
         isNew: Boolean
-        // isOpen: Boolean
     });
 
     const emit = defineEmits(['close']);
@@ -44,6 +43,18 @@
         }
     }
 
+    async function deleteCourse() {
+        if (confirm(`Are you sure you want to delete "${props.course.title}"?`)) {
+            const deleted = await coursesStore.deleteCourse(props.course.course_id);
+            if (deleted) {
+                alert("Course deleted successfully.");
+                closeModal();
+            } else {
+                alert("Failed to delete course.");
+            }
+        }
+    }
+
     function fixString(string){
         let fixed = string.replaceAll("_", " ")
         fixed = fixed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
@@ -57,19 +68,6 @@
         editCourse.value = { ...props.course };
         enrollmentStore.getUsersInCourse(props.course.course_id);
     });
-
-    // watch(() => props.isOpen, (newVal) => {
-    //     if (props.isOpen) enrollmentStore.getUsersInCourse(props.course.course_id);
-
-    //     if (newVal) {
-    //         editCourse.value = { ...props.course };
-    //         if (props.isNew) {
-    //             Object.keys(props.course).forEach(key => {
-    //                 editorState.value[key] = true;
-    //             });
-    //         }
-    //     }
-    // });
 </script>
 
 <template>
@@ -104,12 +102,18 @@
                 />
             </div>
             <div class="modalButtons">
-                <button class="cancel" @click="closeModal(course.course_id)">
-                    Cancel
+                <button class="delete" @click="deleteCourse()">
+                    <span class="material-symbols-outlined deleteText">delete</span>
+                    Delete Course
                 </button>
-                <button @click="saveChanges(course.course_id)">
-                    Save
-                </button>
+                <div class="rightButtons">
+                    <button class="cancel" @click="closeModal(course.course_id)">
+                        Cancel
+                    </button>
+                    <button class="save" @click="saveChanges(course.course_id)">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -185,6 +189,48 @@
         outline: none; 
     }
 
+    .modalButtons {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .rightButtons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .save:hover {
+        background-color: #489FB5;
+    }
+
+    .cancel {
+        color: #489FB5;
+        background-color: #F5F1ED;
+        border: 2px #489FB5 solid;
+    }
+    .cancel:hover {
+        color: #F5F1ED;
+        background-color: #489FB5;
+    }
+
+    .delete {
+        color: #E63946;
+        background-color: #F5F1ED;
+        border: 2px #E63946 solid;
+        width: 9rem;
+    }
+    .delete:hover {
+        color: #F5F1ED;
+        background-color: #E63946;
+    }
+
+    .material-symbols-outlined.deleteText {
+        font-size: 24px;
+        color: inherit;
+        margin-right: 0.5rem;
+    }
+
+    /*
     .modalButtons{
         display: flex;
         justify-content: flex-end;
@@ -198,6 +244,7 @@
     .cancel:hover{
         background-color: #E63946;
     }
+    */
 
     .descriptionBox {
         max-width: 30%;

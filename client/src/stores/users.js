@@ -173,11 +173,13 @@ export const useUsersStore = defineStore('users',{
 
                 if (!response.ok) throw new Error("Failed to delete user");
 
+                // Return boolean confirmation of success to delete user:
                 return true;
             } catch (error) {
                 console.error("Delete failed, rolling back:", error.message);
                 this.users.splice(index, 0, oldUser);
 
+                // Return boolean confirmation of failure to delete user:
                 return false;
             }
         },

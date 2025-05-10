@@ -111,9 +111,15 @@ export const useCoursesStore = defineStore("courses",{
                 if (!response.ok) {
                     throw new Error("Failed to delete course");
                 }
+
+                // Return boolean confirmation of success to delete course:
+                return true;
             } catch (error) {
                 console.error("Delete failed, rolling back:", error);
                 this.courses.splice(index, 0, oldCourse);
+
+                // Return boolean confirmation of failure to delete course:
+                return false;
             }
         },
         sortCourses(sortBy) {

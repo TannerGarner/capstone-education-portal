@@ -53,7 +53,7 @@
     }
 
     async function deleteUser(){
-        if (confirm(`Are you sure you want to delete account with userid: ${props.user.user_id}`)) {
+        if (confirm(`Are you sure you want to delete ${props.user.first_name} ${props.user.last_name}'s account?`)) {
             const deleted = await usersStore.deleteUser(props.user.user_id);
             if (deleted) {
                 alert("User deleted successfully.");
@@ -199,6 +199,7 @@
         display: flex;
         justify-content: space-between;
     }
+
     .rightButtons {
         display: flex;
         gap: 10px;
