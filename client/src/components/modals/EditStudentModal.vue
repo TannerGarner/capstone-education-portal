@@ -34,6 +34,7 @@
                 const requestResult = await usersStore.createUser(editUser.value);
 
                 errorMessage = requestResult.errorMessage;
+                // Note: The user ID for new users is generated on the backend:
                 userID = requestResult.user_id;
             } else {
                 errorMessage = await usersStore.updateUser(editUser.value);
@@ -95,7 +96,7 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <div v-if="!user.is_admin">
                 <EnrollmentList
                     ref="enrolledListRef"
                     heading="Enrolled Courses"

@@ -142,7 +142,7 @@ export const useUsersStore = defineStore('users',{
                     throw new Error(errorMessage);
                 }
 
-                // Update state:
+                // Update user and users state:
                 this.updateAllUserState();
 
                 // Return an error message of null:

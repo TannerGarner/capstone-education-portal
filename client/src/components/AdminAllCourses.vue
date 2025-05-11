@@ -46,14 +46,6 @@
         openEditModal(coursePattern);
     }
 
-    async function deleteCourse(course_id) {
-        if (confirm(`Are you sure you want to delete course with courseid: ${course_id}`)) {
-            const deleted = await coursesStore.deleteCourse(course_id);
-            // alert(`${deleted ? "Failed to Delete" :  "Deleted Successfully"}`);
-            // router.push("/auth");
-        }
-    }
-
     function filterRenderedCourses() {
         if (searchQuery.value === "") {
             renderedCourses.value = [...coursesStore.courses];
@@ -111,9 +103,6 @@
                     <span class="material-symbols-outlined details" @click="openEditModal(course)">
                         edit_square
                     </span>
-                    <!-- <button class="delete" @click="deleteCourse(course.course_id)">
-                        Delete
-                    </button> -->
                 </div>
             </div>
         </div>

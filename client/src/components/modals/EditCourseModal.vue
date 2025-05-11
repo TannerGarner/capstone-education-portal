@@ -28,13 +28,15 @@
 
     async function saveChanges() {
         if (confirm("Are you sure you want to save these changes?")) {
-            // Create or update main course info:
-            if (props.isNew) await coursesStore.createCourse(editCourse.value);
-            else await coursesStore.updateCourse(editCourse.value);
+            // Create or update main user info:
+            let errorMessage;
+            if (props.isNew) errorMessage = await coursesStore.createCourse(editCourse.value);
+            else errorMessage = await coursesStore.updateCourse(editCourse.value);
 
-            console.log("coursesStore.courses:", coursesStore.courses);
+            // If there is an error updating the main user info, show alert and don't update enrollment info:
+            if (errorMessage) return alert("Failed to update course.");
 
-            // Update enrollments info:
+            // Update enrollment info:
             await enrolledListRef.value?.updateEnrollment(props.course.course_id);
             await notEnrolledListRef.value?.updateEnrollment(props.course.course_id);
 
@@ -66,7 +68,8 @@
 
     onMounted(() => {
         editCourse.value = { ...props.course };
-        enrollmentStore.getUsersInCourse(props.course.course_id);
+        
+        if (props.course.course_id) enrollmentStore.getUsersInCourse(props.course.course_id);
     });
 </script>
 
@@ -89,7 +92,7 @@
                     <textarea v-model="editCourse.description" class="descriptionInput">{{ course.description }}</textarea>
                 </div>
             </div>
-            <div>
+            <div v-if="!isNew">
                 <EnrollmentList
                     ref="enrolledListRef"
                     heading="Enrolled Students"

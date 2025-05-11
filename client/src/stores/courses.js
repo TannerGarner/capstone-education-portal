@@ -55,8 +55,12 @@ export const useCoursesStore = defineStore("courses",{
                 }
         
                 this.courses.push(newCourse);
+
+                // Return an error message of null:
+                return null;
             } catch (error) {
-                console.error("Failed to create course:", error);
+                console.error("Failed to create course:", error.message);
+                return error.message;
             }
         },
         async updateCourse(updateValues) {
@@ -82,10 +86,15 @@ export const useCoursesStore = defineStore("courses",{
                     throw new Error("Failed to update course");
                 }
 
+                // Update course state:
                 await this.fetchCourses();
+
+                // Return an error message of null:
+                return null;
             } catch (error) {
-                console.error("Update failed, rolling back:", error);
-                this.courses[index] = oldCourse; 
+                console.error("Update failed:", error.message);
+                // this.courses[index] = oldCourse;
+                return error.message;
             }
         },
         async deleteCourse(courseID) {

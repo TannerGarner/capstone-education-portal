@@ -91,17 +91,18 @@
 <template>
     <div class="enrollment-list">
         <h2>{{ heading }}</h2>
-        <ul>
+        <ul v-if="list.length">
             <li 
                 v-for="item in list"
                 :key="item.name"
                 @click="handleItemClick(item)"
-                :class="['list-item', { selected: item.isSelected }]"
+                :class="[{ selected: item.isSelected }]"
             >
                 <span class="icon">{{ isListARemovingList ? "❌" : "➕" }}</span>
                 <span>{{ item.id }} | {{ item.name }}</span>
             </li>
         </ul>
+        <div v-else class="empty-list-message">None</div>
     </div>
 </template>
 
@@ -111,7 +112,7 @@
         max-width: 100%;
     }
 
-    .enrollment-list ul {
+    ul, .empty-list-message {
         max-height: 6.25rem;
         overflow-y: auto;
         padding: 0.5rem;
@@ -121,7 +122,7 @@
         list-style: none;
     }
 
-    .list-item {
+    li {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -131,11 +132,11 @@
         border-radius: 4px;
     }
 
-    .list-item:hover {
+    li:hover {
         background-color: #ffcfcf;
     }
 
-    .list-item.selected {
+    li.selected {
         background-color: #ffe6e6;
         border: 1px solid #ffcfcf;
     }
@@ -144,21 +145,21 @@
         font-size: 1.2rem;
     }
 
-    .enrollment-list ul::-webkit-scrollbar {
+    ul::-webkit-scrollbar {
         width: 8px;
     }
 
-    .enrollment-list ul::-webkit-scrollbar-track {
+    ul::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 4px;
     }
 
-    .enrollment-list ul::-webkit-scrollbar-thumb {
+    ul::-webkit-scrollbar-thumb {
         background: #ddd;
         border-radius: 4px;
     }
 
-    .enrollment-list ul::-webkit-scrollbar-thumb:hover {
+    ul::-webkit-scrollbar-thumb:hover {
         background: #ccc;
     }
 </style>
