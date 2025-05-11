@@ -67,9 +67,7 @@ export const useCoursesStore = defineStore("courses",{
             const token = JSON.parse(localStorage.getItem('user')).token
             const index = this.courses.findIndex(course => course.course_id === updateValues.course_id);
             if (index === -1) return;
-        
-            const oldCourse = { ...this.courses[index] };
-        
+                
             this.courses[index] = { ...this.courses[index], ...updateValues };
         
             try {
@@ -93,7 +91,6 @@ export const useCoursesStore = defineStore("courses",{
                 return null;
             } catch (error) {
                 console.error("Update failed:", error.message);
-                // this.courses[index] = oldCourse;
                 return error.message;
             }
         },
