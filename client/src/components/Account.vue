@@ -1,17 +1,8 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     const userStore = useUsersStore();
     const editMode = ref(false);
-
-    onMounted(async () => {
-        if (userStore.user){
-            await userStore.fetchUser(userStore.user.user_id);
-            console.log(userStore.user)
-        } else {
-            router.push("/auth");
-        }
-    });
 
     const editUser = ref({
         user_id: userStore.user.user_id,
@@ -73,11 +64,11 @@
         
     };
 
-    async function deleteAccount(userID){
-        if (confirm(`Are you sure you want to delete account with userid: ${userID}`)) {
-            const deleted = userStore.deleteUser(userID)
-            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`)
-            router.push("/auth")
+    async function deleteAccount(){
+        if (confirm("Are you sure you want to delete your account?")) {
+            const deleted = await userStore.deleteUser(userStore.user.user_id);
+            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
+            if (deleted) userStore.logout();
         } else {
             console.log("User clicked Cancel!");
         }
@@ -88,7 +79,7 @@
     <div class="container">
         <div class="header">
             <h2>Account</h2>
-            <div class="deleteBox" @click="deleteAccount(userStore.user.user_id)">
+            <div class="deleteBox" @click="deleteAccount()">
                 <p class="deleteText">Delete My Account</p>
                 <span class="material-symbols-outlined deleteText">
                     delete

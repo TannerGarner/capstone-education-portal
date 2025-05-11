@@ -1,19 +1,10 @@
 <script setup>
-    import { useRouter } from 'vue-router';
     import { useUsersStore } from '../stores/users.js';
     import { useCoursesStore } from '../stores/courses.js';
     const userStore = useUsersStore();
     const courseStore = useCoursesStore();
-    const router = useRouter();
 
     const props = defineProps(['changeDisplay', 'components']);
-
-    const isAdmin = userStore.user.is_admin;
-
-    function logout() {
-        userStore.logout();
-        router.push("/auth");
-    }
 
     function showUserStateForDebugging() {
         console.log("=".repeat(25));
@@ -38,7 +29,7 @@
                 @dblclick="showUserStateForDebugging()"
             />
             <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
-            <button class="logout" @click="logout">Logout</button>
+            <button class="logout" @click="userStore.logout()">Logout</button>
         </div>
     </div>
 </template>

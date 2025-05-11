@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import router from '../router/index.js';
 
 export const useUsersStore = defineStore('users',{
     state: () => ({
@@ -153,31 +154,21 @@ export const useUsersStore = defineStore('users',{
             }
         },
         async deleteUser(userID) {
-            const index = this.users.findIndex(user => user.user_id === userID);
-            console.log(index)
-            console.log(this.user)
-            if (index === -1) return false;
-
-            const oldUser = { ...this.users[index] };
-
-            this.users.splice(index, 1);
-
             try {
                 const response = await fetch(`/api/users/${userID}`, {
                     method: "DELETE",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${this.user.token}`,
                     },
                 });
 
-                if (!response.ok) throw new Error("Failed to delete user");
+                if (!response.ok) throw new Error(await response.json());
 
                 // Return boolean confirmation of success to delete user:
                 return true;
             } catch (error) {
-                console.error("Delete failed, rolling back:", error.message);
-                this.users.splice(index, 0, oldUser);
+                console.error("Delete failed:", error.message);
 
                 // Return boolean confirmation of failure to delete user:
                 return false;
@@ -211,6 +202,7 @@ export const useUsersStore = defineStore('users',{
         async logout() {
             this.user = {};
             localStorage.removeItem("user");
+            router.push("/auth");
         },
     },
 });

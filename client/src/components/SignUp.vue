@@ -46,7 +46,7 @@
                     <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
                     <input v-model="newUser.city" required type="text" name="city" placeholder="City">
                     <input v-model="newUser.last_name" required type="text" name="lastName" placeholder="Last Name">
-                    <input v-model="newUser.state" required type="text" name="stateRegion" placeholder="State, Region">
+                    <input v-model="newUser.state_or_region" required type="text" name="stateOrRegion" placeholder="State, Region">
                     <input v-model="newUser.email" required type="email" name="email" placeholder="Email">
                     <input v-model="newUser.country" required type="text" name="country" placeholder="Country">
                     <input v-model="newUser.password" required type="password" name="password" placeholder="Password">
