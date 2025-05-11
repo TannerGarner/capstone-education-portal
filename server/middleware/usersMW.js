@@ -5,6 +5,7 @@ import { createUserPG, deleteUserPG, getUserPG, getUsersPG, updateUserPG } from 
 import { createAddressPG, updateAddressPG } from "../services/postgres/addressesPG.js";
 import { sendErrRes, throwResErr } from "../utils/errHandlingUtils.js";
 import { sanitizeUserData } from "../services/joi.js";
+import { dropEveryCourseWithStudentPG } from "../services/postgres/enrollmentPG.js";
 
 export async function loginMW(req, res) {
     function throwInvalidCredsErr() {
@@ -21,8 +22,9 @@ export async function loginMW(req, res) {
             returnPasswordHash: true
         });
 
-        if (!user) throwInvalidCredsErr();
-        else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
+        if (!user || !bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
+        // if (!user) throwInvalidCredsErr();
+        // else if (!bcrypt.compareSync(password, user.password_hash)) throwInvalidCredsErr();
 
         delete user.password_hash;
 
@@ -107,6 +109,7 @@ export async function deleteUserMW(req, res) {
     try {
         const { userID } = req.params;
 
+        await dropEveryCourseWithStudentPG(userID);
         await deleteUserPG(userID);
 
         res.json({ errorMessage: null });
