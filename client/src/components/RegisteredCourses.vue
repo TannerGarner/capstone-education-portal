@@ -1,37 +1,37 @@
 <script setup>
     import { onMounted, ref } from 'vue';
     import { useEnrollmentStore } from '../stores/enrollment';
-    import { useCoursesStore } from '../stores/courses.js';
+    // import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
     import CourseEnrollmentModal from './modals/CourseEnrollmentModal.vue';
     import AddCourseModal from './modals/AddCourseModal.vue';
     
     const enrollmentStore = useEnrollmentStore();
-    const courseStore = useCoursesStore();
+    // const courseStore = useCoursesStore();
     const userStore = useUsersStore();
 
     const enrollModalOpen = ref(false);
     const selectedCourse = ref(null);
     const addCourseModalOpen = ref(false);
 
-    let userid;
+    let userID;
     onMounted(async ()=>{ 
         if(userStore.user.is_admin){
-            userid = userStore.editableUser.user_id
+            userID = userStore.editableUser.user_id
         } else {
-            userid = userStore.user.user_id
+            userID = userStore.user.user_id
         }
-        enrollmentStore.getCoursesForUser(userid)
+        enrollmentStore.getCoursesForUser(userID)
     })
 
     function calculateCredits() {
         const courses = enrollmentStore.coursesForUser;
-        return Array.isArray(courses) ? courses.reduce((total, course) => total + course.credit_hours, 0) : 0;
+        return courses.reduce((total, course) => total + course.credit_hours, 0);
     }
 
     function calculateTuition() {
         const courses = enrollmentStore.coursesForUser;
-        return Array.isArray(courses) ? courses.reduce((total, course) => total + Number(course.tuition_cost.replace(/[^0-9.-]+/g, "")), 0) : 0;
+        return courses.reduce((total, course) => total + Number(course.tuition_cost.replace(/[^0-9.-]+/g, "")), 0);
     }
 
     function addCourseModal() {
@@ -50,7 +50,6 @@
             enrollModalOpen.value = false;
         }    
     }
-
 </script>
 
 <template>

@@ -14,13 +14,13 @@
     const enrollModalOpen = ref(false);
     const selectedCourse = ref(null);
     const isEnrolled = ref(false);
-    const userid = ref(null);
+    const userID = ref(null);
 
-    onMounted(async () => { 
-        userid.value = userStore.user.is_admin 
-            ? userStore.editableUser.user_id 
+    onMounted(async () => {
+        userID.value = userStore.user.is_admin
+            ? userStore.editableUser.user_id
             : userStore.user.user_id;
-        await enrollmentStore.getCoursesForUser(userid.value);
+        await enrollmentStore.getCoursesForUser(userID.value);
         await courseStore.fetchCourses();
     });
 
@@ -28,9 +28,9 @@
         emit('close');
     }
 
-    function addCourse(course) {
+    async function addCourse(course) {
         if (confirm(`Are you sure you want to enroll in course with courseId: ${course.course_id}`)) {
-            const enrolled = enrollmentStore.enrollUserInCourse(userid.value, course.course_id);
+            const enrolled = await enrollmentStore.enrollUserInCourse(userID.value, course.course_id);
             alert(`${enrolled ? "Enrolled Successfully" : "Failed to Enroll"}`);
             emit('close');
         }
@@ -38,8 +38,8 @@
 
     async function dropCourse(course) {
         if (confirm(`Are you sure you want to drop course with courseId: ${course.course_id}`)) {
-            const dropped = enrollmentStore.dropCourseFromUser(userid.value, course.course_id);
-            await enrollmentStore.getCoursesForUser(userid.value);
+            const dropped = await enrollmentStore.dropCourseFromUser(userID.value, course.course_id);
+            await enrollmentStore.getCoursesForUser(userID.value);
             alert(`${dropped ? "Dropped Successfully" : "Failed to Drop"}`);
             emit('close');
         }
@@ -101,7 +101,7 @@
                             swap_vert
                         </span>
                     </h3>
-                    <input type="search" placeholder="Search Courses"></input>
+                    <!-- <input type="search" placeholder="Search Courses"></input> -->
                 </div>
                 <div class="row" v-for="course in courseStore.courses" :key="course.course_id">
                     <p class="title">{{ course.title }} </p>
