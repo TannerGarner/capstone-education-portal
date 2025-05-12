@@ -13,8 +13,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "element-plus": "^2.9.9"
-  }
+  "description": ""
 }
