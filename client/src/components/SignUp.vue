@@ -41,7 +41,7 @@
                 <h1>Student Registration</h1>
             </div>
             <div class="inputs">
-                    <input type="text" placeholder="Profile Pic">
+                    <input type="file" placeholder="Profile Pic">
                     <input v-model="newUser.street" required type="text" name="street" placeholder="Street Address">
                     <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
                     <input v-model="newUser.city" required type="text" name="city" placeholder="City">

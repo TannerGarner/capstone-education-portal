@@ -28,14 +28,12 @@
         } else {
             userid.value = userStore.user.user_id
         }
-        await enrollmentStore.getCoursesForUser(userid)
-        console.log(enrollmentStore.coursesForUser)
+        await enrollmentStore.getCoursesForUser(userid.value)
         const processed = await processCourses(enrollmentStore.coursesForUser);
         enrolledByDay.value = processed;
-        console.log(enrolledByDay.value)
     })
 
-    function processCourses(courses) {
+    async function processCourses(courses) {
         if (!Array.isArray(courses)) {
             console.error('Expected courses to be an array');
             return {
