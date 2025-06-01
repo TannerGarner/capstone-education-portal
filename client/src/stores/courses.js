@@ -131,6 +131,21 @@ export const useCoursesStore = defineStore("courses",{
             if (!sortOrder){
                 this.courses.reverse();
             }
+        },
+        async filterCourses(filterBy) {
+            try {
+                const token = JSON.parse(localStorage.getItem('user')).token
+                this.courses = await (await fetch(`/api/courses/?searchTerm=${filterBy}`, {
+                    method: "GET",
+                    headers: { 
+                        "Content-Type": "application/json", 
+                        "Authorization": `Bearer ${token}`
+                    },
+                })).json();
+                return this.courses;
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            }
         }
     },
 });

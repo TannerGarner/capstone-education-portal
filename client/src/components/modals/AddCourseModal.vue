@@ -73,8 +73,8 @@
         sortField.value = field;
     }
 
-    function filter(searchTerm) {
-        courseStore.filterCourses(searchTerm);
+    async function filter(searchTerm) {
+        await courseStore.filterCourses(searchTerm);
     }
 </script>
 
@@ -117,7 +117,7 @@
                             swap_vert
                         </span>
                     </h3>
-                    <input v-model="searchQuery" onchange="filter(this.value)" type="search" placeholder="Search Courses" class="search-bar"></input>
+                    <input v-model="searchQuery" @input="filter(searchQuery)" type="search" placeholder="Search Courses" class="search-bar"></input>
                 </div>
                 <div class="row" v-for="course in courseStore.courses" :key="course.course_id">
                     <p class="title">{{ course.title }} </p>
