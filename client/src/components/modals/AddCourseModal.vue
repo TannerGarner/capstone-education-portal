@@ -13,6 +13,9 @@
 
     const enrollModalOpen = ref(false);
     const selectedCourse = ref(null);
+    const searchQuery = ref('');
+    const sortOrder = ref(true); // true for ascending, false for descending
+    const sortField = ref('title'); 
     const isEnrolled = ref(false);
     const userid = ref(null);
 
@@ -59,6 +62,20 @@
             enrollModalOpen.value = false;
         }    
     }
+
+    function sort(field) {
+        if (sortField?.value === field) {
+            sortOrder.value = !sortOrder.value; // Toggle sort order if the same field is clicked
+        } else {
+            sortOrder.value = true; // Reset to ascending order for a new field
+        }
+        courseStore.sortCourses(field, sortOrder.value);
+        sortField.value = field;
+    }
+
+    function filter(searchTerm) {
+        courseStore.filterCourses(searchTerm);
+    }
 </script>
 
 <template>
@@ -70,37 +87,37 @@
             </span>
             <div class="courseList">
                 <div class="tableHeader">
-                    <h3 @click="courseStore.sortCourses('title')">
+                    <h3 @click="sort('title')">
                         Course Title
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="courseStore.sortCourses('enrolled')">
+                    <h3 @click="sort('enrolled')">
                         Enrolled
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="courseStore.sortCourses('schedule')">
+                    <h3 @click="sort('schedule')">
                         Schedule
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="courseStore.sortCourses('credits')">
+                    <h3 @click="sort('credits')">
                         Credits
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="courseStore.sortCourses('tuition')">
+                    <h3 @click="sort('tuition')">
                         Tuition
                         <span class="material-symbols-outlined">
                             swap_vert
                         </span>
                     </h3>
-                    <input type="search" placeholder="Search Courses"></input>
+                    <input v-model="searchQuery" onchange="filter(this.value)" type="search" placeholder="Search Courses" class="search-bar"></input>
                 </div>
                 <div class="row" v-for="course in courseStore.courses" :key="course.course_id">
                     <p class="title">{{ course.title }} </p>
@@ -132,11 +149,11 @@
 <style scoped>
     .addCourseModal{
         position: relative;
-        width: 70vw;
-        height: 60vh;
+        width: 80vw;
+        height: 80vh;
         background-color: #F5F1ED;
         border-radius: 10px;
-        padding: 100px;
+        padding-top: 50px;
         box-shadow: 0px 0px 500px #153131;
         display: flex;
         flex-direction: column;
@@ -158,7 +175,9 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        border-radius: 10px;
         overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .tableHeader{
@@ -168,7 +187,7 @@
         grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
         justify-content: space-between;
         align-items: center;
-        padding: 30px 0px;
+        padding: 30px 50px;
         background-color: #F5F1ED;
         border-bottom: 2px solid rgba(72, 159, 181, 0.5);
     }
@@ -178,6 +197,14 @@
         align-items: center;
     }
 
+    .search-bar{
+        height: 40px;
+        border-radius: 50px;
+        border: 1px solid #489FB5;
+        padding: 15px;
+        font-size: 16px;
+    }
+
     .tableHeader > h3:hover{
         cursor: pointer;
     }
@@ -185,8 +212,12 @@
     .row{
         display: grid;
         grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
-        padding: 20px 0px;
+        padding: 30px 50px;
         border-bottom: 2px solid rgba(72, 159, 181, 0.5);
+    }
+
+    .icon{
+        justify-self: center;
     }
 
     .icon:hover{
