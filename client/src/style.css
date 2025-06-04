@@ -24,7 +24,7 @@ html body {
   display: flex;
   flex-direction: column;
   width: 75vw;
-  height: 80vh;
+  height: 90vh;
   border: rgb(72, 159, 181) 2px solid;
   border-radius: 30px;
   overflow: hidden;

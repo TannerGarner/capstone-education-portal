@@ -161,7 +161,6 @@
     .container {
         background-color: #F5F1ED;
         display: flex;
-        height: 80vh;
         flex-direction: column;
     }
 

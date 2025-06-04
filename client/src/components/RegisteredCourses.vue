@@ -112,9 +112,10 @@
     .courseList{
         height: 100%;
         display: flex;
+        justify-content: space-between;
         flex-wrap: wrap;
         gap: 5%;
-        padding: 50px;
+        padding: 50px 80px;
         overflow-y: auto;
     }
 
