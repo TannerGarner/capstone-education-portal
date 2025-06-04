@@ -27,6 +27,10 @@
         console.log("=".repeat(25));
     }
 
+    function getLastInitial(name){
+        return userStore.user.last_name.slice(0, 1) + ".";
+    }
+
     function dropdownEnter(el) {
         el.style.height = '0';
         el.style.opacity = '0';
@@ -57,7 +61,7 @@
         <img @click="dropdownOpen = !dropdownOpen" @dblclick="showUserStateForDebugging()"src="/logo.png" alt="profile-picture" class="profilePicture" />
         <transition name="dropdown" @enter="dropdownEnter" @leave="dropdownLeave">
             <div v-if="dropdownOpen" class="user">
-                <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
+                <h3>{{ userStore.user.first_name }} {{ getLastInitial(userStore.user.last_name) }}</h3>
                 <p class="logout" @click="logout">
                     <span class="material-symbols-outlined icon">
                         logout
@@ -111,6 +115,7 @@
         padding: 20px;
         box-shadow: 0px 0px 10px rgba(21, 49, 49, 20%);
         overflow: hidden;
+        z-index: 1000;;
     }
 
     .dropdown-enter-active,
