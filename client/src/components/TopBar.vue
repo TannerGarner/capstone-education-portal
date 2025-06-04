@@ -26,6 +26,26 @@
         console.log("enrollmentStore.coursesNotForUser:", enrollmentStore.coursesNotForUser);
         console.log("=".repeat(25));
     }
+
+    function dropdownEnter(el) {
+        el.style.height = '0';
+        el.style.opacity = '0';
+        requestAnimationFrame(() => {
+            el.style.transition = 'height 0.3s ease, opacity 0.3s ease';
+            el.style.height = el.scrollHeight + 'px';
+            el.style.opacity = '1';
+        });
+    }
+
+    function dropdownLeave(el) {
+        el.style.height = el.scrollHeight + 'px';
+        el.style.opacity = '1';
+        requestAnimationFrame(() => {
+            el.style.transition = 'height 0.3s ease, opacity 0.3s ease';
+            el.style.height = '0';
+            el.style.opacity = '0';
+        });
+    }
 </script>
 
 <template>
@@ -35,10 +55,15 @@
             <h2>Vision<br>Academy</h2>
         </div>
         <img @click="dropdownOpen = !dropdownOpen" @dblclick="showUserStateForDebugging()"src="/logo.png" alt="profile-picture" class="profilePicture" />
-        <transition name="slide">
+        <transition name="dropdown" @enter="dropdownEnter" @leave="dropdownLeave">
             <div v-if="dropdownOpen" class="user">
                 <h3>{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h3>
-                <button class="logout" @click="logout">Logout</button>
+                <p class="logout" @click="logout">
+                    <span class="material-symbols-outlined icon">
+                        logout
+                    </span> 
+                    Logout
+                </p>
             </div>
         </transition>
         
@@ -74,27 +99,53 @@
     .user {
         display: flex;
         flex-direction: column;
+        justify-content: space-evenly;
         position: absolute;
         top: 100px;
-        right: 45px;
-        align-items: center;
+        right: 50px;
+        align-items: flex-start;
         background-color: #F5F1ED;
         border: #489FB5 2px solid;
         border-radius: 15px;
         gap: 20px;
-        padding: 30px;
+        padding: 20px;
         box-shadow: 0px 0px 10px rgba(21, 49, 49, 20%);
+        overflow: hidden;
+    }
+
+    .dropdown-enter-active,
+    .dropdown-leave-active {
+        transition: height 0.3s ease, opacity 0.3s ease;
+        overflow: hidden;
+    }
+
+    .dropdown-enter-from,
+    .dropdown-leave-to {
+        height: 0;
+        opacity: 0;
+    }
+
+    .dropdown-enter-to,
+    .dropdown-leave-from {
+        height: auto;
+        opacity: 1;
     }
 
     .logout{
-        width: fit-content;
-        background-color: #489FB5;
-        color: #F5F1ED;
+        width: 100%;
+        color: #E63946;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 20px;
     }
 
     .logout:hover{
-        background-color: #E63946;
-        color: #F5F1ED;
+        cursor: pointer;
+    }
+
+    .icon {
+        color: #E63946;
     }
 
     .links {
