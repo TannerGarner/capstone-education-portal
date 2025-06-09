@@ -181,4 +181,15 @@
         font-weight: bold;
     }
 
+    @media screen and (max-width: 768px) {
+        .topBar {
+            padding: 10px 20px;
+        }
+
+        .user {
+            position: absolute;
+            top: 75px;
+            right: 20px;
+        }
+    }
 </style>

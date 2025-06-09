@@ -88,32 +88,32 @@
             <div class="courseList">
                 <div class="tableHeader">
                     <h3 @click="sort('title')">
-                        Course Title
-                        <span class="material-symbols-outlined">
+                        Title
+                        <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
                     <h3 @click="sort('enrolled')">
                         Enrolled
-                        <span class="material-symbols-outlined">
+                        <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
                     <h3 @click="sort('schedule')">
                         Schedule
-                        <span class="material-symbols-outlined">
+                        <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
                     <h3 @click="sort('credits')">
                         Credits
-                        <span class="material-symbols-outlined">
+                        <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
                     <h3 @click="sort('tuition')">
                         Tuition
-                        <span class="material-symbols-outlined">
+                        <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
@@ -214,6 +214,7 @@
         grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
         padding: 30px 50px;
         border-bottom: 2px solid rgba(72, 159, 181, 0.5);
+        align-items: center;
     }
 
     .icon{
@@ -230,6 +231,36 @@
 
     .add{
         color: #489FB5;
+    }
+
+    @media screen and (max-width: 768px) {
+        .addCourseModal {
+            width: 95vw;
+            height: 92vh;
+        }
+
+        .tableHeader{
+            padding: 15px;
+            font-size: 8px;
+        }
+
+        .sortIcon{
+            font-size: inherit;
+        }
+
+        .search-bar{
+            font-size: 10px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .row{
+            padding: 15px;
+        }
+
+        .row > *{
+            font-size: 10px;
+        }
     }
 
 </style>

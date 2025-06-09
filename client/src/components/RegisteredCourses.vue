@@ -56,11 +56,28 @@
 <template>
     <div class="container">
         <div class="header">
-            <h2>Registered Courses</h2>
-            <p>Courses: {{ enrollmentStore.coursesForUser.length }}</p>
-            <p>Credits: {{ calculateCredits() }}</p>
-            <p>Tuition: ${{ calculateTuition() }}</p>
-            <h2 class="addCourseModal" @click="addCourseModal()">+ Add a Course</h2>
+            <h2>My Courses</h2>
+            <div class="userInfo">
+                <p> 
+                    <span class="material-symbols-outlined icon">
+                        tag
+                    </span>  
+                    {{ enrollmentStore.coursesForUser.length }}
+                </p>
+                <p>
+                    <span class="material-symbols-outlined icon">
+                        school
+                    </span>
+                    {{ calculateCredits() }}
+                </p>
+                <p> 
+                    <span class="material-symbols-outlined icon">
+                        attach_money
+                    </span>
+                    {{ calculateTuition() }}
+                </p>
+            </div>
+            <span class="material-symbols-outlined icon addCourseModal" @click="addCourseModal()">add</span>
         </div>
         <div class="courseList">
             <div class="courseCard" v-for="course in enrollmentStore.coursesForUser" :key="course.course_id" @click="detailsModal(course)">
@@ -101,12 +118,26 @@
         flex-direction: column;
     }
 
-    .header > *{
-        color: #489FB5;
+    .userInfo{
+        display: flex;
+        gap: 100px;
+        align-items: center;
     }
 
-    .header > p{
+    .userInfo > p{
         font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .addCourseModal{
+        background-color: #F5F1ED;
+        border: #FE5E41 2px solid;
+        border-radius: 50%;
+        font-size: 38px;
+        color: #FE5E41;
+        cursor: pointer;
     }
 
     .courseList{
@@ -151,11 +182,6 @@
         gap: 10px;
     }
 
-    .addCourseModal{
-        color: #FE5E41;
-        cursor: pointer;
-    }
-
     .dropCourse{
         background-color: #E63946;
     }
@@ -174,9 +200,27 @@
         color: #F5F1ED;
     }
 
-    @media screen and (max-width: 900px) {
-    .header > p {
-        display: none;
+    
+
+    @media screen and (max-width: 768px) {
+        .header {
+            align-items: center;
+            padding: 10px 20px;
+            gap: 10px;
+        }
+
+        .userInfo {
+            gap: 10px;
+        }
+
+        .userInfo > p {
+            font-size: 16px;
+        }
+        
+        .courseList {
+            padding: 20px;
+            justify-content: center;
+        }
+        
     }
-}
 </style>

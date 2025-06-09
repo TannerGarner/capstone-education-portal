@@ -249,4 +249,49 @@
         color: #F5F1ED;
     }
 
+
+    @media (max-width: 1200px) {
+        
+    }
+
+    @media (max-width: 768px) {
+        .courseEnrollmentModal {
+            width: 100vw;
+            height: 80vh;
+            padding: 60px;
+            justify-content: start;
+        }
+
+        .title {
+            font-size: 1.5rem;
+        }
+
+        .courseInfo {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .column {
+            width: 100%;
+            gap: 20px;
+        }
+
+        .description-heading{
+            font-size: 1.5rem;
+        }
+
+        .buttons {
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .dropCourse, .addCourse, .cancel {
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+    }
 </style>

@@ -89,7 +89,6 @@
         <div class="header">
             <h2>Account</h2>
             <div class="deleteBox" @click="deleteAccount(userStore.user.user_id)">
-                <p class="deleteText">Delete My Account</p>
                 <span class="material-symbols-outlined deleteText">
                     delete
                 </span>
