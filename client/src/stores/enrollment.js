@@ -27,6 +27,8 @@ export const useEnrollmentStore = defineStore("enrollment",{
 
                 const enrollData = await response.json();
 
+                await this.getCoursesForUser(user_id);
+
                 alert(`Successfully enrolled in ${course_id}`)
 
                 return enrollData;

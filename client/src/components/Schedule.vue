@@ -1,5 +1,5 @@
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import { useEnrollmentStore } from '../stores/enrollment';
     import { useCoursesStore } from '../stores/courses.js';
     import { useUsersStore } from '../stores/users.js';
@@ -114,6 +114,15 @@
             enrollModalOpen.value = false;
         }    
     }
+
+    watch(
+        () => enrollmentStore.coursesForUser,
+        async (newCourses) => {
+            const processed = await processCourses(newCourses);
+            enrolledByDay.value = processed;
+        },
+        { immediate: true, deep: true } 
+    );
 </script>
 
 <template>
