@@ -87,7 +87,7 @@
 <template>
     <div class="container">
         <div class="header">
-            <h2>Account</h2>
+            <h2>My Account</h2>
             <div class="deleteBox" @click="deleteAccount(userStore.user.user_id)">
                 <span class="material-symbols-outlined deleteText">
                     delete

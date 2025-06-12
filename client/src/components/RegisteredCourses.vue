@@ -58,19 +58,19 @@
         <div class="header">
             <h2>My Courses</h2>
             <div class="userInfo">
-                <p> 
+                <p title="Number of courses enrolled"> 
                     <span class="material-symbols-outlined icon">
-                        tag
+                        book_2
                     </span>  
                     {{ enrollmentStore.coursesForUser.length }}
                 </p>
-                <p>
+                <p title="Total credits for enrolled courses">
                     <span class="material-symbols-outlined icon">
                         school
                     </span>
                     {{ calculateCredits() }}
                 </p>
-                <p> 
+                <p title="Total tuition cost for enrolled courses"> 
                     <span class="material-symbols-outlined icon">
                         attach_money
                     </span>
@@ -129,6 +129,10 @@
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+
+    .userInfo > p:hover{
+        cursor: default;
     }
 
     .addCourseModal{
