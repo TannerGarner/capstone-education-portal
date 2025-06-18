@@ -6,6 +6,8 @@
     const userStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
+    const sortOrder = ref(true);
+    const sortField = ref(null); 
     const isNew = ref(false)
 
     onMounted(async () => {
@@ -64,22 +66,66 @@
             // if (deleted) router.push("/auth");
         }
     }
+
+    function sort(field) {
+        if (sortField?.value === field) {
+            sortOrder.value = !sortOrder.value; 
+        } else {
+            sortOrder.value = true; 
+        }
+        userStore.sortUsers(field, sortOrder.value);
+        sortField.value = field;
+    }
+
+    async function filter(searchTerm) {
+        await userStore.filterUsers(searchTerm);
+    }
+
+    const fields = {
+        course_id: 'user_id',
+        first_name: 'first_name',
+        last_name: 'last_name',
+        email: 'email',
+    };
 </script>
 
 <template>
     <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
             <h2>Manage Users</h2>
-            <input class="searchBar" type="search" placeholder="Search All Users"></input>
+        <div class="searchContainer">
+                <span class="search-icon material-symbols-outlined">search</span>
+                <input v-model="searchQuery" @input="filter(searchQuery)" class="searchBar" type="search" placeholder="Search All Users"></input>
+            </div>            
             <p @click="createUser" class="createUser">+ Create a New User</p>
         </div>
         <div class="allStudents">
             <div class="studentList">
                 <div class="studentHeader">
-                    <p>First Name</p>
-                    <p>Last Name</p>
-                    <p>User ID</p>
-                    <p>Email</p>
+                    <h3 @click="sort(fields.first_name)">
+                        First Name
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.last_name)">
+                        Last Name
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.user_id)">
+                        User ID
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.email)">
+                        Email
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
                 </div>
                 <div 
                 class="student" 

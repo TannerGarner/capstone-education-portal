@@ -14,8 +14,8 @@
     const enrollModalOpen = ref(false);
     const selectedCourse = ref(null);
     const searchQuery = ref('');
-    const sortOrder = ref(true); // true for ascending, false for descending
-    const sortField = ref('title'); 
+    const sortOrder = ref(true); 
+    const sortField = ref(null); 
     const isEnrolled = ref(false);
     const userid = ref(null);
 
@@ -65,9 +65,9 @@
 
     function sort(field) {
         if (sortField?.value === field) {
-            sortOrder.value = !sortOrder.value; // Toggle sort order if the same field is clicked
+            sortOrder.value = !sortOrder.value; 
         } else {
-            sortOrder.value = true; // Reset to ascending order for a new field
+            sortOrder.value = true; 
         }
         courseStore.sortCourses(field, sortOrder.value);
         sortField.value = field;
@@ -76,6 +76,15 @@
     async function filter(searchTerm) {
         await courseStore.filterCourses(searchTerm);
     }
+
+    const fields = {
+        title: 'title',
+        enrolled: 'enrolled',
+        schedule: 'schedule',
+        credits: 'credits',
+        tuition: 'tuition'
+    };
+
 </script>
 
 <template>
@@ -87,37 +96,37 @@
             </span>
             <div class="courseList">
                 <div class="tableHeader">
-                    <h3 @click="sort('title')">
+                    <h3 @click="sort(fields.title)">
                         Title
                         <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="sort('enrolled')">
+                    <h3 @click="sort(fields.enrolled)">
                         Enrolled
                         <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="sort('schedule')">
+                    <h3 @click="sort(fields.schedule)">
                         Schedule
                         <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="sort('credits')">
+                    <h3 @click="sort(fields.credits)">
                         Credits
                         <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
-                    <h3 @click="sort('tuition')">
+                    <h3 @click="sort(fields.tuition)">
                         Tuition
                         <span class="material-symbols-outlined sortIcon">
                             swap_vert
                         </span>
                     </h3>
-                    <input v-model="searchQuery" @input="filter(searchQuery)" type="search" placeholder="Search Courses" class="search-bar"></input>
+                    <input v-model="searchQuery" @input="filter(searchQuery)" type="search" placeholder="Search Courses" class="searchBar"></input>
                 </div>
                 <div class="row" v-for="course in courseStore.courses" :key="course.course_id">
                     <p class="title">{{ course.title }} </p>
@@ -195,14 +204,6 @@
     .tableHeader > h3{
         display: flex;
         align-items: center;
-    }
-
-    .search-bar{
-        height: 40px;
-        border-radius: 50px;
-        border: 1px solid #489FB5;
-        padding: 15px;
-        font-size: 16px;
     }
 
     .tableHeader > h3:hover{

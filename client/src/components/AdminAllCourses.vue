@@ -6,6 +6,8 @@
     const courseStore = useCoursesStore();
     const userStore = useUsersStore();
     const selectedCourse = ref(null);
+    const sortOrder = ref(true);
+    const sortField = ref(null); 
     const isEditModalOpen = ref(false);
     const isNew = ref(false);
 
@@ -59,30 +61,85 @@
         }
     }
 
+    function sort(field) {
+        if (sortField?.value === field) {
+            sortOrder.value = !sortOrder.value; 
+        } else {
+            sortOrder.value = true; 
+        }
+        courseStore.sortCourses(field, sortOrder.value);
+        sortField.value = field;
+    }
+
+    async function filter(searchTerm) {
+        await courseStore.filterCourses(searchTerm);
+    }
+
+    const fields = {
+        course_id: 'course_id',
+        title: 'title',
+        enrolled: 'enrolled',
+        schedule: 'schedule',
+        credits: 'credits',
+        tuition: 'tuition'
+    };
 </script>
 
 <template>
     <div v-if="userStore.user.is_admin" class="container">
         <div class="header">
             <h2>Manage Courses</h2>
-            <input class="searchBar" type="search" placeholder="Search All Courses"></input>
+            <div class="searchContainer">
+                <span class="search-icon material-symbols-outlined">search</span>
+                <input v-model="searchQuery" @input="filter(searchQuery)" class="searchBar" type="search" placeholder="Search All Courses"></input>
+            </div>
             <p @click="createCourse" class="createCourse">+ Create a Course</p>
         </div>
         <div class="allCourses">
             <div class="courseList">
                 <div class="courseHeader">
-                    <p>Course Title</p>
-                    <p>Course ID</p>
-                    <p>Enrolled</p>
-                    <p>Schedule</p>
-                    <p>Credits</p>
-                    <p>Tuition</p>
+                    <h3 @click="sort(fields.title)">
+                        Course Title
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.course_id)">
+                        Course ID
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.enrolled)">
+                        Enrolled
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.schedule)">
+                        Schedule
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.credits)">
+                        Credits
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.tuition)">
+                        Tuition
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
                 </div>
                 <div
                 class="course" 
                 v-for="(course, index) in courseStore.courses" 
                 :key="course.course_id" 
-                :class="{ firstCourse: index === 0 }"
+                :class="{ firstCourse: index === 0, lastCourse: index === courseStore.courses.length - 1}"
                 >
                     <h4>{{course.title}}</h4>
                     <p>{{ course.course_id }}</p>
@@ -147,23 +204,24 @@
         align-items: center;
         background-color: #F5F1ED;
         color: #153131;
-        padding: 20px 5px;
+        padding: 20px 40px;
+        gap: 10px;
         border-bottom: #489FB5 2px solid;
         position: sticky;
         top: 0;
     }
 
-    .courseHeader > * {
-        overflow: hidden;       
-        text-overflow: ellipsis; 
-        white-space: nowrap;
-        margin-left: 20px;
+    .courseHeader > h3 {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
     }
 
 
     .course{
         border-top: solid 2px #489FB5;
-        padding: 15px;
+        padding: 20px 40px;
+        gap: 10px;
         border-radius: 1px;
         display: grid;
         grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
@@ -174,12 +232,14 @@
         border: none;
     }
 
+    .course.lastCourse {
+        border-bottom: solid 2px #489FB5;
+    }
 
     .course > * {
         overflow: hidden;       
         text-overflow: ellipsis; 
         white-space: nowrap;
-        margin-left: 20px;
     }
 
     .details {
