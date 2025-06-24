@@ -76,14 +76,15 @@
 
 <style scoped>
     .enrollment-list {
-        padding: 1rem;
         max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap:5px;
     }
 
     .enrollment-list ul {
-        max-height: 6.25rem;
         overflow-y: auto;
-        padding: 0.5rem;
+        height: 30vh;
         border: 1px solid #ddd;
         border-radius: 4px;
         margin: 0;

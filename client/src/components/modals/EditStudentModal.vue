@@ -23,6 +23,13 @@
         emit('save', editUser.value);
     }
 
+    function deleteUser(userId) {
+        if (confirm(`Are you sure you want to delete user with ID: ${userId}?`)) {
+            enrollmentStore.deleteUser(userId);
+            closeModal();
+        }
+    }
+
     function fixString(string){
         let fixed = string.replaceAll("_", " ");
         fixed = fixed.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
@@ -58,7 +65,7 @@
     <div v-if="isOpen" class="cover">
         <div class="editStudentModal">
             <div class="studentInfo">
-                <div class="smallFields column">
+                <div class="smallFields">
                     <div 
                         v-for="key in Object.keys(user).filter((k) => k !== 'user_id')"
                         :key="key"
@@ -69,21 +76,31 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="enrollmentLists">
                 <EnrollmentList
                     heading="Enrolled Courses"
                     listType="coursesForUser"
+                    class="coursesForUser"
                 />
                 <EnrollmentList
                     heading="Available Courses"
                     listType="coursesNotForUser"
+                    class="coursesNotForUser"
                 />
             </div>
-            <div class="modalButtons">
+            <div class="deleteUser">
+                <button class="deleteButton" @click="deleteUser(user.user_id)">
+                    <span class="material-symbols-outlined">
+                        delete
+                    </span>
+                    Delete User
+                </button>
+            </div>
+            <div class="exitButtons">
                 <button class="cancel" @click="closeModal(user.user_id)">
                     Cancel
                 </button>
-                <button @click="saveChanges(user.user_id)">
+                <button class="save" @click="saveChanges(user.user_id)">
                     Save
                 </button>
             </div>
@@ -106,80 +123,100 @@
 
     .editStudentModal {
         position: relative;
-        width: 70vw;
-        height: 60vh;
+        width: 85vw;
+        height: 80vh;
         background-color: #F5F1ED;
         border-radius: 10px;
         padding: 50px;
         box-shadow: 0px 0px 500px #153131;
-        display: flex;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: 4fr 0.5fr;;
         flex-direction: column;
         justify-content: center;
-        gap: 20px;
+        gap: 1.5rem;
     }
 
     .studentInfo {
         display: flex;
-        gap: 40px;
+        flex-direction: column;
     }
 
-    .column{
-        flex-grow: 1;
+    .smallFields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(0.5rem, 2vw, 1rem);
+        height: 100%;
     }
 
     .row {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr 1fr;
+        display: flex;
         align-items: center;
-        padding: 10px;
+        gap: 0.5rem;
+        justify-content: space-between;
+        padding: 0.5rem;
+        padding-bottom: 1rem;
         border-bottom: 1px solid #489FB5;
-    }
-
-    .row button {
-        justify-self: end;
+        font-size: clamp(0.5rem, 2vw, 1.25rem);
     }
 
     input {
-        padding: 5px;
+        padding: clamp(0.5rem, 2vw, 1.25rem);
+        font-size: clamp(0.5rem, 2vw, 1.25rem);
         border: 1px solid #489FB5;
         border-radius: 5px;
+        max-width: 200px;
     }
 
-    textarea {
-        width: 100%; 
-        height: 200px; 
-        padding: 10px; 
-        font-size: 16px; 
-        font-family:'Courier New', Courier, monospace;
-        border: 2px solid #489FB5; 
-        border-radius: 10px; 
-        outline: none; 
+    .enrollmentLists {
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
     }
+    
 
-    .modalButtons{
+    .exitButtons{
         display: flex;
         justify-content: flex-end;
         gap: 10px;
     }
 
-    button:hover{
+    .save:hover{
         background-color: #489FB5;
     }
 
+    .cancel{
+        color: #FE5E41;
+        background-color: #F5F1ED;
+        border: 2px solid #FE5E41;
+        cursor: pointer;
+    }
+
     .cancel:hover{
+        background-color: #FE5E41;
+        color: #F5F1ED;
+    }
+
+    .deleteButton{
+        background-color: #F5F1ED;
+        color: #E63946;
+        border: 2px solid #E63946;
+        width: auto;
+    }
+
+    .deleteButton > *{
+        color: #E63946;
+    }
+
+    .deleteButton:hover{
         background-color: #E63946;
+        color: #F5F1ED;
     }
 
-    .descriptionBox {
-        max-width: 30%;
+    .deleteButton:hover > *{
+        color: #F5F1ED;
     }
 
-    .descriptionBox > * {
-        margin: 20px 0px;
-    }
-
-    .description {
-        text-wrap: wrap;
-        
-    }
 </style>
