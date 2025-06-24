@@ -127,7 +127,7 @@
         height: 80vh;
         background-color: #F5F1ED;
         border-radius: 10px;
-        padding: 50px;
+        padding: 75px;
         box-shadow: 0px 0px 500px #153131;
         display: grid;
         grid-template-columns: 2fr 1fr;
