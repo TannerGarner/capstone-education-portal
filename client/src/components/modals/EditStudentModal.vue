@@ -88,21 +88,21 @@
                     class="coursesNotForUser"
                 />
             </div>
-            <div class="deleteUser">
-                <button class="deleteButton" @click="deleteUser(user.user_id)">
+            <div class="modalButtons">
+                <button class="delete" @click="deleteUser(user.user_id)">
                     <span class="material-symbols-outlined">
                         delete
                     </span>
                     Delete User
                 </button>
-            </div>
-            <div class="exitButtons">
-                <button class="cancel" @click="closeModal(user.user_id)">
-                    Cancel
-                </button>
-                <button class="save" @click="saveChanges(user.user_id)">
-                    Save
-                </button>
+                <div class="rightButtons">
+                    <button class="cancel" @click="closeModal(user.user_id)">
+                        Cancel
+                    </button>
+                    <button class="save" @click="saveChanges(user.user_id)">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -131,7 +131,7 @@
         box-shadow: 0px 0px 500px #153131;
         display: grid;
         grid-template-columns: 2fr 1fr;
-        grid-template-rows: 4fr 0.5fr;;
+        grid-template-rows: auto auto;
         flex-direction: column;
         justify-content: center;
         gap: 1.5rem;
@@ -177,10 +177,18 @@
     }
     
 
-    .exitButtons{
-        display: flex;
-        justify-content: flex-end;
+    .modalButtons{
+        grid-column: 1 / span 2;
+        display: grid;
+        grid-template-columns: auto auto;
         gap: 10px;
+    }
+
+    .rightButtons{
+        justify-self: end;
+        display: flex;
+        gap: 10px;
+        justify-content: end;
     }
 
     .save:hover{
@@ -199,24 +207,79 @@
         color: #F5F1ED;
     }
 
-    .deleteButton{
+    .delete{
+        grid-column: 1 / span 1;
+        justify-self: start;
         background-color: #F5F1ED;
         color: #E63946;
         border: 2px solid #E63946;
         width: auto;
     }
 
-    .deleteButton > *{
+    .delete > *{
         color: #E63946;
     }
 
-    .deleteButton:hover{
+    .delete:hover{
         background-color: #E63946;
         color: #F5F1ED;
     }
 
-    .deleteButton:hover > *{
+    .delete:hover > *{
         color: #F5F1ED;
+    }
+
+    @media screen and (max-width: 768px) {
+
+        .cover {
+            align-items: end; 
+        }
+
+        .editStudentModal {
+            width: 95vw;
+            height: 90vh;
+            padding: 20px;
+            padding-bottom: 0;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto auto;
+            overflow-y: scroll;
+        }
+
+        .studentInfo,
+        .enrollmentLists,
+        .modalButtons {
+            grid-column: 1 / -1; 
+        }
+
+        .smallFields {
+            grid-template-columns: 1fr;
+        }
+
+        .row{
+            font-size: clamp(0.75rem, 2vw, 1rem);
+        }
+
+        input {
+            font-size: clamp(0.75rem, 2vw, 1rem);;
+            width: 100%;
+        }
+
+        .enrollmentLists {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .modalButtons {
+            position: sticky;
+            bottom: 0;
+            padding: 10px;
+            box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            background-color: #F5F1ED;
+            display: flex;
+            justify-content: space-between;        
+        }
+
     }
 
 </style>
