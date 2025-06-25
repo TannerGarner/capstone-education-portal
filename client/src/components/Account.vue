@@ -65,12 +65,12 @@
     };
 
     async function deleteAccount(){
-        if (confirm("Are you sure you want to delete your account?")) {
+        if (confirm('Are you sure you want to delete your account?')) {
             const deleted = await userStore.deleteUser(userStore.user.user_id);
-            alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
+            alert(`${deleted ? 'Deleted Successfully' : 'Failed to Delete'}`);
             if (deleted) userStore.logout();
         } else {
-            console.log("User clicked Cancel!");
+            console.log('User clicked Cancel!');
         }
     }
 </script>
