@@ -5,40 +5,38 @@
     const usersStore = useUsersStore();
     const selectedUser = ref(null);
     const isEditStudentModalOpen = ref(false);
+    const sortOrder = ref(true);
+    const sortField = ref(null); 
     const isNew = ref(false)
-    const renderedUsers = ref([]);
-    const searchQuery = ref("");
+    const renderedUsers = ref([]); /////////////////////
+    const searchQuery = ref(""); /////////////////////
 
     onMounted(async () => {
         await usersStore.fetchUsers();
-        filterRenderedUsers();
     });
-    
-    watch(searchQuery, filterRenderedUsers);
-    watch(() => usersStore.users, filterRenderedUsers);
-
 
     function openEditModal(user) {
+        console.log(user);
         selectedUser.value = { ...user };
         isEditStudentModalOpen.value = true;
     }
 
     function closeEditModal() {
-        isNew.value = false;
         isEditStudentModalOpen.value = false;
         selectedUser.value = null;
+        isNew.value = false;
     }
 
-    // async function saveStudent(userInfo) {
-    //     if (isNew.value === true) {
-    //         await usersStore.createUser(userInfo);
-    //         alert(`Successfully created user`);
-    //     } else {
-    //         console.log(userInfo);
-    //         await usersStore.updateUser(userInfo);
-    //     }
-    //     closeEditModal();
-    // }
+    async function saveStudent(userInfo) {
+        if (isNew.value === true) {
+            await usersStore.createUser(userInfo);
+            alert(`Successfully created user`);
+        } else {
+            console.log(userInfo);
+            await usersStore.updateUser(userInfo);
+        }
+        closeEditModal();
+    }
 
     function createUser() {
         isNew.value = true;
@@ -54,62 +52,91 @@
             state: "",
             country: "",
             is_admin: ""
+            // first_name:"",
+            // last_name: "",
+            // email:"",
+            // password: "",
+            // phone_number:"",
+            // address:{
+            //     street: " ",
+            //     city: "",
+            //     state: "",
+            //     country: "",
+            // },          
+            // is_admin: ""
         }
         // selectedUser.value = { ...userPattern };
         openEditModal(userPattern);
     }
 
-    // async function deleteUser(user_id){
-    //     if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
-    //         await usersStore.deleteUser(user_id);
-    //         // const deleted = await usersStore.deleteUser(user_id);
-    //         // alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
-    //         // if (deleted) router.push("/auth");
-    //     }
-    // }
-
-    function filterRenderedUsers() {
-        if (searchQuery.value === "") {
-            renderedUsers.value = [...usersStore.users];
-        } else {
-            const searchQueryLower = searchQuery.value.toLowerCase();
-
-            renderedUsers.value = usersStore.users.filter((user) => (
-                user.first_name.toLowerCase().includes(searchQueryLower)
-                || user.last_name.toLowerCase().includes(searchQueryLower)
-                || user.user_id.toString().toLowerCase().startsWith(searchQueryLower)
-                || user.email.toLowerCase().includes(searchQueryLower)
-            ));
+    async function deleteUser(user_id){
+        if (confirm(`Are you sure you want to delete account with userid: ${user_id}`)) {
+            await usersStore.deleteUser(user_id);
+            // const deleted = await usersStore.deleteUser(user_id);
+            // alert(`${deleted ? "Deleted Successfully" : "Failed to Delete"}`);
+            // if (deleted) router.push("/auth");
         }
     }
 
-    function tempDebugTesting() {
-        console.log("=".repeat(25));
-        console.log("searchQuery.value:", searchQuery.value);
-        console.log("renderedUsers.value:", renderedUsers.value);
-        console.log("=".repeat(25));
+    function sort(field) {
+        if (sortField?.value === field) {
+            sortOrder.value = !sortOrder.value; 
+        } else {
+            sortOrder.value = true; 
+        }
+        usersStore.sortUsers(field, sortOrder.value);
+        sortField.value = field;
     }
+
+    async function filter(searchTerm) {
+        await usersStore.filterUsers(searchTerm);
+    }
+
+    const fields = {
+        user_id: 'user_id',
+        first_name: 'first_name',
+        last_name: 'last_name',
+        email: 'email',
+    };
 </script>
 
 <template>
     <div v-if="usersStore.user.is_admin" class="container">
         <div class="header">
-            <h2 @dblclick="tempDebugTesting()">Manage Users</h2>
-            <input
-                class="searchBar"
-                type="search"
-                v-model="searchQuery"
-                placeholder="Search All Users"
-            />
+            <h2>Manage Users</h2>
+            <div class="searchContainer">
+                <span class="search-icon material-symbols-outlined">search</span>
+                <input v-model="searchQuery" @input="filter(searchQuery)" class="searchBar" type="search" placeholder="Search All Users"></input>
+            </div>
             <p @click="createUser" class="createUser">+ Create a New User</p>
         </div>
         <div class="allStudents">
             <div class="studentList">
                 <div class="studentHeader">
-                    <p>First Name</p>
-                    <p>Last Name</p>
-                    <p>User ID</p>
-                    <p>Role</p>
+                    <h3 @click="sort(fields.first_name)">
+                        First Name
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.last_name)">
+                        Last Name
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.user_id)">
+                        User ID
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.email)">
+                        Email
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
                 </div>
                 <div 
                     class="student"
@@ -124,21 +151,19 @@
                     <span class="material-symbols-outlined details" @click="openEditModal(user)">
                         edit_square
                     </span>
-                    <!--
                     <span class="material-symbols-outlined delete" @click="deleteUser(user.user_id)">
                         delete
                     </span>
-                    -->
                 </div>
             </div>
         </div>
         <EditStudentModal
-            v-if="isEditStudentModalOpen"
             :user="selectedUser"
             :isNew="isNew"
+            :isOpen="isEditStudentModalOpen"
             @close="closeEditModal"
+            @save="saveStudent"
         />
-            <!-- @save="saveStudent" -->
     </div>
 </template>
 
@@ -176,7 +201,7 @@
 
     .studentHeader{
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.5fr;
         align-items: center;
         background-color: #F5F1ED;
         color: #153131;
@@ -198,7 +223,7 @@
         padding: 15px;
         border-radius: 1px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr  0.5fr 0.5fr;
         align-items: center;
     }
 

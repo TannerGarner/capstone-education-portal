@@ -54,12 +54,10 @@
     };
 
     const getEditValue = (field) => {
-        
         return editUser.value[field];
     };
 
     const updateEditValue = (field, value) => {
-        
         editUser.value[field] = value;
         
     };
@@ -79,8 +77,7 @@
     <div class="container">
         <div class="header">
             <h2>Account</h2>
-            <div class="deleteBox" @click="deleteAccount()">
-                <p class="deleteText">Delete My Account</p>
+            <div class="deleteBox" @click="deleteAccount">
                 <span class="material-symbols-outlined deleteText">
                     delete
                 </span>

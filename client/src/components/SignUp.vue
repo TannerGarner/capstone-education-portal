@@ -2,7 +2,7 @@
     import { ref } from 'vue';
     import { useUsersStore } from '../stores/users.js';
     import { useRouter } from 'vue-router';
-    const userStore = useUsersStore();
+    const usersStore = useUsersStore();
     const router = useRouter();
 
     const defualtUserValues = {
@@ -21,7 +21,7 @@
     const newUser = ref({ ...defualtUserValues });
 
     async function onSubmit(){
-        await userStore.createUser(newUser.value);
+        await usersStore.createUser(newUser.value);
         newUser.value = { ...defualtUserValues };
         
         router.push("/");
@@ -46,7 +46,8 @@
                     <input v-model="newUser.first_name" required type="text" name="firstName" placeholder="First Name">
                     <input v-model="newUser.city" required type="text" name="city" placeholder="City">
                     <input v-model="newUser.last_name" required type="text" name="lastName" placeholder="Last Name">
-                    <input v-model="newUser.state_or_region" required type="text" name="stateOrRegion" placeholder="State, Region">
+                    <input v-model="newUser.state" required type="text" name="stateRegion" placeholder="State, Region">
+                    <!-- <input class="input" v-model="newUser.state_or_region" required type="text" name="stateRegion" placeholder="State, Region"> -->
                     <input v-model="newUser.email" required type="email" name="email" placeholder="Email">
                     <input v-model="newUser.country" required type="text" name="country" placeholder="Country">
                     <input v-model="newUser.password" required type="password" name="password" placeholder="Password">
@@ -110,7 +111,22 @@
         gap: 20px;    
     }
 
-    input {
+    input[type="file"] {
+        width: 100%;
+        max-width: 100%;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .profile-pic-input {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .input {
         padding: 15px;
         padding-left: 0px;
         border: none;
@@ -122,12 +138,12 @@
         max-width: 100%;
     }
 
-    input::placeholder{
+    .input::placeholder{
         color:#153131;
         opacity: 50%;
     }
 
-    input:focus {
+    .input:focus {
         border-color: #FE5E41;        /* Custom border on focus */
         box-shadow: 0 0 5px #FE5E41;  /* Optional glow or highlight */
         outline: none;                /* Remove default outline */
@@ -178,7 +194,7 @@
             overflow-y: scroll;
         }
         
-        input{
+        .input{
             font-size: 18px;
         }
     }

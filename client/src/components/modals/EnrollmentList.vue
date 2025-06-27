@@ -45,6 +45,11 @@
         item.isSelected = !item.isSelected;
     }
 
+    // This gets the proper icon for the list being used:
+    const getIcon = (listType) => {
+        return ['usersInCourse', 'coursesForUser'].includes(listType) ? '❌' : '➕';
+    };
+
     // Update DB as modal parent closes:
     async function updateEnrollment(id) {
         const selectedItems = list.value.filter((item) => item.isSelected);
@@ -96,33 +101,34 @@
                 v-for="item in list"
                 :key="item.name"
                 @click="handleItemClick(item)"
-                :class="[{ selected: item.isSelected }]"
+                :class="['list-item', { selected: item.isSelected }]"
             >
-                <span class="icon">{{ isListARemovingList ? "❌" : "➕" }}</span>
+                <span class="icon">{{ getIcon(listType) }}</span>
                 <span>{{ item.id }} | {{ item.name }}</span>
             </li>
         </ul>
-        <div v-else class="empty-list-message">None</div>
+        <!-- <div v-else class="empty-list-message">None</div> -->
     </div>
 </template>
 
 <style scoped>
     .enrollment-list {
-        padding: 1rem;
         max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap:5px;
     }
 
-    ul, .empty-list-message {
-        max-height: 6.25rem;
+    .enrollment-list ul {
         overflow-y: auto;
-        padding: 0.5rem;
+        height: 30vh;
         border: 1px solid #ddd;
         border-radius: 4px;
         margin: 0;
         list-style: none;
     }
 
-    li {
+    .list-item {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -132,11 +138,11 @@
         border-radius: 4px;
     }
 
-    li:hover {
+    .list-item:hover {
         background-color: #ffcfcf;
     }
 
-    li.selected {
+    .list-item.selected {
         background-color: #ffe6e6;
         border: 1px solid #ffcfcf;
     }
@@ -145,21 +151,21 @@
         font-size: 1.2rem;
     }
 
-    ul::-webkit-scrollbar {
+    .enrollment-list ul::-webkit-scrollbar {
         width: 8px;
     }
 
-    ul::-webkit-scrollbar-track {
+    .enrollment-list ul::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 4px;
     }
 
-    ul::-webkit-scrollbar-thumb {
+    .enrollment-list ul::-webkit-scrollbar-thumb {
         background: #ddd;
         border-radius: 4px;
     }
 
-    ul::-webkit-scrollbar-thumb:hover {
+    .enrollment-list ul::-webkit-scrollbar-thumb:hover {
         background: #ccc;
     }
 </style>

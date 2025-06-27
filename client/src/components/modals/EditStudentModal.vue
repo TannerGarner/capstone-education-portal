@@ -11,7 +11,7 @@
         isNew: Boolean
     });
     
-    const emit = defineEmits(['close']);
+    const emit = defineEmits(['close', 'save']);
     
     function closeModal() {
         Object.entries(editorState.value).forEach(([key]) => {
@@ -27,41 +27,50 @@
     const notEnrolledListRef = ref(null);
     
     async function saveChanges() {
-        if (confirm("Are you sure you want to save these changes?")) {
-            // Create or update main user info:
-            let userID, errorMessage;
-            if (props.isNew) {
-                const requestResult = await usersStore.createUser(editUser.value);
+        emit('save', editUser.value);
 
-                errorMessage = requestResult.errorMessage;
-                // Note: The user ID for new users is generated on the backend:
-                userID = requestResult.user_id;
-            } else {
-                errorMessage = await usersStore.updateUser(editUser.value);
-                userID = props.user.user_id;
-            }
+        // if (confirm("Are you sure you want to save these changes?")) {
+        //     // Create or update main user info:
+        //     let userID, errorMessage;
+        //     if (props.isNew) {
+        //         const requestResult = await usersStore.createUser(editUser.value);
 
-            // If there is an error updating the main user info, show alert and don't update enrollment info:
-            if (errorMessage) return alert("Failed to update user.");
+        //         errorMessage = requestResult.errorMessage;
+        //         // Note: The user ID for new users is generated on the backend:
+        //         userID = requestResult.user_id;
+        //     } else {
+        //         errorMessage = await usersStore.updateUser(editUser.value);
+        //         userID = props.user.user_id;
+        //     }
 
-            // Update enrollment info:
-            await enrolledListRef.value?.updateEnrollment(userID);
-            await notEnrolledListRef.value?.updateEnrollment(userID);
+        //     // If there is an error updating the main user info, show alert and don't update enrollment info:
+        //     if (errorMessage) return alert("Failed to update user.");
 
-            // Close modal:
-            closeModal();
-        }
+        //     // Update enrollment info:
+        //     await enrolledListRef.value?.updateEnrollment(userID);
+        //     await notEnrolledListRef.value?.updateEnrollment(userID);
+
+        //     // Close modal:
+        //     closeModal();
+        // }
     }
 
-    async function deleteUser(){
-        if (confirm(`Are you sure you want to delete ${props.user.first_name} ${props.user.last_name}'s account?`)) {
-            const deleted = await usersStore.deleteUser(props.user.user_id);
-            if (deleted) {
-                alert("User deleted successfully.");
-                closeModal();
-            } else {
-                alert("Failed to delete user.");
-            }
+    // async function deleteUser(){
+    //     if (confirm(`Are you sure you want to delete ${props.user.first_name} ${props.user.last_name}'s account?`)) {
+    //         const deleted = await usersStore.deleteUser(props.user.user_id);
+    //         if (deleted) {
+    //             alert("User deleted successfully.");
+    //             closeModal();
+    //         } else {
+    //             alert("Failed to delete user.");
+    //         }
+    //     }
+    // }
+
+    function deleteUser(userId) {
+        if (confirm(`Are you sure you want to delete user with ID: ${userId}?`)) {
+            enrollmentStore.deleteUser(userId);
+            closeModal();
         }
     }
 
@@ -75,17 +84,37 @@
     const editUser = ref({});
     const editorState = ref({});
 
-    onMounted(() => {
-        editUser.value = { ...props.user };
-        enrollmentStore.getCoursesForUser(props.user.user_id);
+    watch(() => props.isOpen, (newVal) => {
+        if (props.isOpen) enrollmentStore.getCoursesForUser(props.user.user_id);
+
+        if (newVal) {
+            editUser.value = { ...props.user };
+            if (props.isNew) {
+                Object.keys(props.user).forEach(key => {
+                    if (key === 'address') {
+                        editorState.value.address = {};
+                        Object.keys(props.user.address).forEach(addressKey => {
+                            editorState.value.address[addressKey] = true;
+                        });
+                    } else {
+                        editorState.value[key] = true;
+                    }
+                });
+            }
+        }
     });
+    // onMounted(() => {
+    //     editUser.value = { ...props.user };
+    //     enrollmentStore.getCoursesForUser(props.user.user_id);
+    // });
 </script>
 
 <template>
-    <div class="cover">
+    <!-- TODO: Note that isOpen is valid. -->
+    <div v-if="isOpen" class="cover">
         <div class="editStudentModal">
             <div class="studentInfo">
-                <div class="smallFields column">
+                <div class="smallFields">
                     <div 
                         v-for="key in Object.keys(user).filter((k) => k !== 'user_id')"
                         :key="key"
@@ -96,28 +125,33 @@
                     </div>
                 </div>
             </div>
-            <div v-if="!user.is_admin">
+            <!-- v-if="!user.is_admin" -->
+            <div class="enrollmentLists">
                 <EnrollmentList
                     ref="enrolledListRef"
                     heading="Enrolled Courses"
                     listType="coursesForUser"
+                    class="coursesForUser"
                 />
                 <EnrollmentList
                     ref="notEnrolledListRef"
                     heading="Available Courses"
                     listType="coursesNotForUser"
+                    class="coursesNotForUser"
                 />
             </div>
             <div class="modalButtons">
-                <button class="delete" @click="deleteUser()">
-                    <span class="material-symbols-outlined deleteText">delete</span>
+                <button class="delete" @click="deleteUser(user.user_id)">
+                    <span class="material-symbols-outlined">
+                        delete
+                    </span>
                     Delete User
                 </button>
                 <div class="rightButtons">
-                    <button class="cancel" @click="closeModal()">
+                    <button class="cancel" @click="closeModal(user.user_id)">
                         Cancel
                     </button>
-                    <button class="save" @click="saveChanges()">
+                    <button class="save" @click="saveChanges(user.user_id)">
                         Save
                     </button>
                 </div>
@@ -127,125 +161,176 @@
 </template>
 
 <style scoped>
-    .cover {
+    .cover{
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: #00000080;
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
-        overflow-y: auto;
-        padding: 2rem 0;
     }
 
     .editStudentModal {
         position: relative;
-        width: 70vw;
-        min-height: 60vh;
+        width: 85vw;
+        height: 80vh;
         background-color: #F5F1ED;
         border-radius: 10px;
-        padding: 50px;
+        padding: 75px;
         box-shadow: 0px 0px 500px #153131;
-        display: flex;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: auto auto;
         flex-direction: column;
-        gap: 20px;
-        margin: auto;
-        margin-bottom: 4rem;
+        justify-content: center;
+        gap: 1.5rem;
     }
 
     .studentInfo {
         display: flex;
-        gap: 40px;
-        width: 100%;
-        padding-bottom: 20px;
+        flex-direction: column;
     }
 
-    .column {
-        flex-grow: 1;
+    .smallFields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(0.5rem, 2vw, 1rem);
+        height: 100%;
     }
 
     .row {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr 1fr;
+        display: flex;
         align-items: center;
-        padding: 10px;
+        gap: 0.5rem;
+        justify-content: space-between;
+        padding: 0.5rem;
+        padding-bottom: 1rem;
         border-bottom: 1px solid #489FB5;
-    }
-
-    .row button {
-        justify-self: end;
+        font-size: clamp(0.5rem, 2vw, 1.25rem);
     }
 
     input {
-        padding: 5px;
+        padding: clamp(0.5rem, 2vw, 1.25rem);
+        font-size: clamp(0.5rem, 2vw, 1.25rem);
         border: 1px solid #489FB5;
         border-radius: 5px;
+        max-width: 200px;
     }
 
-    textarea {
-        width: 100%; 
-        height: 200px; 
-        padding: 10px; 
-        font-size: 16px; 
-        font-family:'Courier New', Courier, monospace;
-        border: 2px solid #489FB5; 
-        border-radius: 10px; 
-        outline: none; 
-    }
-
-    .modalButtons {
+    .enrollmentLists {
+        max-height: 70vh;
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
+        gap: 1rem;
     }
+    
 
-    .rightButtons {
-        display: flex;
+    .modalButtons{
+        grid-column: 1 / span 2;
+        display: grid;
+        grid-template-columns: auto auto;
         gap: 10px;
     }
 
-    .save:hover {
+    .rightButtons{
+        justify-self: end;
+        display: flex;
+        gap: 10px;
+        justify-content: end;
+    }
+
+    .save:hover{
         background-color: #489FB5;
     }
 
-    .cancel {
-        color: #489FB5;
+    .cancel{
+        color: #FE5E41;
         background-color: #F5F1ED;
-        border: 2px #489FB5 solid;
-    }
-    .cancel:hover {
-        color: #F5F1ED;
-        background-color: #489FB5;
+        border: 2px solid #FE5E41;
+        cursor: pointer;
     }
 
-    .delete {
+    .cancel:hover{
+        background-color: #FE5E41;
+        color: #F5F1ED;
+    }
+
+    .delete{
+        grid-column: 1 / span 1;
+        justify-self: start;
+        background-color: #F5F1ED;
         color: #E63946;
-        background-color: #F5F1ED;
-        border: 2px #E63946 solid;
-        width: 9rem;
+        border: 2px solid #E63946;
+        width: auto;
     }
-    .delete:hover {
-        color: #F5F1ED;
+
+    .delete > *{
+        color: #E63946;
+    }
+
+    .delete:hover{
         background-color: #E63946;
+        color: #F5F1ED;
     }
 
-    .material-symbols-outlined.deleteText {
-        font-size: 24px;
-        color: inherit;
-        margin-right: 0.5rem;
+    .delete:hover > *{
+        color: #F5F1ED;
     }
 
-    .descriptionBox {
-        max-width: 30%;
-    }
+    @media screen and (max-width: 768px) {
 
-    .descriptionBox > * {
-        margin: 20px 0px;
-    }
+        .cover {
+            align-items: end; 
+        }
 
-    .description {
-        text-wrap: wrap;
+        .editStudentModal {
+            width: 95vw;
+            height: 90vh;
+            padding: 20px;
+            padding-bottom: 0;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto auto;
+            overflow-y: scroll;
+        }
+
+        .studentInfo,
+        .enrollmentLists,
+        .modalButtons {
+            grid-column: 1 / -1; 
+        }
+
+        .smallFields {
+            grid-template-columns: 1fr;
+        }
+
+        .row{
+            font-size: clamp(0.75rem, 2vw, 1rem);
+        }
+
+        input {
+            font-size: clamp(0.75rem, 2vw, 1rem);;
+            width: 100%;
+        }
+
+        .enrollmentLists {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .modalButtons {
+            position: sticky;
+            bottom: 0;
+            padding: 10px;
+            box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            background-color: #F5F1ED;
+            display: flex;
+            justify-content: space-between;        
+        }
+
     }
 </style>

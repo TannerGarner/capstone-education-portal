@@ -128,19 +128,42 @@ export const useCoursesStore = defineStore("courses",{
                 return false;
             }
         },
-        sortCourses(sortBy) {
-            if (sortBy === "title") {
-                this.courses.sort((a, b) => a.title.localeCompare(b.title));
-            } else if (sortBy === "course_id") {
-                this.courses.sort((a, b) => a.course_id.localeCompare(b.course_id));
-            } else if (sortBy === "enrolled") {
-                this.courses.sort((a, b) => a.spots_taken - b.spots_taken);
-            } else if (sortBy === "schedule") {
-                this.courses.sort((a, b) => a.schedule.localeCompare(b.schedule));
-            } else if (sortBy === "credits") {
-                this.courses.sort((a, b) => a.credit_hours - b.credit_hours);
-            } else if (sortBy === "tuition") {
-                this.courses.sort((a, b) => a.tuition_cost.localeCompare(b.tuition_cost));
+        sortCourses(sortBy, sortOrder) {
+            if (!this.courses || this.courses.length === 0) return;
+
+            this.courses.sort((a, b) => {
+                if (sortBy === "title") {
+                    return a.title.localeCompare(b.title);
+                } else if (sortBy === "course_id") {
+                    return a.course_id.localeCompare(b.course_id);
+                } else if (sortBy === "enrolled") {
+                    return a.spots_taken - b.spots_taken;
+                } else if (sortBy === "schedule") {
+                    return a.schedule.localeCompare(b.schedule);
+                } else if (sortBy === "credits") {
+                    return a.credit_hours - b.credit_hours;
+                } else if (sortBy === "tuition") {
+                    return a.tuition_cost.localeCompare(b.tuition_cost);
+                }
+                return 0; // Default case
+            });
+            if (!sortOrder) {
+                this.courses.reverse();
+            }
+        },
+        async filterCourses(filterBy) {
+            try {
+                const token = JSON.parse(localStorage.getItem('user')).token
+                this.courses = await (await fetch(`/api/courses/?searchTerm=${filterBy}`, {
+                    method: "GET",
+                    headers: { 
+                        "Content-Type": "application/json", 
+                        "Authorization": `Bearer ${token}`
+                    },
+                })).json();
+                return this.courses;
+            } catch (error) {
+                console.error("Error fetching courses:", error);
             }
         }
     },

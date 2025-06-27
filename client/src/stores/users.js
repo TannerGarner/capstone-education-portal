@@ -204,5 +204,40 @@ export const useUsersStore = defineStore('users',{
             localStorage.removeItem("user");
             router.push("/auth");
         },
+        sortUsers(sortBy, sortOrder) {
+            if (!this.users || this.users.length === 0) return;
+
+            this.users.sort((a, b) => {
+                if (sortBy === "first_name") {
+                    return a.first_name.localeCompare(b.first_name);
+                } else if (sortBy === "last_name") {
+                    return a.last_name.localeCompare(b.last_name);
+                } else if (sortBy === "email") {
+                    return a.email.localeCompare(b.email);
+                } else if (sortBy === "user_id") {
+                    a.user_id = Number(a.user_id);
+                    b.user_id = Number(b.user_id);
+                    return a.user_id - b.user_id;
+                }
+                return 0; // Default case
+            });
+            if (!sortOrder) {
+                this.users.reverse();
+            }
+        },
+        async filterUsers(filterBy) {
+            try {
+                this.users = await (await fetch(`/api/users/?searchTerm=${filterBy}`, {
+                    method: "GET",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${this.user.token}`
+                    },
+                })).json();
+                return this.users;
+            } catch (error) {
+                console.error("Error fetching users:", error.message);
+            }
+        }
     },
 });

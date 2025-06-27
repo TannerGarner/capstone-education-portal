@@ -50,7 +50,7 @@
 <template>
     <div class="cover">
         <div class="courseEnrollmentModal">
-            <h1> {{ course.title }} </h1>
+            <h1 class="title"> {{ course.title }} </h1>
             <div class="courseInfo row">
                 <div class="column">
                     <p class="info">
@@ -92,10 +92,10 @@
                         {{ course.classroom_number }}
                     </p>
                 </div>
-                <div class="column">
-                    <p><span class="heading">Description</span><br><br>{{ course.description }}</p>
+                <div class="column description-column">
+                    <h3 class="description-heading">Description</h3>
+                    <p class="description">{{ course.description }}</p>
                 </div>
-        
             </div>
             <div class="buttons row">                
                 <button class="cancel" @click="closeModal">Cancel</button>
@@ -121,17 +121,25 @@
 
     .courseEnrollmentModal{
         position: relative;
-        width: 50vw;
-        height: 50vh;
+        width: 65vw;
+        height: 65vh;
         background-color: #F5F1ED;
         border-radius: 10px;
-        padding: 100px;
+        padding: 75px;
         box-shadow: 0px 0px 500px #153131;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
         gap: 20px;
+    }
+
+    .title{
+        font-size: clamp(1.5rem, 2vw + 1rem, 2.25rem);
+        font-weight: bold;
+        color: #153131;
+        text-align: center;
+        padding-bottom: 20px;
     }
 
     .row{
@@ -163,8 +171,18 @@
         color: #153131;
     }
 
-    .heading{
-        font-weight: bold;
+    .description-column {
+        gap: 10px;
+    }
+
+    .description-heading{
+        padding-bottom: 0px;
+        display: flex;
+        align-items: center;
+    }
+
+    .description{
+        font-size: clamp(0.5rem, 1.25rem, 1.5rem);
     }
 
     .buttons{
@@ -232,4 +250,49 @@
         color: #F5F1ED;
     }
 
+
+    @media (max-width: 1200px) {
+        
+    }
+
+    @media (max-width: 768px) {
+        .courseEnrollmentModal {
+            width: 100vw;
+            height: 80vh;
+            padding: 60px;
+            justify-content: start;
+        }
+
+        .title {
+            font-size: 1.5rem;
+        }
+
+        .courseInfo {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .column {
+            width: 100%;
+            gap: 20px;
+        }
+
+        .description-heading{
+            font-size: 1.5rem;
+        }
+
+        .buttons {
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .dropCourse, .addCourse, .cancel {
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+    }
 </style>

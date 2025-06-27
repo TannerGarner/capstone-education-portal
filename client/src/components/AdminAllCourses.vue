@@ -6,6 +6,8 @@
     const coursesStore = useCoursesStore();
     const usersStore = useUsersStore();
     const selectedCourse = ref(null);
+    const sortOrder = ref(true);
+    const sortField = ref(null); 
     const isEditModalOpen = ref(false);
     const isNew = ref(false);
     const renderedCourses = ref([]);
@@ -13,11 +15,7 @@
 
     onMounted(async () => {
         await coursesStore.fetchCourses();
-        filterRenderedCourses();
     });
-
-    watch(searchQuery, filterRenderedCourses);
-    watch(() => coursesStore.courses, filterRenderedCourses);
 
     function openEditModal(course) {
         selectedCourse.value = { ...course };
@@ -25,9 +23,19 @@
     }
 
     function closeEditModal() {
-        isNew.value = false;
         isEditModalOpen.value = false;
         selectedCourse.value = null;
+        isNew.value = false;
+    }
+
+    function saveCourse(courseInfo) {
+        if(isNew.value === true){
+            coursesStore.createCourse(courseInfo)
+        } else {
+            coursesStore.updateCourse(courseInfo);
+        }
+        console.log('Saving course:', courseInfo);
+        closeEditModal();
     }
 
     function createCourse(){
@@ -46,53 +54,93 @@
         openEditModal(coursePattern);
     }
 
-    function filterRenderedCourses() {
-        if (searchQuery.value === "") {
-            renderedCourses.value = [...coursesStore.courses];
-        } else {
-            const searchQueryLower = searchQuery.value.toLowerCase();
-
-            renderedCourses.value = coursesStore.courses.filter((course) => (
-                course.title.toLowerCase().includes(searchQueryLower) || course.course_id.toLowerCase().includes(searchQueryLower)
-            ));
+    async function deleteCourse(course_id) {
+        if (confirm(`Are you sure you want to delete course with courseid: ${course_id}`)) {
+            const deleted = await coursesStore.deleteCourse(course_id)
+            alert(`${deleted ? "Failed to Delete" :  "Deleted Successfully"}`)
+            router.push("/auth")
         }
     }
 
-    function tempDebugTesting() {
-        console.log("=".repeat(25));
-        console.log("searchQuery.value:", searchQuery.value);
-        console.log("renderedCourses.value:", renderedCourses.value);
-        console.log("=".repeat(25));
+    function sort(field) {
+        if (sortField?.value === field) {
+            sortOrder.value = !sortOrder.value; 
+        } else {
+            sortOrder.value = true; 
+        }
+        coursesStore.sortCourses(field, sortOrder.value);
+        sortField.value = field;
     }
+
+    async function filter(searchTerm) {
+        await coursesStore.filterCourses(searchTerm);
+    }
+
+    const fields = {
+        course_id: 'course_id',
+        title: 'title',
+        enrolled: 'enrolled',
+        schedule: 'schedule',
+        credits: 'credits',
+        tuition: 'tuition'
+    };
 </script>
 
 <template>
     <div v-if="usersStore.user.is_admin" class="container">
         <div class="header">
-            <h2 @dblclick="tempDebugTesting()">Manage Courses</h2>
-            <input
-                class="searchBar"
-                type="search"
-                v-model="searchQuery"
-                placeholder="Search All Courses"
-            />
+            <h2>Manage Courses</h2>
+            <div class="searchContainer">
+                <span class="search-icon material-symbols-outlined">search</span>
+                <input v-model="searchQuery" @input="filter(searchQuery)" class="searchBar" type="search" placeholder="Search All Courses"></input>
+            </div>
             <p @click="createCourse" class="createCourse">+ Create a Course</p>
         </div>
         <div class="allCourses">
             <div class="courseList">
                 <div class="courseHeader">
-                    <p>Course Title</p>
-                    <p>Course ID</p>
-                    <p>Enrolled</p>
-                    <p>Schedule</p>
-                    <p>Credits</p>
-                    <p>Tuition</p>
+                    <h3 @click="sort(fields.title)">
+                        Course Title
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.course_id)">
+                        Course ID
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.enrolled)">
+                        Enrolled
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.schedule)">
+                        Schedule
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.credits)">
+                        Credits
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
+                    <h3 @click="sort(fields.tuition)">
+                        Tuition
+                        <span class="material-symbols-outlined sortIcon">
+                            swap_vert
+                        </span>
+                    </h3>
                 </div>
                 <div
-                    class="course"
-                    v-for="(course, index) in renderedCourses"
-                    :key="course.course_id"
-                    :class="{ firstCourse: index === 0 }"
+                    class="course" 
+                    v-for="(course, index) in courseStore.courses" 
+                    :key="course.course_id" 
+                    :class="{ firstCourse: index === 0, lastCourse: index === courseStore.courses.length - 1}"
                 >
                     <h4>{{ course.title }}</h4>
                     <p>{{ course.course_id }}</p>
@@ -107,13 +155,12 @@
             </div>
         </div>
         <EditCourseModal
-            v-if="isEditModalOpen"
             :course="selectedCourse"
             :isNew="isNew"
+            :isOpen="isEditModalOpen"
             @close="closeEditModal"
+            @save="saveCourse"
         />
-            <!-- :isOpen="isEditModalOpen" -->
-            <!-- @save="saveCourse" -->
     </div>
 </template>
 
@@ -154,23 +201,24 @@
         align-items: center;
         background-color: #F5F1ED;
         color: #153131;
-        padding: 20px 5px;
+        padding: 20px 40px;
+        gap: 10px;
         border-bottom: #489FB5 2px solid;
         position: sticky;
         top: 0;
     }
 
-    .courseHeader > * {
-        overflow: hidden;       
-        text-overflow: ellipsis; 
-        white-space: nowrap;
-        margin-left: 20px;
+    .courseHeader > h3 {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
     }
 
 
     .course{
         border-top: solid 2px #489FB5;
-        padding: 15px;
+        padding: 20px 40px;
+        gap: 10px;
         border-radius: 1px;
         display: grid;
         grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
@@ -181,12 +229,14 @@
         border: none;
     }
 
+    .course.lastCourse {
+        border-bottom: solid 2px #489FB5;
+    }
 
     .course > * {
         overflow: hidden;       
         text-overflow: ellipsis; 
         white-space: nowrap;
-        margin-left: 20px;
     }
 
     .details {
