@@ -5,7 +5,7 @@
     const usersStore = useUsersStore();
     const router = useRouter();
 
-    const defualtUserValues = {
+    const defaultUserValues = {
         first_name: "",
         last_name: "",
         email: "",
@@ -18,11 +18,11 @@
         is_admin: false
     };
 
-    const newUser = ref({ ...defualtUserValues });
+    const newUser = ref({ ...defaultUserValues });
 
     async function onSubmit(){
         await usersStore.createUser(newUser.value);
-        newUser.value = { ...defualtUserValues };
+        newUser.value = { ...defaultUserValues };
         
         router.push("/");
     }
