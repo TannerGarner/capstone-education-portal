@@ -4,19 +4,19 @@ import router from '../router/index.js';
 export const useUsersStore = defineStore('users',{
     state: () => ({
         users: [],
-        user: JSON.parse(localStorage.getItem("user")) || {},
+        user: {},
         editableUser: {}
     }),
     actions: {
         async verifyToken() {
-            const storedUser = localStorage.getItem("user");
-            if (!storedUser) return false;
-
-            const user = JSON.parse(storedUser);
-            const token = user?.token;
-            if (!token) return false;
-
             try {
+                // Attempt to access the token stored in local storage:
+                const token = localStorage.getItem("token");
+
+                // If the token isn't in local storage, return false:
+                if (!token) return false;
+
+                // Very that the token hasn't expired and is valid:
                 const response = await fetch("/api/verify-token", {
                     method: "GET",
                     headers: {
@@ -24,11 +24,10 @@ export const useUsersStore = defineStore('users',{
                         "Authorization": `Bearer ${token}`,
                     }
                 });
-                if (!response.ok) throw new Error ("Invalid token");
 
-                return true;
-            } catch (error) {
-                console.error("Error verifying token:", error.message);
+                // Return true if the token is unexpired and false if it is expired:
+                return response.ok;
+            } catch {
                 return false;
             }
         },
@@ -193,6 +192,7 @@ export const useUsersStore = defineStore('users',{
                 };
 
                 localStorage.setItem("user", JSON.stringify(this.user));
+                localStorage.setItem("token", this.user.token);
                 return true;
             } catch (error) {
                 console.error("Login failed:", error.message);
@@ -202,6 +202,7 @@ export const useUsersStore = defineStore('users',{
         async logout() {
             this.user = {};
             localStorage.removeItem("user");
+            localStorage.removeItem("token");
             router.push("/auth");
         },
         sortUsers(sortBy, sortOrder) {
